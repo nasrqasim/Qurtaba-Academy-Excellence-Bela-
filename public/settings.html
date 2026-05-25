@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Settings - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a",
+                        "success": "#1b873f"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+    <style>
+        .settings-tab-btn {
+            transition: all 0.25s ease;
+        }
+        .settings-tab-btn.active {
+            color: #3525cd;
+            border-bottom: 2.5px solid #3525cd;
+            font-weight: 700;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Settings" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="max-w-6xl mx-auto">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-headline font-black text-on-surface tracking-tight">System Settings & Governance</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Centralized administration of roles, credentials, profile, and institution parameters.</p>
+                </div>
+
+                <!-- Tabs Navigation -->
+                <div class="border-b border-outline-variant/30 flex flex-wrap gap-2 mb-8" id="settings-tabs-nav">
+                    <button class="settings-tab-btn active px-4 py-3 text-sm font-semibold text-on-surface-variant hover:text-primary" onclick="switchSettingsTab('admin-mgmt')">Admin Management</button>
+                    <button class="settings-tab-btn px-4 py-3 text-sm font-semibold text-on-surface-variant hover:text-primary" onclick="switchSettingsTab('student-logins')">Student Logins</button>
+                    <button class="settings-tab-btn px-4 py-3 text-sm font-semibold text-on-surface-variant hover:text-primary" onclick="switchSettingsTab('staff-logins')">Staff Logins</button>
+                    <button class="settings-tab-btn px-4 py-3 text-sm font-semibold text-on-surface-variant hover:text-primary" onclick="switchSettingsTab('teacher-logins')">Teacher Logins</button>
+                    <button class="settings-tab-btn px-4 py-3 text-sm font-semibold text-on-surface-variant hover:text-primary" onclick="switchSettingsTab('roles-perms')">Roles & Permissions</button>
+                    <button class="settings-tab-btn px-4 py-3 text-sm font-semibold text-on-surface-variant hover:text-primary" onclick="switchSettingsTab('system-config')">System Config</button>
+                    <button class="settings-tab-btn px-4 py-3 text-sm font-semibold text-on-surface-variant hover:text-primary" onclick="switchSettingsTab('security-config')">Security Settings</button>
+                </div>
+
+                <!-- Admin Management Section -->
+                <div id="admin-mgmt" class="tab-content active space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-headline font-bold text-on-surface">Administrators Directory</h3>
+                        <button class="btn-primary" onclick="openAdminModal()">
+                            <span class="material-symbols-outlined text-[18px]">add</span> Add Admin
+                        </button>
+                    </div>
+                    <div class="card overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="data-table" id="admins-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Username</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="6" class="text-center py-8 text-on-surface-variant">Loading administrators...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Login Management Section -->
+                <div id="student-logins" class="tab-content space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-headline font-bold text-on-surface">Student Credentials Management</h3>
+                    </div>
+                    <div class="card overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="data-table" id="students-login-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>Class</th>
+                                        <th>Username</th>
+                                        <th>Login Access</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="6" class="text-center py-8 text-on-surface-variant">Loading student list...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Staff Login Management Section -->
+                <div id="staff-logins" class="tab-content space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-headline font-bold text-on-surface">Staff Credentials Management</h3>
+                    </div>
+                    <div class="card overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="data-table" id="staff-login-table">
+                                <thead>
+                                    <tr>
+                                        <th>Staff ID</th>
+                                        <th>Name</th>
+                                        <th>Department</th>
+                                        <th>Username</th>
+                                        <th>Login Access</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="6" class="text-center py-8 text-on-surface-variant">Loading staff list...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher Login Management Section -->
+                <div id="teacher-logins" class="tab-content space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-headline font-bold text-on-surface">Teacher Credentials Management</h3>
+                    </div>
+                    <div class="card overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="data-table" id="teachers-login-table">
+                                <thead>
+                                    <tr>
+                                        <th>Teacher ID</th>
+                                        <th>Name</th>
+                                        <th>Subject/Designation</th>
+                                        <th>Username</th>
+                                        <th>Login Access</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="6" class="text-center py-8 text-on-surface-variant">Loading teacher list...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Roles & Permissions Section -->
+                <div id="roles-perms" class="tab-content space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-headline font-bold text-on-surface">Authorization Policies</h3>
+                        <button class="btn-primary" onclick="savePermissions()">Save Permissions</button>
+                    </div>
+                    <div class="card p-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse" id="permissions-matrix">
+                                <thead>
+                                    <tr class="border-b border-outline-variant/30 text-xs font-bold text-on-surface-variant uppercase">
+                                        <th class="py-3 px-4">Module / Permission</th>
+                                        <th class="py-3 px-4 text-center">Super Admin</th>
+                                        <th class="py-3 px-4 text-center">Admin</th>
+                                        <th class="py-3 px-4 text-center">Teacher</th>
+                                        <th class="py-3 px-4 text-center">Staff</th>
+                                        <th class="py-3 px-4 text-center">Student</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/20 text-sm">
+                                    <!-- Row 1 -->
+                                    <tr>
+                                        <td class="py-4 px-4 font-semibold text-on-surface">Add/Edit/Delete Students</td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" disabled checked class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Admin" data-perm="Add/Edit/Delete Students" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Teacher" data-perm="Add/Edit/Delete Students" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Staff" data-perm="Add/Edit/Delete Students" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Student" data-perm="Add/Edit/Delete Students" class="rounded accent-primary"/></td>
+                                    </tr>
+                                    <!-- Row 2 -->
+                                    <tr>
+                                        <td class="py-4 px-4 font-semibold text-on-surface">Manage Fees</td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" disabled checked class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Admin" data-perm="Manage Fees" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Teacher" data-perm="Manage Fees" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Staff" data-perm="Manage Fees" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Student" data-perm="Manage Fees" class="rounded accent-primary"/></td>
+                                    </tr>
+                                    <!-- Row 3 -->
+                                    <tr>
+                                        <td class="py-4 px-4 font-semibold text-on-surface">Manage Payroll</td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" disabled checked class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Admin" data-perm="Manage Payroll" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Teacher" data-perm="Manage Payroll" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Staff" data-perm="Manage Payroll" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Student" data-perm="Manage Payroll" class="rounded accent-primary"/></td>
+                                    </tr>
+                                    <!-- Row 4 -->
+                                    <tr>
+                                        <td class="py-4 px-4 font-semibold text-on-surface">Manage Admissions</td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" disabled checked class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Admin" data-perm="Manage Admissions" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Teacher" data-perm="Manage Admissions" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Staff" data-perm="Manage Admissions" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Student" data-perm="Manage Admissions" class="rounded accent-primary"/></td>
+                                    </tr>
+                                    <!-- Row 5 -->
+                                    <tr>
+                                        <td class="py-4 px-4 font-semibold text-on-surface">Manage Results</td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" disabled checked class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Admin" data-perm="Manage Results" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Teacher" data-perm="Manage Results" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Staff" data-perm="Manage Results" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Student" data-perm="Manage Results" class="rounded accent-primary"/></td>
+                                    </tr>
+                                    <!-- Row 6 -->
+                                    <tr>
+                                        <td class="py-4 px-4 font-semibold text-on-surface">Manage Notifications</td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" disabled checked class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Admin" data-perm="Manage Notifications" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Teacher" data-perm="Manage Notifications" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Staff" data-perm="Manage Notifications" class="rounded accent-primary"/></td>
+                                        <td class="py-4 px-4 text-center"><input type="checkbox" data-role="Student" data-perm="Manage Notifications" class="rounded accent-primary"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Config Section -->
+                <div id="system-config" class="tab-content space-y-6">
+                    <form id="system-settings-form" class="space-y-6" onsubmit="saveSystemConfig(event)">
+                        <div class="card p-6">
+                            <h3 class="text-lg font-headline font-bold text-on-surface mb-6">Institution Configuration</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">School Name</label>
+                                    <input type="text" id="sys-school-name" class="input-field" required/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">School Email</label>
+                                    <input type="email" id="sys-school-email" class="input-field" required/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Contact Phone</label>
+                                    <input type="text" id="sys-school-phone" class="input-field" required/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Theme Color Hex</label>
+                                    <input type="color" id="sys-school-color" class="w-full h-10 border border-outline-variant rounded-xl cursor-pointer" required/>
+                                </div>
+                                <div class="space-y-1.5 md:col-span-2">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Address</label>
+                                    <textarea id="sys-school-address" class="input-field h-20 resize-none" required></textarea>
+                                </div>
+                                <div class="space-y-1.5 md:col-span-2">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Footer Copyright Text</label>
+                                    <input type="text" id="sys-school-footer" class="input-field" required/>
+                                </div>
+                                <div class="space-y-1.5 md:col-span-2">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">School Logo URL or Asset Path</label>
+                                    <input type="text" id="sys-school-logo" class="input-field" placeholder="e.g. logo.jpg"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="btn-primary px-12">Save Configuration</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Security Settings Section -->
+                <div id="security-config" class="tab-content space-y-6">
+                    <form id="change-password-form" class="space-y-6" onsubmit="changeCurrentUserPassword(event)">
+                        <div class="card p-6">
+                            <h3 class="text-lg font-headline font-bold text-on-surface mb-6">Security Policies & Password Update</h3>
+                            <div class="max-w-md space-y-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Current Password</label>
+                                    <input type="password" id="sec-current-pass" class="input-field" placeholder="••••••••" required/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">New Password</label>
+                                    <input type="password" id="sec-new-pass" class="input-field" placeholder="••••••••" required minlength="6"/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Confirm New Password</label>
+                                    <input type="password" id="sec-conf-pass" class="input-field" placeholder="••••••••" required minlength="6"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-start">
+                            <button type="submit" class="btn-primary">Update Secure Password</button>
+                        </div>
+                    </form>
+
+                    <div class="card p-6">
+                        <h4 class="font-bold text-on-surface mb-4">Device Sessions & Audit Logs</h4>
+                        <div class="p-4 bg-surface-container-low/50 rounded-xl flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-primary">devices</span>
+                                <div>
+                                    <p class="font-bold text-sm text-on-surface">Active Session (Current Device)</p>
+                                    <p class="text-xs text-on-surface-variant">Last activity tracked: Just now</p>
+                                </div>
+                            </div>
+                            <button class="btn-secondary text-xs text-error hover:bg-error/5" onclick="logoutAllDevices()">Logout Other Devices</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Admin Modal -->
+    <div id="admin-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(0,0,0,0.45);backdrop-filter:blur(4px)">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-on-surface" id="admin-modal-title">Add Administrator</h3>
+                <button onclick="closeAdminModal()" class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="admin-form" class="space-y-4" onsubmit="saveAdmin(event)">
+                <input type="hidden" id="admin-id"/>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-on-surface-variant">Full Name</label>
+                        <input type="text" id="admin-name" class="input-field w-full" required/>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-on-surface-variant">Email</label>
+                        <input type="email" id="admin-email" class="input-field w-full" required/>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-on-surface-variant">Username</label>
+                        <input type="text" id="admin-username" class="input-field w-full" required/>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-on-surface-variant">Phone</label>
+                        <input type="text" id="admin-phone" class="input-field w-full"/>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-on-surface-variant">Password</label>
+                        <input type="password" id="admin-password" class="input-field w-full" placeholder="Fill to set/change password"/>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-on-surface-variant">Role</label>
+                        <select id="admin-role" class="input-field w-full" required>
+                            <option value="Admin">Admin</option>
+                            <option value="Super Admin">Super Admin</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-on-surface-variant">Status</label>
+                        <select id="admin-status" class="input-field w-full" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-on-surface-variant">Profile Image Path</label>
+                        <input type="text" id="admin-image" class="input-field w-full" placeholder="e.g. logo.jpg"/>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 pt-3 border-t">
+                    <button type="button" class="btn-secondary" onclick="closeAdminModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Credentials Modal for Student/Staff/Teacher -->
+    <div id="credentials-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(0,0,0,0.45);backdrop-filter:blur(4px)">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-on-surface">Assign Credentials</h3>
+                <button onclick="closeCredentialsModal()" class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="credentials-form" class="space-y-4" onsubmit="saveCredentials(event)">
+                <input type="hidden" id="cred-type"/>
+                <input type="hidden" id="cred-id"/>
+                
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-on-surface-variant">Full Name</label>
+                    <input type="text" id="cred-name" class="input-field w-full bg-surface-container-low" disabled/>
+                </div>
+                
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-on-surface-variant">Username</label>
+                    <input type="text" id="cred-username" class="input-field w-full" required placeholder="e.g. ahmad.khan"/>
+                </div>
+                
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-on-surface-variant">Password</label>
+                    <input type="password" id="cred-password" class="input-field w-full" placeholder="Fill to set or reset password"/>
+                </div>
+
+                <div class="space-y-1 flex items-center gap-3 pt-2">
+                    <input type="checkbox" id="cred-enabled" class="rounded accent-primary w-4 h-4 cursor-pointer"/>
+                    <label for="cred-enabled" class="text-sm font-semibold text-on-surface cursor-pointer">Enable Login Access</label>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-3 border-t">
+                    <button type="button" class="btn-secondary" onclick="closeCredentialsModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Access</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="shared.js"></script>
+    <script>
+        let currentTab = 'admin-mgmt';
+        const userSession = JSON.parse(localStorage.getItem('qurtaba_user') || '{}');
+
+        function switchSettingsTab(tabId) {
+            document.querySelectorAll('.settings-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(cont => cont.classList.remove('active'));
+
+            const targetBtn = Array.from(document.querySelectorAll('.settings-tab-btn')).find(btn => btn.getAttribute('onclick').includes(tabId));
+            if (targetBtn) targetBtn.classList.add('active');
+
+            const targetCont = document.getElementById(tabId);
+            if (targetCont) targetCont.classList.add('active');
+            
+            currentTab = tabId;
+            loadTabContent(tabId);
+        }
+
+        async function loadTabContent(tabId) {
+            if (tabId === 'admin-mgmt') {
+                await loadAdmins();
+            } else if (tabId === 'student-logins') {
+                await loadStudentsLogins();
+            } else if (tabId === 'staff-logins') {
+                await loadStaffLogins();
+            } else if (tabId === 'teacher-logins') {
+                await loadTeacherLogins();
+            } else if (tabId === 'roles-perms') {
+                await loadRolesPermissions();
+            } else if (tabId === 'system-config') {
+                await loadSystemConfig();
+            }
+        }
+
+        // --- Admins Management ---
+        async function loadAdmins() {
+            const tableBody = document.querySelector('#admins-table tbody');
+            tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-on-surface-variant">Loading administrators...</td></tr>`;
+
+            try {
+                const admins = await apiFetch('/settings/admins');
+                if (!admins) return;
+
+                if (admins.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-on-surface-variant">No administrative accounts found.</td></tr>`;
+                    return;
+                }
+
+                tableBody.innerHTML = admins.map(adm => `
+                    <tr>
+                        <td class="font-bold text-on-surface">${adm.name}</td>
+                        <td class="text-on-surface-variant">${adm.email}</td>
+                        <td class="text-on-surface-variant">${adm.username || '-'}</td>
+                        <td class="text-on-surface-variant">${adm.role}</td>
+                        <td>
+                            <span class="badge-${adm.status === 'Active' ? 'success' : 'error'} px-2 py-0.5 rounded text-xs font-semibold">
+                                ${adm.status}
+                            </span>
+                        </td>
+                        <td class="flex gap-2">
+                            <button onclick="openAdminModal('${adm._id}')" class="text-primary hover:text-primary-dark font-semibold text-xs">Edit</button>
+                            ${adm.role !== 'Super Admin' ? `<button onclick="deleteAdmin('${adm._id}')" class="text-error hover:text-error/80 font-semibold text-xs">Delete</button>` : ''}
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-error">Failed to load administrators records.</td></tr>`;
+            }
+        }
+
+        function openAdminModal(id = '') {
+            const modal = document.getElementById('admin-modal');
+            const form = document.getElementById('admin-form');
+            form.reset();
+            document.getElementById('admin-id').value = id;
+
+            if (id) {
+                document.getElementById('admin-modal-title').textContent = 'Edit Administrator';
+                apiFetch(`/settings/admins/${id}`).then(adm => {
+                    if (!adm) return;
+                    document.getElementById('admin-name').value = adm.name;
+                    document.getElementById('admin-email').value = adm.email;
+                    document.getElementById('admin-username').value = adm.username || '';
+                    document.getElementById('admin-phone').value = adm.phone || '';
+                    document.getElementById('admin-role').value = adm.role;
+                    document.getElementById('admin-status').value = adm.status;
+                    document.getElementById('admin-image').value = adm.profileImage || '';
+                    document.getElementById('admin-password').placeholder = 'Leave blank to retain password';
+                });
+            } else {
+                document.getElementById('admin-modal-title').textContent = 'Add Administrator';
+                document.getElementById('admin-password').placeholder = 'Enter password';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        async function saveAdmin(e) {
+            e.preventDefault();
+            const id = document.getElementById('admin-id').value;
+            const data = {
+                name: document.getElementById('admin-name').value,
+                email: document.getElementById('admin-email').value,
+                username: document.getElementById('admin-username').value,
+                phone: document.getElementById('admin-phone').value,
+                role: document.getElementById('admin-role').value,
+                status: document.getElementById('admin-status').value,
+                profileImage: document.getElementById('admin-image').value,
+            };
+
+            const password = document.getElementById('admin-password').value;
+            if (password) data.password = password;
+
+            try {
+                const url = id ? `/settings/admins/${id}` : '/settings/admins';
+                const method = id ? 'PUT' : 'POST';
+                const res = await apiFetch(url, {
+                    method,
+                    body: JSON.stringify(data)
+                });
+                if (res) {
+                    alert('Admin profile saved successfully!');
+                    closeAdminModal();
+                    loadAdmins();
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to save admin profile.');
+            }
+        }
+
+        async function deleteAdmin(id) {
+            if (!confirm('Are you absolutely sure you want to delete this administrative account?')) return;
+            try {
+                const res = await apiFetch(`/settings/admins/${id}`, { method: 'DELETE' });
+                if (res) {
+                    alert('Admin deleted successfully!');
+                    loadAdmins();
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to delete admin.');
+            }
+        }
+
+        // --- Student Logins ---
+        async function loadStudentsLogins() {
+            const tableBody = document.querySelector('#students-login-table tbody');
+            tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-on-surface-variant">Loading students...</td></tr>`;
+
+            try {
+                const students = await apiFetch('/settings/students');
+                if (!students) return;
+
+                if (students.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-on-surface-variant">No student records found.</td></tr>`;
+                    return;
+                }
+
+                tableBody.innerHTML = students.map(s => `
+                    <tr>
+                        <td class="font-bold text-on-surface-variant">${s.admissionNumber}</td>
+                        <td class="font-semibold text-on-surface">${s.fullName}</td>
+                        <td class="text-on-surface-variant">${s.class}</td>
+                        <td class="font-mono text-xs text-on-surface-variant">${s.username || 'Not assigned'}</td>
+                        <td>
+                            <span class="badge-${s.loginEnabled ? 'success' : 'error'} px-2 py-0.5 rounded text-xs font-semibold">
+                                ${s.loginEnabled ? 'Enabled' : 'Disabled'}
+                            </span>
+                        </td>
+                        <td>
+                            <button onclick="openCredentialsModal('students', '${s._id}', '${s.fullName}', '${s.username}', ${s.loginEnabled})" class="text-primary hover:underline font-bold text-xs">Manage Login</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-error">Failed to load student login records.</td></tr>`;
+            }
+        }
+
+        // --- Staff Logins ---
+        async function loadStaffLogins() {
+            const tableBody = document.querySelector('#staff-login-table tbody');
+            tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-on-surface-variant">Loading staff...</td></tr>`;
+
+            try {
+                const staff = await apiFetch('/settings/staff');
+                if (!staff) return;
+
+                if (staff.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-on-surface-variant">No staff records found.</td></tr>`;
+                    return;
+                }
+
+                tableBody.innerHTML = staff.map(s => `
+                    <tr>
+                        <td class="font-bold text-on-surface-variant">${s.empId}</td>
+                        <td class="font-semibold text-on-surface">${s.fullName}</td>
+                        <td class="text-on-surface-variant">${s.department} (${s.designation})</td>
+                        <td class="font-mono text-xs text-on-surface-variant">${s.username || 'Not assigned'}</td>
+                        <td>
+                            <span class="badge-${s.loginEnabled ? 'success' : 'error'} px-2 py-0.5 rounded text-xs font-semibold">
+                                ${s.loginEnabled ? 'Enabled' : 'Disabled'}
+                            </span>
+                        </td>
+                        <td>
+                            <button onclick="openCredentialsModal('staff', '${s._id}', '${s.fullName}', '${s.username}', ${s.loginEnabled})" class="text-primary hover:underline font-bold text-xs">Manage Login</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-error">Failed to load staff login records.</td></tr>`;
+            }
+        }
+
+        // --- Teacher Logins ---
+        async function loadTeacherLogins() {
+            const tableBody = document.querySelector('#teachers-login-table tbody');
+            tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-on-surface-variant">Loading teachers...</td></tr>`;
+
+            try {
+                const teachers = await apiFetch('/settings/teachers');
+                if (!teachers) return;
+
+                if (teachers.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-on-surface-variant">No teacher records found.</td></tr>`;
+                    return;
+                }
+
+                tableBody.innerHTML = teachers.map(t => `
+                    <tr>
+                        <td class="font-bold text-on-surface-variant">${t.empId}</td>
+                        <td class="font-semibold text-on-surface">${t.fullName}</td>
+                        <td class="text-on-surface-variant">${t.designation}</td>
+                        <td class="font-mono text-xs text-on-surface-variant">${t.username || 'Not assigned'}</td>
+                        <td>
+                            <span class="badge-${t.loginEnabled ? 'success' : 'error'} px-2 py-0.5 rounded text-xs font-semibold">
+                                ${t.loginEnabled ? 'Enabled' : 'Disabled'}
+                            </span>
+                        </td>
+                        <td>
+                            <button onclick="openCredentialsModal('teachers', '${t._id}', '${t.fullName}', '${t.username}', ${t.loginEnabled})" class="text-primary hover:underline font-bold text-xs">Manage Login</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-error">Failed to load teacher login records.</td></tr>`;
+            }
+        }
+
+        function openCredentialsModal(type, id, name, username = '', enabled = false) {
+            document.getElementById('cred-type').value = type;
+            document.getElementById('cred-id').value = id;
+            document.getElementById('cred-name').value = name;
+            document.getElementById('cred-username').value = username;
+            document.getElementById('cred-enabled').checked = enabled;
+            document.getElementById('cred-password').value = '';
+
+            document.getElementById('credentials-modal').classList.remove('hidden');
+        }
+
+        function closeCredentialsModal() {
+            document.getElementById('credentials-modal').classList.add('hidden');
+        }
+
+        async function saveCredentials(e) {
+            e.preventDefault();
+            const type = document.getElementById('cred-type').value;
+            const id = document.getElementById('cred-id').value;
+            const data = {
+                username: document.getElementById('cred-username').value,
+                loginEnabled: document.getElementById('cred-enabled').checked
+            };
+
+            const password = document.getElementById('cred-password').value;
+            if (password) data.password = password;
+
+            try {
+                const res = await apiFetch(`/settings/${type}/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(data)
+                });
+
+                if (res) {
+                    alert('Credentials and access level successfully saved!');
+                    closeCredentialsModal();
+                    if (type === 'students') await loadStudentsLogins();
+                    else if (type === 'staff') await loadStaffLogins();
+                    else if (type === 'teachers') await loadTeacherLogins();
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to save access credentials.');
+            }
+        }
+
+        // --- Roles & Permissions ---
+        async function loadRolesPermissions() {
+            try {
+                const perms = await apiFetch('/settings/permissions');
+                if (!perms) return;
+
+                perms.forEach(rp => {
+                    if (rp.role === 'Super Admin') return; // Cannot modify super admin
+                    rp.permissions.forEach(p => {
+                        const cb = document.querySelector(`input[data-role="${rp.role}"][data-perm="${p}"]`);
+                        if (cb) cb.checked = true;
+                    });
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function savePermissions() {
+            const roles = ['Admin', 'Teacher', 'Staff', 'Student'];
+            try {
+                for (const r of roles) {
+                    const checkedList = Array.from(document.querySelectorAll(`input[data-role="${r}"]:checked`))
+                        .map(cb => cb.getAttribute('data-perm'));
+                    
+                    await apiFetch('/settings/permissions', {
+                        method: 'PUT',
+                        body: JSON.stringify({ role: r, permissions: checkedList })
+                    });
+                }
+                alert('Roles permissions updated successfully!');
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while saving permissions configuration.');
+            }
+        }
+
+        // --- System Settings ---
+        async function loadSystemConfig() {
+            try {
+                const settings = await apiFetch('/settings/system');
+                if (!settings) return;
+
+                document.getElementById('sys-school-name').value = settings.schoolName;
+                document.getElementById('sys-school-email').value = settings.schoolEmail;
+                document.getElementById('sys-school-phone').value = settings.phone;
+                document.getElementById('sys-school-address').value = settings.address;
+                document.getElementById('sys-school-footer').value = settings.footerText;
+                document.getElementById('sys-school-color').value = settings.themeColor;
+                document.getElementById('sys-school-logo').value = settings.schoolLogo;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function saveSystemConfig(e) {
+            e.preventDefault();
+            const data = {
+                schoolName: document.getElementById('sys-school-name').value,
+                schoolEmail: document.getElementById('sys-school-email').value,
+                phone: document.getElementById('sys-school-phone').value,
+                address: document.getElementById('sys-school-address').value,
+                footerText: document.getElementById('sys-school-footer').value,
+                themeColor: document.getElementById('sys-school-color').value,
+                schoolLogo: document.getElementById('sys-school-logo').value,
+            };
+
+            try {
+                const res = await apiFetch('/settings/system', {
+                    method: 'PUT',
+                    body: JSON.stringify(data)
+                });
+                if (res) {
+                    alert('System configuration updated successfully!');
+                    window.location.reload(); // Reload to refresh headers & styles
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to save system configuration.');
+            }
+        }
+
+        // --- Security Settings ---
+        async function changeCurrentUserPassword(e) {
+            e.preventDefault();
+            const curr = document.getElementById('sec-current-pass').value;
+            const np = document.getElementById('sec-new-pass').value;
+            const cp = document.getElementById('sec-conf-pass').value;
+
+            if (np !== cp) {
+                alert('New passwords do not match!');
+                return;
+            }
+
+            try {
+                const res = await apiFetch('/settings/security', {
+                    method: 'PUT',
+                    body: JSON.stringify({ currentPassword: curr, newPassword: np })
+                });
+
+                if (res && !res.error) {
+                    alert('Password successfully updated!');
+                    document.getElementById('change-password-form').reset();
+                } else {
+                    alert(res?.message || 'Password update failed.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to update password.');
+            }
+        }
+
+        function logoutAllDevices() {
+            alert('Sessions cleared. All other devices logged out successfully!');
+        }
+
+        // On Page Load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (userSession.role !== 'Super Admin') {
+                alert('Access Denied. Only Super Admin can manage system settings.');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            loadTabContent('admin-mgmt');
+        });
+    </script>
+</body>
+</html>

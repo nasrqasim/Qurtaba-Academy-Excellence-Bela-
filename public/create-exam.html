@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Create Exam - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Exam Scheduler" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8 text-center md:text-left">
+                    <h2 class="text-3xl font-black text-on-surface tracking-tight">Schedule New Examination</h2>
+                    <p class="text-on-surface-variant mt-1.5 text-sm font-medium">Define exam terms, subjects, and session timings.</p>
+                </div>
+
+                <form id="examForm" class="space-y-6">
+                    <div class="card p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-primary uppercase tracking-widest">Exam Title</label>
+                            <input type="text" name="name" id="exam-name" class="input-field" placeholder="e.g. Mid-Term Examination 2024" required/>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-primary uppercase tracking-widest">Academic Session</label>
+                            <input type="text" name="session" id="exam-session" class="input-field" placeholder="e.g. 2024 - 2025" required/>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-primary uppercase tracking-widest">Class / Grade</label>
+                            <select name="class" id="exam-class" class="input-field" required>
+                                <option value="" disabled selected>Select Class</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-primary uppercase tracking-widest">Subject</label>
+                            <select name="subject" id="exam-subject" class="input-field" required>
+                                <option value="" disabled selected>Select Subject</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-primary uppercase tracking-widest">Exam Date</label>
+                                <input type="date" name="date" id="exam-date" class="input-field" required/>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-primary uppercase tracking-widest">Start Time</label>
+                                <input type="time" name="time" id="exam-time" class="input-field" value="09:00"/>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-primary uppercase tracking-widest">Duration (Minutes)</label>
+                            <input type="number" name="duration" id="exam-duration" class="input-field" value="180" required/>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-primary uppercase tracking-widest">Total Marks</label>
+                            <input type="number" name="totalMarks" id="exam-totalMarks" class="input-field" value="100" required/>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-primary uppercase tracking-widest">Passing Marks</label>
+                            <input type="number" name="passingMarks" id="exam-passingMarks" class="input-field" value="33" required/>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-6">
+                        <button type="button" class="btn-secondary py-3 px-8 text-sm font-bold" onclick="window.history.back()">Discard</button>
+                        <button type="submit" class="btn-primary py-3 px-12 text-sm font-black shadow-xl shadow-primary/30" id="submit-btn">Publish Schedule</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('edit');
+
+        async function loadDropdowns() {
+            try {
+                // Load Classes
+                const classRes = await fetch('/api/classes');
+                const classes = await classRes.json();
+                const classSelect = document.getElementById('exam-class');
+                classes.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = `${c.name}-${c.section}`;
+                    opt.textContent = `${c.name}-${c.section}`;
+                    classSelect.appendChild(opt);
+                });
+
+                // Load Subjects
+                const subjectRes = await fetch('/api/subjects');
+                const subjects = await subjectRes.json();
+                const subjectSelect = document.getElementById('exam-subject');
+                subjects.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.name;
+                    opt.textContent = s.name;
+                    subjectSelect.appendChild(opt);
+                });
+            } catch (e) {
+                console.error('Error loading dropdown options:', e);
+            }
+        }
+
+        async function loadExamData() {
+            if (!editId) return;
+            try {
+                document.querySelector('h2').textContent = 'Edit Examination Details';
+                document.getElementById('submit-btn').textContent = 'Update Schedule';
+                
+                const res = await fetch(`/api/exams/${editId}`);
+                const data = await res.json();
+                
+                document.getElementById('exam-name').value = data.name || '';
+                document.getElementById('exam-session').value = data.session || '2024 - 2025';
+                document.getElementById('exam-class').value = data.class || '';
+                document.getElementById('exam-subject').value = data.subject || '';
+                if (data.date) {
+                    document.getElementById('exam-date').value = new Date(data.date).toISOString().split('T')[0];
+                }
+                document.getElementById('exam-time').value = data.time || '09:00';
+                document.getElementById('exam-duration').value = data.duration || 180;
+                document.getElementById('exam-totalMarks').value = data.totalMarks || 100;
+                document.getElementById('exam-passingMarks').value = data.passingMarks || 33;
+            } catch (e) {
+                console.error('Error loading exam details:', e);
+            }
+        }
+
+        document.getElementById('examForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            data.duration = parseInt(data.duration);
+            data.totalMarks = parseInt(data.totalMarks);
+            data.passingMarks = parseInt(data.passingMarks);
+
+            try {
+                const url = editId ? `/api/exams/${editId}` : '/api/exams';
+                const method = editId ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    alert(editId ? 'Exam updated successfully!' : 'Exam scheduled successfully!');
+                    window.location.href = 'exams.html';
+                } else {
+                    const error = await res.json();
+                    alert(error.message || 'Failed to save exam details');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while saving the exam.');
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadDropdowns();
+            await loadExamData();
+        });
+    </script>
+</body>
+</html>

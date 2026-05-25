@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Manage Timetable - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Manage Timetable" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Add Class Schedule</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Assign subjects, teachers, and time slots to create a class timetable.</p>
+                </div>
+
+                <form id="timetableForm" class="space-y-6">
+                    <div class="card p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-on-surface-variant uppercase">Select Class</label>
+                            <select id="class-select" name="class" class="input-field" required>
+                                <!-- Loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-on-surface-variant uppercase">Select Day</label>
+                            <select name="day" class="input-field" required>
+                                <option>Monday</option>
+                                <option>Tuesday</option>
+                                <option>Wednesday</option>
+                                <option>Thursday</option>
+                                <option>Friday</option>
+                                <option>Saturday</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-on-surface-variant uppercase">Subject</label>
+                            <select id="subject-select" name="subject" class="input-field" required>
+                                <!-- Loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-on-surface-variant uppercase">Teacher</label>
+                            <select id="teacher-select" name="teacher" class="input-field" required>
+                                <!-- Loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Start Time</label>
+                                <input type="time" name="startTime" class="input-field" required/>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">End Time</label>
+                                <input type="time" name="endTime" class="input-field" required/>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-on-surface-variant uppercase">Room / Hall</label>
+                            <input type="text" name="room" class="input-field" placeholder="e.g. Room 402" required/>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end gap-3 pt-4">
+                        <button type="button" class="btn-secondary" onclick="window.history.back()">Back</button>
+                        <button type="submit" class="btn-primary px-10 py-3 shadow-lg shadow-primary/20">Save Schedule Entry</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        let isEditing = false;
+        let editId = null;
+
+        async function loadDropdowns() {
+            try {
+                // Load Classes
+                const classRes = await fetch('/api/classes');
+                const classes = await classRes.json();
+                const classSelect = document.getElementById('class-select');
+                classSelect.innerHTML = classes.map(c => `<option value="Class ${c.name}-${c.section}">Class ${c.name}-${c.section}</option>`).join('');
+
+                // Load Subjects
+                const subjectRes = await fetch('/api/subjects');
+                const subjects = await subjectRes.json();
+                const subjectSelect = document.getElementById('subject-select');
+                subjectSelect.innerHTML = subjects.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+
+                // Load Teachers
+                const teacherRes = await fetch('/api/staff');
+                const teachers = await teacherRes.json();
+                const teacherSelect = document.getElementById('teacher-select');
+                teacherSelect.innerHTML = teachers.map(t => `<option value="${t.fullName || t.name}">${t.fullName || t.name}</option>`).join('');
+            } catch (e) {
+                console.error('Error loading dropdowns:', e);
+            }
+        }
+
+        async function loadEntry(id) {
+            try {
+                const res = await fetch(`/api/timetable/${id}`);
+                if (!res.ok) throw new Error('Failed to fetch schedule entry');
+                const routine = await res.json();
+
+                const form = document.getElementById('timetableForm');
+                form.elements['class'].value = routine.class;
+                form.elements['day'].value = routine.day;
+                form.elements['subject'].value = routine.subject;
+                form.elements['teacher'].value = routine.teacher;
+                form.elements['startTime'].value = routine.startTime;
+                form.elements['endTime'].value = routine.endTime;
+                form.elements['room'].value = routine.room || '';
+
+                document.querySelector('h2').textContent = 'Edit Class Schedule';
+                form.querySelector('button[type="submit"]').textContent = 'Update Schedule Entry';
+            } catch (e) {
+                console.error(e);
+                alert('Error loading timetable entry details.');
+            }
+        }
+
+        document.getElementById('timetableForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = isEditing ? 'Updating...' : 'Saving...';
+
+            const formData = new FormData(e.target);
+            const payload = Object.fromEntries(formData.entries());
+
+            const url = isEditing ? `/api/timetable/${editId}` : '/api/timetable';
+            const method = isEditing ? 'PATCH' : 'POST';
+
+            try {
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    alert(`Schedule entry ${isEditing ? 'updated' : 'saved'} successfully!`);
+                    window.location.href = 'timetable.html';
+                } else {
+                    const error = await res.json();
+                    alert(error.message || 'Failed to save schedule entry');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = isEditing ? 'Update Schedule Entry' : 'Save Schedule Entry';
+            }
+        });
+
+        window.onPageLoad(async () => {
+            await loadDropdowns();
+
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('edit')) {
+                isEditing = true;
+                editId = params.get('edit');
+                await loadEntry(editId);
+            }
+        });
+    </script>
+</body>
+</html>

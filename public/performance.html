@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Performance Tracking - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Performance Analytics" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Institutional Performance</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Analyze academic trends and institutional growth metrics.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-secondary">
+                        <span class="material-symbols-outlined text-[18px]">query_stats</span>
+                        Compare Years
+                    </button>
+                    <button class="btn-primary">
+                        <span class="material-symbols-outlined text-[18px]">insights</span>
+                        Generate Insight
+                    </button>
+                </div>
+            </div>
+
+            <!-- Global Analytics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="card p-5">
+                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Pass Percentage</p>
+                    <p class="text-3xl font-black text-on-surface">88.4%</p>
+                    <p class="text-xs text-emerald-600 font-bold mt-2">↑ 4.2% from last term</p>
+                </div>
+                <div class="card p-5">
+                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Student Retention</p>
+                    <p class="text-3xl font-black text-on-surface">96.2%</p>
+                    <p class="text-xs text-emerald-600 font-bold mt-2">↑ 1.5% improvement</p>
+                </div>
+                <div class="card p-5">
+                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Teacher Attendance</p>
+                    <p class="text-3xl font-black text-on-surface">98.1%</p>
+                    <p class="text-xs text-on-surface-variant mt-2">Consistent performance</p>
+                </div>
+                <div class="card p-5">
+                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Resource Utilization</p>
+                    <p class="text-3xl font-black text-on-surface">74%</p>
+                    <p class="text-xs text-rose-600 font-bold mt-2">↓ 5% lab maintenance</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Academic Trends -->
+                <div class="card lg:col-span-2 p-6">
+                    <h3 class="font-bold text-on-surface mb-6">Subject-wise Academic Performance</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-xs font-bold text-on-surface-variant">Mathematics</span>
+                            <div class="flex-1 h-3 bg-surface-container rounded-full overflow-hidden">
+                                <div class="h-full bg-primary" style="width: 72%"></div>
+                            </div>
+                            <span class="w-12 text-right text-sm font-black">72%</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-xs font-bold text-on-surface-variant">Physics</span>
+                            <div class="flex-1 h-3 bg-surface-container rounded-full overflow-hidden">
+                                <div class="h-full bg-blue-500" style="width: 85%"></div>
+                            </div>
+                            <span class="w-12 text-right text-sm font-black">85%</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-xs font-bold text-on-surface-variant">English</span>
+                            <div class="flex-1 h-3 bg-surface-container rounded-full overflow-hidden">
+                                <div class="h-full bg-purple-500" style="width: 91%"></div>
+                            </div>
+                            <span class="w-12 text-right text-sm font-black">91%</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-xs font-bold text-on-surface-variant">Urdu</span>
+                            <div class="flex-1 h-3 bg-surface-container rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-500" style="width: 94%"></div>
+                            </div>
+                            <span class="w-12 text-right text-sm font-black">94%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Performing Classes -->
+                <div class="card p-6">
+                    <h3 class="font-bold text-on-surface mb-6">Top Classes</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-100">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white font-bold text-xs">1</div>
+                                <span class="font-bold text-on-surface text-sm">Class 10-A</span>
+                            </div>
+                            <span class="text-xs font-black text-emerald-700">92.4%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low border border-outline-variant/10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">2</div>
+                                <span class="font-bold text-on-surface text-sm">Class 9-B</span>
+                            </div>
+                            <span class="text-xs font-black text-primary">88.1%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low border border-outline-variant/10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">3</div>
+                                <span class="font-bold text-on-surface text-sm">Class 11-Eng</span>
+                            </div>
+                            <span class="text-xs font-black text-primary">85.6%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+</body>
+</html>

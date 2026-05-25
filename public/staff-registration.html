@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Staff Registration - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Staff Registration" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Employee Registration</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Add a new staff member or teacher to the institution records.</p>
+                </div>
+
+                <form id="staffForm" class="space-y-6">
+                    <!-- Personal Info -->
+                    <div class="card">
+                        <div class="card-header"><h3 class="font-bold text-on-surface">Personal Information</h3></div>
+                        <div class="card-body grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Full Name</label>
+                                <input type="text" name="fullName" class="input-field" placeholder="e.g. Ahmad Khan" required/>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">CNIC Number</label>
+                                <input type="text" name="cnic" class="input-field" placeholder="00000-0000000-0"/>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Email Address</label>
+                                <input type="email" name="email" class="input-field" placeholder="name@qurtaba.edu.pk" required/>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Phone Number</label>
+                                <input type="tel" name="phone" class="input-field" placeholder="+92 3XX XXXXXXX"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Professional Info -->
+                    <div class="card">
+                        <div class="card-header"><h3 class="font-bold text-on-surface">Professional Details</h3></div>
+                        <div class="card-body grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Department</label>
+                                <select name="department" class="input-field" required>
+                                    <option>Academic</option>
+                                    <option>Administrative</option>
+                                    <option>Accounts</option>
+                                    <option>Support Staff</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Designation</label>
+                                <input type="text" name="designation" class="input-field" placeholder="e.g. Subject Specialist" required/>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Joining Date</label>
+                                <input type="date" name="joiningDate" class="input-field" required/>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Monthly Salary (₨)</label>
+                                <input type="number" name="salary" class="input-field" placeholder="e.g. 45000" required/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4">
+                        <button type="button" class="btn-secondary" onclick="window.location='staff.html'">Cancel</button>
+                        <button type="submit" class="btn-primary px-8">Register Staff</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        let isEditing = false;
+        let editId = null;
+
+        async function loadStaffData(id) {
+            try {
+                const res = await fetch(`/api/staff/${id}`);
+                if (!res.ok) throw new Error('Failed to load staff data');
+                const staff = await res.json();
+                
+                const form = document.getElementById('staffForm');
+                Object.keys(staff).forEach(key => {
+                    const input = form.elements[key];
+                    if (input) {
+                        if (input.type === 'date' && staff[key]) {
+                            input.value = new Date(staff[key]).toISOString().split('T')[0];
+                        } else {
+                            input.value = staff[key];
+                        }
+                    }
+                });
+
+                document.querySelector('h2').textContent = 'Edit Employee';
+                document.querySelector('button[type="submit"]').textContent = 'Update Staff';
+            } catch (error) {
+                console.error(error);
+                alert('Error loading staff data');
+            }
+        }
+
+        document.getElementById('staffForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = isEditing ? 'Updating...' : 'Registering...';
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            data.salary = parseFloat(data.salary);
+            
+            if (!isEditing) {
+                data.empId = `EMP-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+            }
+
+            try {
+                const url = isEditing ? `/api/staff/${editId}` : '/api/staff';
+                const method = isEditing ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    alert(`Staff ${isEditing ? 'updated' : 'registered'} successfully!`);
+                    window.location.href = 'staff.html';
+                } else {
+                    const error = await res.json();
+                    alert(error.message || `Failed to ${isEditing ? 'update' : 'register'} staff`);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('edit')) {
+                isEditing = true;
+                editId = params.get('edit');
+                await loadStaffData(editId);
+            }
+        });
+    </script>
+</body>
+</html>

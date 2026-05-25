@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Report Cards - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Report Cards" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Generate Report Cards</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Preview and print official student performance certificates.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-primary">
+                        <span class="material-symbols-outlined text-[18px]">print</span>
+                        Print Batch
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview Grid -->
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                <!-- Sample Card Preview -->
+                <div class="xl:col-span-2">
+                    <div id="report-card-container" class="bg-white p-8 border border-outline-variant/30 shadow-2xl rounded-sm aspect-[1/1.414] max-w-2xl mx-auto relative overflow-hidden">
+                        <!-- School Header -->
+                        <div class="flex items-center justify-between border-b-2 border-primary pb-6 mb-8">
+                            <div class="flex items-center gap-4">
+                                <img src="logo.jpg" alt="Logo" class="w-20 h-20 object-contain"/>
+                                <div>
+                                    <h1 class="text-xl font-black text-on-surface uppercase tracking-tight">Qurtaba School of Excellence Bela</h1>
+                                    <p class="text-xs font-bold text-primary">Academic Excellence Since 1992</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-black text-on-surface">REPORT CARD</p>
+                                <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider" id="card-exam-title">LOADING EXAM...</p>
+                            </div>
+                        </div>
+
+                        <!-- Student Info -->
+                        <div class="grid grid-cols-2 gap-6 mb-8 text-sm">
+                            <div class="space-y-1">
+                                <p class="text-[10px] font-bold text-on-surface-variant uppercase">Student Name</p>
+                                <p class="font-black text-on-surface uppercase" id="card-student-name">Loading...</p>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-[10px] font-bold text-on-surface-variant uppercase">Admission Number</p>
+                                <p class="font-black text-on-surface" id="card-student-roll">Loading...</p>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-[10px] font-bold text-on-surface-variant uppercase">Class & Section</p>
+                                <p class="font-black text-on-surface uppercase" id="card-student-class">Loading...</p>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-[10px] font-bold text-on-surface-variant uppercase">Father's Name</p>
+                                <p class="font-black text-on-surface uppercase" id="card-student-father">Loading...</p>
+                            </div>
+                        </div>
+
+                        <!-- Marks Table -->
+                        <table class="w-full border-collapse mb-8">
+                            <thead>
+                                <tr class="bg-surface-container-low">
+                                    <th class="p-2 text-left text-[10px] font-black uppercase border border-outline-variant/30">Subject</th>
+                                    <th class="p-2 text-center text-[10px] font-black uppercase border border-outline-variant/30">Max Marks</th>
+                                    <th class="p-2 text-center text-[10px] font-black uppercase border border-outline-variant/30">Obtained</th>
+                                    <th class="p-2 text-center text-[10px] font-black uppercase border border-outline-variant/30">Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-xs" id="card-marks-tbody">
+                                <tr>
+                                    <td colspan="4" class="p-4 text-center text-on-surface-variant italic">No subjects graded yet...</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="bg-surface-container-low font-black" id="card-total-row">
+                                    <td class="p-2 border border-outline-variant/30">TOTAL</td>
+                                    <td class="p-2 border border-outline-variant/30 text-center" id="card-total-max">0</td>
+                                    <td class="p-2 border border-outline-variant/30 text-center text-primary" id="card-total-obtained">0</td>
+                                    <td class="p-2 border border-outline-variant/30 text-center text-primary font-black" id="card-overall-grade">F</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <!-- Remarks Section -->
+                        <div class="mb-8 p-3 bg-surface-container-low/30 rounded border border-outline-variant/20">
+                            <p class="text-[10px] font-bold text-on-surface-variant uppercase mb-1">Remarks & Feedback</p>
+                            <p class="text-xs italic text-on-surface" id="card-remarks">No remarks provided.</p>
+                        </div>
+
+                        <!-- Signature Area -->
+                        <div class="flex justify-between mt-16 pt-8 border-t border-dashed border-outline-variant/50">
+                            <div class="text-center">
+                                <div class="w-32 h-px bg-on-surface mb-2"></div>
+                                <p class="text-[10px] font-bold uppercase">Class Teacher</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="w-32 h-px bg-on-surface mb-2"></div>
+                                <p class="text-[10px] font-bold uppercase">Principal Signature</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="xl:col-span-1 space-y-6 no-print">
+                    <div class="card p-6">
+                        <h3 class="font-bold text-on-surface mb-4">Print Configuration</h3>
+                        <div class="space-y-4">
+                            <button onclick="window.print()" class="btn-primary w-full py-3 flex items-center justify-center gap-2 shadow-xl shadow-primary/30">
+                                <span class="material-symbols-outlined">print</span>
+                                Print Report Card
+                            </button>
+                            <button onclick="window.history.back()" class="btn-secondary w-full py-3 flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">arrow_back</span>
+                                Go Back
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <style>
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            /* Hide all UI components */
+            aside, header, .no-print, #sidebar-overlay {
+                display: none !important;
+            }
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white !important;
+            }
+            .grid {
+                display: block !important;
+            }
+            /* Style report card to fit perfectly on printable area */
+            #report-card-container {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 auto !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: auto !important;
+                aspect-ratio: auto !important;
+            }
+        }
+    </style>
+    
+    <script src="shared.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentId = urlParams.get('studentId');
+        const examId = urlParams.get('examId');
+
+        async function loadReportCard() {
+            if (!studentId || !examId) {
+                alert('Invalid access parameters. Please select a valid result from Results Management.');
+                window.location.href = 'results.html';
+                return;
+            }
+
+            try {
+                // Fetch student details
+                const studentRes = await fetch(`/api/students/${studentId}`);
+                const student = await studentRes.json();
+
+                // Fetch exam details
+                const examRes = await fetch(`/api/exams/${examId}`);
+                const exam = await examRes.json();
+
+                // Fetch result
+                const resultRes = await fetch(`/api/results?studentId=${studentId}&examId=${examId}`);
+                const results = await resultRes.json();
+
+                if (!results || results.length === 0) {
+                    alert('No result found for this student and examination.');
+                    window.location.href = 'results.html';
+                    return;
+                }
+
+                const result = results[0];
+
+                // Populate Student details
+                document.getElementById('card-student-name').textContent = student.fullName;
+                document.getElementById('card-student-roll').textContent = student.admissionNumber || 'N/A';
+                document.getElementById('card-student-class').textContent = `${student.class} - Section ${student.section || 'A'}`;
+                document.getElementById('card-student-father').textContent = student.fatherName || 'N/A';
+
+                // Populate Exam title
+                document.getElementById('card-exam-title').textContent = `${exam.name} ${exam.session || ''}`;
+
+                // Populate Remarks
+                document.getElementById('card-remarks').textContent = result.remarks || 'No remarks provided.';
+
+                // Populate Marks Table
+                const tbody = document.getElementById('card-marks-tbody');
+                if (result.subjects && result.subjects.length > 0) {
+                    tbody.innerHTML = result.subjects.map(sub => `
+                        <tr class="border-b border-outline-variant/25">
+                            <td class="p-2 border border-outline-variant/30 font-bold text-on-surface">${sub.name}</td>
+                            <td class="p-2 border border-outline-variant/30 text-center">${sub.total}</td>
+                            <td class="p-2 border border-outline-variant/30 text-center font-black text-primary">${sub.obtained}</td>
+                            <td class="p-2 border border-outline-variant/30 text-center font-black">${sub.grade || 'F'}</td>
+                        </tr>
+                    `).join('');
+
+                    // Populate Totals
+                    document.getElementById('card-total-max').textContent = result.totalMarks || 0;
+                    document.getElementById('card-total-obtained').textContent = result.marks || 0;
+                    document.getElementById('card-overall-grade').textContent = result.grade || 'F';
+                } else {
+                    // Fallback to legacy single score format if no subjects array
+                    tbody.innerHTML = `
+                        <tr class="border-b border-outline-variant/25">
+                            <td class="p-2 border border-outline-variant/30 font-bold text-on-surface">${exam.subject || 'All Subjects'}</td>
+                            <td class="p-2 border border-outline-variant/30 text-center">${result.totalMarks || 100}</td>
+                            <td class="p-2 border border-outline-variant/30 text-center font-black text-primary">${result.marks || 0}</td>
+                            <td class="p-2 border border-outline-variant/30 text-center font-black">${result.grade || 'F'}</td>
+                        </tr>
+                    `;
+                    document.getElementById('card-total-max').textContent = result.totalMarks || 100;
+                    document.getElementById('card-total-obtained').textContent = result.marks || 0;
+                    document.getElementById('card-overall-grade').textContent = result.grade || 'F';
+                }
+
+            } catch (e) {
+                console.error('Error loading report card:', e);
+                alert('An error occurred while loading the report card.');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadReportCard);
+    </script>
+</body>
+</html>

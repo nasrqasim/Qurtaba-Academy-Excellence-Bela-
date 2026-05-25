@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Student Dashboard – Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        headline: ["Inter"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Student Portal" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface" id="welcome-title">Welcome back, Student</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Here is a quick overview of your academic performance, timetable, and attendance.</p>
+                </div>
+                <div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800" id="student-badge">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        Active Student
+                    </span>
+                </div>
+            </div>
+
+            <!-- Tab Buttons Navigation -->
+            <div class="border-b border-outline-variant/30 mb-8 flex gap-2 overflow-x-auto">
+                <button onclick="switchTab('overview')" id="tab-btn-overview" class="tab-btn active px-4 py-2.5 font-semibold text-sm border-b-2 border-primary text-primary transition-all flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">dashboard</span> Overview
+                </button>
+                <button onclick="switchTab('attendance')" id="tab-btn-attendance" class="tab-btn px-4 py-2.5 font-semibold text-sm text-on-surface-variant hover:text-primary transition-all flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">how_to_reg</span> Attendance
+                </button>
+                <button onclick="switchTab('results')" id="tab-btn-results" class="tab-btn px-4 py-2.5 font-semibold text-sm text-on-surface-variant hover:text-primary transition-all flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">quiz</span> Results & Exams
+                </button>
+                <button onclick="switchTab('fees')" id="tab-btn-fees" class="tab-btn px-4 py-2.5 font-semibold text-sm text-on-surface-variant hover:text-primary transition-all flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">payments</span> Fee Status
+                </button>
+                <button onclick="switchTab('routine')" id="tab-btn-routine" class="tab-btn px-4 py-2.5 font-semibold text-sm text-on-surface-variant hover:text-primary transition-all flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">calendar_month</span> Timetable
+                </button>
+                <button onclick="switchTab('assignments')" id="tab-btn-assignments" class="tab-btn px-4 py-2.5 font-semibold text-sm text-on-surface-variant hover:text-primary transition-all flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">assignment</span> Coursework
+                </button>
+            </div>
+
+            <!-- Tab Contents -->
+            <div id="tab-content">
+                
+                <!-- ================== Tab: Overview ================== -->
+                <div id="tab-overview" class="tab-pane space-y-6">
+                    <!-- Quick Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="card p-6 flex items-center justify-between">
+                            <div>
+                                <p class="text-on-surface-variant text-sm font-medium mb-1">Attendance Rate</p>
+                                <h3 id="stat-attendance" class="text-3xl font-headline font-bold text-on-surface">--%</h3>
+                                <p class="text-xs text-on-surface-variant mt-1" id="stat-attendance-desc">Loading records...</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[24px]">analytics</span>
+                            </div>
+                        </div>
+                        <div class="card p-6 flex items-center justify-between">
+                            <div>
+                                <p class="text-on-surface-variant text-sm font-medium mb-1">Outstanding Fees</p>
+                                <h3 id="stat-fees" class="text-3xl font-headline font-bold text-on-surface">₨ --</h3>
+                                <p class="text-xs text-on-surface-variant mt-1" id="stat-fees-desc">Outstanding balance</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-error/10 text-error flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[24px]">account_balance_wallet</span>
+                            </div>
+                        </div>
+                        <div class="card p-6 flex items-center justify-between">
+                            <div>
+                                <p class="text-on-surface-variant text-sm font-medium mb-1">Completed Assignments</p>
+                                <h3 id="stat-assignments" class="text-3xl font-headline font-bold text-on-surface">--</h3>
+                                <p class="text-xs text-on-surface-variant mt-1" id="stat-assignments-desc">Pending tasks</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[24px]">task_alt</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Profile Card -->
+                        <div class="card p-6 lg:col-span-1 flex flex-col items-center text-center space-y-4">
+                            <div id="profile-img-container" class="w-24 h-24 rounded-full bg-primary/10 text-primary flex items-center justify-center border-4 border-outline-variant/30 overflow-hidden relative">
+                                <span class="material-symbols-outlined text-[48px]">person</span>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-on-surface" id="profile-name">Student Name</h4>
+                                <p class="text-xs text-on-surface-variant" id="profile-class-section">Class - Section</p>
+                            </div>
+                            <div class="w-full h-px bg-outline-variant/20 my-2"></div>
+                            <div class="w-full text-left space-y-2.5 text-sm">
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-medium">Admission No:</span><span class="font-semibold text-on-surface" id="profile-admission-no">--</span></div>
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-medium">Admission Date:</span><span class="font-semibold text-on-surface" id="profile-admission-date">--</span></div>
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-medium">Father's Name:</span><span class="font-semibold text-on-surface" id="profile-father-name">--</span></div>
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-medium">Phone:</span><span class="font-semibold text-on-surface" id="profile-phone">--</span></div>
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-medium">Email:</span><span class="font-semibold text-on-surface overflow-hidden truncate max-w-[150px]" id="profile-email">--</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Class Timetable Summary -->
+                        <div class="card p-6 lg:col-span-2 space-y-4">
+                            <div class="flex items-center justify-between border-b border-outline-variant/20 pb-3">
+                                <h4 class="text-md font-bold text-on-surface flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
+                                    Today's Class Schedule
+                                </h4>
+                                <button onclick="switchTab('routine')" class="text-xs font-semibold text-primary hover:underline">View Timetable</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Day</th>
+                                            <th>Subject</th>
+                                            <th>Time Slot</th>
+                                            <th>Room / Teacher</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="today-routine-body">
+                                        <tr>
+                                            <td colspan="4" class="text-center text-on-surface-variant py-4">No timetable entries returned for your class.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== Tab: Attendance ================== -->
+                <div id="tab-attendance" class="tab-pane hidden space-y-6">
+                    <div class="card p-6">
+                        <div class="flex justify-between items-center border-b border-outline-variant/20 pb-4 mb-4">
+                            <h4 class="text-lg font-bold text-on-surface">Attendance Overview</h4>
+                            <div class="flex gap-2">
+                                <span class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 text-xs font-semibold" id="cnt-present">Present: 0</span>
+                                <span class="px-2.5 py-1 rounded bg-red-100 text-red-800 text-xs font-semibold" id="cnt-absent">Absent: 0</span>
+                                <span class="px-2.5 py-1 rounded bg-amber-100 text-amber-800 text-xs font-semibold" id="cnt-leave">Leave: 0</span>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Class & Section</th>
+                                        <th>Status</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendance-history-body">
+                                    <tr>
+                                        <td colspan="4" class="text-center text-on-surface-variant py-4">Loading attendance records...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== Tab: Results ================== -->
+                <div id="tab-results" class="tab-pane hidden space-y-6">
+                    <div class="card p-6">
+                        <div class="border-b border-outline-variant/20 pb-4 mb-4">
+                            <h4 class="text-lg font-bold text-on-surface">Academic Results History</h4>
+                            <p class="text-xs text-on-surface-variant mt-1">Review your scorecards, midterm and final examinations performance.</p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Exam / Test</th>
+                                        <th>Subject</th>
+                                        <th>Obtained Marks</th>
+                                        <th>Total Marks</th>
+                                        <th>Percentage</th>
+                                        <th>Grade</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="results-history-body">
+                                    <tr>
+                                        <td colspan="7" class="text-center text-on-surface-variant py-4">Loading exam results...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== Tab: Fees ================== -->
+                <div id="tab-fees" class="tab-pane hidden space-y-6">
+                    <div class="card p-6">
+                        <div class="border-b border-outline-variant/20 pb-4 mb-4 flex justify-between items-center">
+                            <div>
+                                <h4 class="text-lg font-bold text-on-surface">Fee & Payments Log</h4>
+                                <p class="text-xs text-on-surface-variant mt-1">Monitor fee bills, payment dates, dues, and transaction records.</p>
+                            </div>
+                            <div>
+                                <h3 id="fee-total-dues" class="text-xl font-headline font-bold text-error">₨ 0.00 Dues</h3>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Receipt No</th>
+                                        <th>Month / Invoice</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Transaction Date</th>
+                                        <th>Method</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fees-history-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-on-surface-variant py-4">Loading fee database...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== Tab: Routine (Timetable) ================== -->
+                <div id="tab-routine" class="tab-pane hidden space-y-6">
+                    <div class="card p-6">
+                        <div class="border-b border-outline-variant/20 pb-4 mb-6">
+                            <h4 class="text-lg font-bold text-on-surface">Class Weekly Timetable</h4>
+                            <p class="text-xs text-on-surface-variant mt-1" id="timetable-desc-class">Active routine schedules for your registered class.</p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Subject</th>
+                                        <th>Time Slot</th>
+                                        <th>Room No</th>
+                                        <th>Teacher</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="timetable-body">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-on-surface-variant py-4">Loading class routine...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== Tab: Assignments (Coursework) ================== -->
+                <div id="tab-assignments" class="tab-pane hidden space-y-6">
+                    <div class="card p-6 space-y-4">
+                        <div class="border-b border-outline-variant/20 pb-4">
+                            <h4 class="text-lg font-bold text-on-surface">Active Assignments & Coursework</h4>
+                            <p class="text-xs text-on-surface-variant mt-1">Timely complete and upload your assigned homework/assignments. Keep an eye on deadlines!</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="assignments-grid">
+                            <div class="col-span-2 text-center text-on-surface-variant py-4">Loading active assignments...</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="shared.js"></script>
+    <script>
+        let currentTabId = 'overview';
+        let studentProfile = null;
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-b-2', 'border-primary', 'text-primary');
+                btn.classList.add('text-on-surface-variant');
+            });
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'border-b-2', 'border-primary', 'text-primary');
+                activeBtn.classList.remove('text-on-surface-variant');
+            }
+
+            const activePane = document.getElementById(`tab-${tabId}`);
+            if (activePane) activePane.classList.remove('hidden');
+
+            currentTabId = tabId;
+        }
+
+        async function fetchStudentDashboardData() {
+            try {
+                const user = JSON.parse(localStorage.getItem('qurtaba_user'));
+                if (!user || user.role !== 'Student') {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Load basic info first
+                document.getElementById('welcome-title').textContent = `Welcome back, ${user.name}`;
+
+                // Fetch Student Profile Detail
+                const profileRes = await apiFetch(`/students/${user.id}`);
+                if (profileRes) {
+                    studentProfile = profileRes;
+                    populateProfile(profileRes);
+                    
+                    // Fetch other student parameters in parallel
+                    fetchAttendance();
+                    fetchResults();
+                    fetchFees();
+                    fetchTimetable(profileRes.class);
+                    fetchAssignments(profileRes.class);
+                }
+            } catch (e) {
+                console.error("Error loading dashboard data", e);
+            }
+        }
+
+        function populateProfile(student) {
+            document.getElementById('profile-name').textContent = student.fullName || 'N/A';
+            document.getElementById('profile-class-section').textContent = `Class: ${student.class || 'N/A'} | Section: ${student.section || 'N/A'}`;
+            document.getElementById('profile-admission-no').textContent = student.admissionNumber || 'N/A';
+            document.getElementById('profile-admission-date').textContent = student.admissionDate ? new Date(student.admissionDate).toLocaleDateString() : 'N/A';
+            document.getElementById('profile-father-name').textContent = student.fatherName || 'N/A';
+            document.getElementById('profile-phone').textContent = student.phone || 'N/A';
+            document.getElementById('profile-email').textContent = student.email || 'N/A';
+
+            if (student.image) {
+                const profileImgContainer = document.getElementById('profile-img-container');
+                profileImgContainer.innerHTML = `<img src="${student.image}" alt="Profile" class="w-full h-full object-cover"/>`;
+            }
+        }
+
+        async function fetchAttendance() {
+            const data = await apiFetch('/attendance/student');
+            if (data && data.stats) {
+                document.getElementById('stat-attendance').textContent = `${data.stats.percentage}%`;
+                document.getElementById('stat-attendance-desc').textContent = `${data.stats.present} Present / ${data.stats.total} Total`;
+                
+                document.getElementById('cnt-present').textContent = `Present: ${data.stats.present}`;
+                document.getElementById('cnt-absent').textContent = `Absent: ${data.stats.absent}`;
+                document.getElementById('cnt-leave').textContent = `Leave: ${data.stats.leave}`;
+
+                // Load detailed attendance history
+                const tbody = document.getElementById('attendance-history-body');
+                if (data.history && data.history.length > 0) {
+                    tbody.innerHTML = data.history.map(item => `
+                        <tr>
+                            <td class="text-sm text-on-surface font-semibold">${new Date(item.date).toLocaleDateString()}</td>
+                            <td class="text-sm text-on-surface-variant">${item.class || 'N/A'}</td>
+                            <td>
+                                <span class="px-2.5 py-1 rounded text-xs font-bold ${
+                                    item.status === 'Present' ? 'badge-success' :
+                                    item.status === 'Absent' ? 'badge-error' : 'badge-warning'
+                                }">${item.status}</span>
+                            </td>
+                            <td class="text-sm text-on-surface-variant">${item.remarks || 'No remarks'}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-on-surface-variant py-4">No attendance records registered.</td></tr>`;
+                }
+            }
+        }
+
+        async function fetchResults() {
+            const data = await apiFetch('/results/student');
+            if (data) {
+                const tbody = document.getElementById('results-history-body');
+                if (data.length > 0) {
+                    tbody.innerHTML = data.map(item => {
+                        const examName = item.examId?.name || 'Standard Exam';
+                        const examTerm = item.examId?.term || 'N/A';
+                        const examYear = item.examId?.year || '';
+                        
+                        const marksObtained = item.obtainedMarks || 0;
+                        const marksTotal = item.totalMarks || 100;
+                        const percentage = Math.round((marksObtained / marksTotal) * 100);
+                        
+                        let grade = 'F';
+                        if (percentage >= 90) grade = 'A+';
+                        else if (percentage >= 80) grade = 'A';
+                        else if (percentage >= 70) grade = 'B';
+                        else if (percentage >= 60) grade = 'C';
+                        else if (percentage >= 50) grade = 'D';
+
+                        return `
+                            <tr>
+                                <td class="text-sm text-on-surface font-semibold">${examName} (${examTerm} - ${examYear})</td>
+                                <td class="text-sm text-on-surface font-semibold text-primary">${item.subject || 'N/A'}</td>
+                                <td class="text-sm text-on-surface-variant">${marksObtained}</td>
+                                <td class="text-sm text-on-surface-variant">${marksTotal}</td>
+                                <td class="text-sm text-on-surface font-semibold">${percentage}%</td>
+                                <td>
+                                    <span class="px-2 py-0.5 rounded text-xs font-bold ${
+                                        grade === 'A+' || grade === 'A' ? 'badge-success' :
+                                        grade === 'B' || grade === 'C' ? 'badge-info' : 'badge-error'
+                                    }">${grade}</span>
+                                </td>
+                                <td class="text-sm text-on-surface-variant">${item.remarks || 'N/A'}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-on-surface-variant py-4">No exam results recorded yet.</td></tr>`;
+                }
+            }
+        }
+
+        async function fetchFees() {
+            const data = await apiFetch('/fees/student');
+            if (data) {
+                // Calculate outstanding fees (unpaid)
+                const outstanding = data.filter(f => f.status === 'Unpaid').reduce((acc, curr) => acc + (curr.amount || 0), 0);
+                
+                document.getElementById('stat-fees').textContent = `₨ ${outstanding.toLocaleString()}`;
+                document.getElementById('fee-total-dues').textContent = `₨ ${outstanding.toLocaleString()} Dues`;
+
+                if (outstanding > 0) {
+                    document.getElementById('stat-fees-desc').textContent = 'Please clear outstanding dues.';
+                } else {
+                    document.getElementById('stat-fees-desc').textContent = 'Fee details are fully paid.';
+                }
+
+                // Render fee tables
+                const tbody = document.getElementById('fees-history-body');
+                if (data.length > 0) {
+                    tbody.innerHTML = data.map(item => `
+                        <tr>
+                            <td class="text-sm text-on-surface font-semibold">${item.receiptNumber || 'N/A'}</td>
+                            <td class="text-sm text-on-surface font-semibold">${item.month || 'N/A'}</td>
+                            <td class="text-sm text-on-surface-variant">₨ ${(item.amount || 0).toLocaleString()}</td>
+                            <td>
+                                <span class="px-2 py-0.5 rounded text-xs font-bold ${
+                                    item.status === 'Paid' ? 'badge-success' : 'badge-error'
+                                }">${item.status}</span>
+                            </td>
+                            <td class="text-sm text-on-surface-variant">${item.date ? new Date(item.date).toLocaleDateString() : 'N/A'}</td>
+                            <td class="text-sm text-on-surface-variant font-medium text-primary">${item.paymentMethod || 'Bank Transfer'}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-on-surface-variant py-4">No fee records found.</td></tr>`;
+                }
+            }
+        }
+
+        async function fetchTimetable(className) {
+            if (!className) return;
+            document.getElementById('timetable-desc-class').textContent = `Active routine schedules for Class ${className}.`;
+
+            const data = await apiFetch(`/timetable?class=${encodeURIComponent(className)}`);
+            if (data) {
+                const tbody = document.getElementById('timetable-body');
+                const todayTbody = document.getElementById('today-routine-body');
+                
+                if (data.length > 0) {
+                    // Populate general timetable
+                    tbody.innerHTML = data.map(item => `
+                        <tr>
+                            <td class="text-sm text-on-surface font-semibold text-primary">${item.day}</td>
+                            <td class="text-sm text-on-surface font-semibold">${item.subject}</td>
+                            <td class="text-sm text-on-surface-variant font-medium">${item.startTime} - ${item.endTime}</td>
+                            <td class="text-sm text-on-surface-variant">${item.roomNo || 'N/A'}</td>
+                            <td class="text-sm text-on-surface-variant">${item.teacher || 'N/A'}</td>
+                        </tr>
+                    `).join('');
+
+                    // Populate today's timetable filter
+                    const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                    const todayName = weekdays[new Date().getDay()];
+                    
+                    const todaysRoutines = data.filter(item => item.day.toLowerCase() === todayName.toLowerCase());
+                    if (todaysRoutines.length > 0) {
+                        todayTbody.innerHTML = todaysRoutines.map(item => `
+                            <tr>
+                                <td class="text-sm text-on-surface font-semibold text-primary">${item.day}</td>
+                                <td class="text-sm text-on-surface font-semibold">${item.subject}</td>
+                                <td class="text-sm text-on-surface-variant font-medium">${item.startTime} - ${item.endTime}</td>
+                                <td class="text-sm text-on-surface-variant">${item.roomNo} / ${item.teacher}</td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        todayTbody.innerHTML = `<tr><td colspan="4" class="text-center text-on-surface-variant py-4">No routine classes scheduled for today (${todayName}).</td></tr>`;
+                    }
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-on-surface-variant py-4">No routine entries recorded for Class ${className} yet.</td></tr>`;
+                    todayTbody.innerHTML = `<tr><td colspan="4" class="text-center text-on-surface-variant py-4">No routines found.</td></tr>`;
+                }
+            }
+        }
+
+        async function fetchAssignments(className) {
+            if (!className) return;
+            const data = await apiFetch(`/assignments?class=${encodeURIComponent(className)}`);
+            if (data) {
+                document.getElementById('stat-assignments').textContent = data.length;
+                document.getElementById('stat-assignments-desc').textContent = `${data.length} Total Assignments`;
+
+                const grid = document.getElementById('assignments-grid');
+                if (data.length > 0) {
+                    grid.innerHTML = data.map(item => {
+                        const dueDate = new Date(item.dueDate);
+                        const isOverdue = dueDate < new Date();
+                        return `
+                            <div class="card p-5 space-y-3 relative hover:scale-[1.01] transition-all">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700 uppercase">${item.subject || 'Homework'}</span>
+                                        <h5 class="text-md font-bold text-on-surface mt-1.5">${item.title}</h5>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded text-xs font-semibold ${
+                                        isOverdue ? 'badge-error' : 'badge-warning'
+                                    }">${isOverdue ? 'Overdue' : 'Active'}</span>
+                                </div>
+                                <p class="text-sm text-on-surface-variant leading-relaxed">${item.description || 'No description provided.'}</p>
+                                <div class="w-full h-px bg-outline-variant/10"></div>
+                                <div class="flex justify-between items-center text-xs">
+                                    <div class="flex items-center gap-1.5 text-on-surface-variant">
+                                        <span class="material-symbols-outlined text-[16px]">person</span>
+                                        <span>Teacher: <span class="font-semibold">${item.teacherId?.fullName || 'Academic Faculty'}</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 text-error font-medium">
+                                        <span class="material-symbols-outlined text-[16px]">alarm</span>
+                                        <span>Due: ${dueDate.toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+                                ${item.fileUrl ? `
+                                    <div class="pt-2">
+                                        <a href="${item.fileUrl}" target="_blank" class="w-full btn-secondary text-xs flex justify-center py-2">
+                                            <span class="material-symbols-outlined text-[14px]">download</span>
+                                            Download Course Materials
+                                        </a>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    grid.innerHTML = `<div class="col-span-2 text-center text-on-surface-variant py-4">No active assignments recorded for Class ${className}.</div>`;
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', fetchStudentDashboardData);
+    </script>
+</body>
+</html>

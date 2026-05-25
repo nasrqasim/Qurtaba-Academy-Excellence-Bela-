@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Attendance - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Attendance Tracking" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Daily Attendance</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Monitor and record daily attendance for students and staff.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-secondary">
+                        <span class="material-symbols-outlined text-[18px]">history</span>
+                        History
+                    </button>
+                    <button class="btn-primary" onclick="window.location='mark-attendance.html'">
+                        <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                        Mark Attendance
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="card p-5">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Present Today</p>
+                    <p class="text-3xl font-black text-emerald-600" id="stat-present">0</p>
+                    <p class="text-xs text-on-surface-variant mt-1" id="stat-present-count">0 students</p>
+                </div>
+                <div class="card p-5">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Absent Today</p>
+                    <p class="text-3xl font-black text-rose-600" id="stat-absent">0</p>
+                    <p class="text-xs text-on-surface-variant mt-1" id="stat-absent-count">0 students</p>
+                </div>
+                <div class="card p-5">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Leave</p>
+                    <p class="text-3xl font-black text-amber-600" id="stat-leave">0</p>
+                    <p class="text-xs text-on-surface-variant mt-1" id="stat-leave-count">0 students</p>
+                </div>
+                <div class="card p-5">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Total Evaluated</p>
+                    <p class="text-3xl font-black text-primary" id="stat-total">0</p>
+                    <p class="text-xs text-on-surface-variant mt-1">students evaluated</p>
+                </div>
+            </div>
+
+            <!-- Attendance Register -->
+            <div class="card overflow-hidden">
+                <div class="card-header flex flex-wrap justify-between items-center gap-4">
+                    <h3 class="text-lg font-bold text-on-surface">Class Attendance</h3>
+                    <div class="flex gap-3">
+                        <input type="date" id="filter-date" class="input-field py-1.5 px-3 w-auto text-xs" />
+                        <select id="filter-class" class="input-field py-1.5 px-3 w-auto text-xs">
+                            <option value="">All Classes</option>
+                            <option>Class 10-A</option>
+                            <option>Class 10-B</option>
+                            <option>Class 9-A</option>
+                        </select>
+                        <button class="btn-secondary py-1.5 px-3 text-xs" onclick="loadAttendance()">Refresh</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Roll No</th>
+                                <th>Student Name</th>
+                                <th>Class</th>
+                                <th class="text-center">Status</th>
+                                <th>Date</th>
+                                <th>Remarks</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-tbody">
+                            <!-- Dynamic -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        async function loadClassOptions() {
+            try {
+                const res = await fetch('/api/classes');
+                const classes = await res.json();
+                const select = document.getElementById('filter-class');
+                if (classes.length > 0) {
+                    select.innerHTML = '<option value="">All Classes</option>' + classes.map(c => {
+                        const classLabel = c.section ? `${c.name}-${c.section}` : c.name;
+                        return `<option value="${classLabel}">${classLabel}</option>`;
+                    }).join('');
+                } else {
+                    select.innerHTML = '<option value="">All Classes</option>';
+                }
+            } catch (e) {
+                console.error('Error loading classes:', e);
+            }
+        }
+
+        function editAttendance(classLabel, date) {
+            const dateStr = new Date(date).toISOString().split('T')[0];
+            window.location.href = `mark-attendance.html?class=${encodeURIComponent(classLabel)}&date=${encodeURIComponent(dateStr)}`;
+        }
+
+        async function loadAttendance() {
+            try {
+                const dateVal = document.getElementById('filter-date').value;
+                const classVal = document.getElementById('filter-class').value;
+                
+                let query = '?';
+                if (dateVal) query += `date=${dateVal}&`;
+                if (classVal) query += `class=${classVal}`;
+                
+                const res = await fetch('/api/attendance' + query);
+                const records = await res.json();
+                
+                let present = 0, absent = 0, leave = 0;
+                
+                const tbody = document.getElementById('attendance-tbody');
+                if (records.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8">No attendance records found.</td></tr>';
+                } else {
+                    tbody.innerHTML = records.map(r => {
+                        let statusHtml = '';
+                        if (r.status === 'Present') {
+                            present++;
+                            statusHtml = '<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700 border border-emerald-200">Present</span>';
+                        } else if (r.status === 'Absent') {
+                            absent++;
+                            statusHtml = '<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-rose-100 text-rose-700 border border-rose-200">Absent</span>';
+                        } else {
+                            leave++;
+                            statusHtml = '<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-amber-100 text-amber-700 border border-amber-200">Leave</span>';
+                        }
+                        
+                        return `
+                        <tr>
+                            <td class="font-bold text-xs text-on-surface-variant">${r.studentId?.admissionNumber || 'N/A'}</td>
+                            <td class="font-semibold text-sm">${r.studentId?.fullName || 'Unknown Student'}</td>
+                            <td class="text-sm">${r.class}</td>
+                            <td class="text-center">${statusHtml}</td>
+                            <td class="text-sm text-on-surface-variant">${new Date(r.date).toLocaleDateString()}</td>
+                            <td class="text-xs text-on-surface-variant">${r.remarks || ''}</td>
+                            <td class="text-right">
+                                <button onclick="editAttendance('${r.class}', '${r.date}')" class="p-1.5 hover:bg-surface-container rounded text-primary" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                            </td>
+                        </tr>
+                        `;
+                    }).join('');
+                }
+                
+                const total = present + absent + leave;
+                
+                document.getElementById('stat-present').textContent = total ? Math.round((present/total)*100) + '%' : '0%';
+                document.getElementById('stat-present-count').textContent = present + ' students';
+                
+                document.getElementById('stat-absent').textContent = total ? Math.round((absent/total)*100) + '%' : '0%';
+                document.getElementById('stat-absent-count').textContent = absent + ' students';
+                
+                document.getElementById('stat-leave').textContent = leave;
+                document.getElementById('stat-leave-count').textContent = 'students on leave';
+                
+                document.getElementById('stat-total').textContent = total;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            document.getElementById('filter-date').valueAsDate = new Date();
+            await loadClassOptions();
+            loadAttendance();
+            
+            document.getElementById('filter-date').addEventListener('change', loadAttendance);
+            document.getElementById('filter-class').addEventListener('change', loadAttendance);
+        });
+    </script>
+</body>
+</html>

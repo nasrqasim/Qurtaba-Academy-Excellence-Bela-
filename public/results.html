@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Results Management - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Results Management" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Examination Results</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Review, publish, and manage student performance results.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-secondary" onclick="window.location='add-result.html'">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        Add New Result
+                    </button>
+                    <button class="btn-primary" onclick="window.location='results2.html'">
+                        <span class="material-symbols-outlined text-[18px]">description</span>
+                        Generate Cards
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats & Filter Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="card p-5">
+                        <h3 class="text-sm font-bold text-on-surface-variant uppercase mb-4">Select Context</h3>
+                        <div class="space-y-4">
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-bold text-on-surface-variant uppercase">Academic Year</label>
+                                <select class="input-field py-1.5 text-xs" id="session-select">
+                                    <option>2024-2025</option>
+                                    <option>2023-2024</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-bold text-on-surface-variant uppercase">Examination</label>
+                                <select class="input-field py-1.5 text-xs" id="exam-select">
+                                    <!-- Loaded dynamically -->
+                                </select>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-bold text-on-surface-variant uppercase">Class / Section</label>
+                                <select class="input-field py-1.5 text-xs" id="class-select">
+                                    <!-- Loaded dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-5 bg-primary/5 border-primary/20">
+                        <h3 class="text-sm font-bold text-primary mb-2">Class Performance</h3>
+                        <div class="flex items-end gap-2">
+                            <span class="text-3xl font-black text-on-surface" id="class-avg">0.0%</span>
+                            <span class="text-xs text-emerald-600 font-bold mb-1" id="class-trend">--</span>
+                        </div>
+                        <p class="text-[10px] text-on-surface-variant mt-1">Average score for selected exam</p>
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="lg:col-span-3">
+                    <div class="card overflow-hidden">
+                        <div class="card-header flex justify-between items-center">
+                            <h3 class="font-bold text-on-surface">Class Result Sheet</h3>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-[16px]">search</span>
+                                <input type="text" id="student-search" placeholder="Search student..." class="input-field py-1 px-8 text-xs w-40"/>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Roll #</th>
+                                        <th>Student Name</th>
+                                        <th class="text-center">Obtained</th>
+                                        <th class="text-center">Total</th>
+                                        <th class="text-center">Percentage</th>
+                                        <th class="text-center">Grade</th>
+                                        <th class="text-right">Status</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="results-tbody">
+                                    <!-- Loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+    let allStudents = [];
+        let allResults = [];
+        let activeExam = null;
+        let examId = '';
+        let classLabel = '';
+
+        async function loadDropdowns() {
+            try {
+                // Load Scheduled Exams
+                const examRes = await fetch('/api/exams');
+                const exams = await examRes.json();
+                const examSelect = document.getElementById('exam-select');
+                examSelect.innerHTML = exams.map(e => `<option value="${e._id}">${e.name} (${e.class})</option>`).join('');
+
+                // Load Classes
+                const classRes = await fetch('/api/classes');
+                const classes = await classRes.json();
+                const classSelect = document.getElementById('class-select');
+                classSelect.innerHTML = classes.map(c => `<option value="${c.name}-${c.section}">${c.name}-${c.section}</option>`).join('');
+
+                // Pre-select from URL if available
+                const urlParams = new URLSearchParams(window.location.search);
+                const queryExam = urlParams.get('examId');
+                const queryClass = urlParams.get('class');
+                if (queryExam && exams.some(e => e._id === queryExam)) {
+                    examSelect.value = queryExam;
+                }
+                if (queryClass && classes.some(c => `${c.name}-${c.section}` === queryClass)) {
+                    classSelect.value = queryClass;
+                }
+
+                // Trigger loading on change
+                examSelect.addEventListener('change', loadResultsSheet);
+                classSelect.addEventListener('change', loadResultsSheet);
+                document.getElementById('student-search').addEventListener('input', renderTable);
+            } catch (e) {
+                console.error('Error loading context dropdowns:', e);
+            }
+        }
+
+        async function loadResultsSheet() {
+            examId = document.getElementById('exam-select').value;
+            classLabel = document.getElementById('class-select').value;
+
+            if (!examId || !classLabel) return;
+
+            // Update action URLs
+            document.querySelector('.btn-secondary[onclick]').setAttribute('onclick', `window.location='add-result.html?examId=${examId}&class=${classLabel}'`);
+            document.querySelector('.btn-primary[onclick]').setAttribute('onclick', `window.location='results2.html?examId=${examId}&class=${classLabel}'`);
+
+            try {
+                // Get exam details to know totalMarks and passingMarks
+                const examRes = await fetch(`/api/exams/${examId}`);
+                activeExam = await examRes.json();
+
+                // Fetch students matching the class label
+                // First let's query all students matching class
+                const [className, section] = classLabel.split('-');
+                const studentRes = await fetch(`/api/students?class=${className}&section=${section}`);
+                allStudents = await studentRes.json();
+
+                // Fetch existing results for this exam
+                const resultsRes = await fetch(`/api/results?examId=${examId}`);
+                allResults = await resultsRes.json();
+
+                renderTable();
+            } catch (e) {
+                console.error('Error loading results sheet data:', e);
+            }
+        }
+
+        function calculateLetterGrade(pct) {
+            if (pct >= 90) return 'A+';
+            if (pct >= 80) return 'A';
+            if (pct >= 70) return 'B';
+            if (pct >= 60) return 'C';
+            if (pct >= 50) return 'D';
+            return 'F';
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('results-tbody');
+            const searchVal = document.getElementById('student-search').value.toLowerCase();
+            
+            const filteredStudents = allStudents.filter(s => 
+                s.fullName.toLowerCase().includes(searchVal) || 
+                (s.admissionNumber && s.admissionNumber.toLowerCase().includes(searchVal))
+            );
+
+            if (filteredStudents.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-on-surface-variant">No students found for the selected filter.</td></tr>';
+                document.getElementById('class-avg').textContent = '0.0%';
+                return;
+            }
+
+            let totalObtained = 0;
+            let totalMax = 0;
+            let scoredCount = 0;
+
+            const html = filteredStudents.map(s => {
+                // Find matching result for student
+                const res = allResults.find(r => r.studentId?._id === s._id || r.studentId === s._id);
+                
+                let obtained = '--';
+                let totalMarks = activeExam ? activeExam.totalMarks : 100;
+                let pct = 0;
+                let grade = '--';
+                let statusBadge = '<span class="badge-warning px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 text-amber-700">No Record</span>';
+                let gradeClass = 'bg-outline-variant/30 text-on-surface-variant';
+
+                if (res) {
+                    obtained = (res.marks || 0) + (res.practicalMarks || 0);
+                    totalMarks = res.totalMarks || totalMarks;
+                    pct = Math.round((obtained / totalMarks) * 100);
+                    grade = res.grade || calculateLetterGrade(pct);
+                    
+                    totalObtained += obtained;
+                    totalMax += totalMarks;
+                    scoredCount++;
+
+                    const isPass = obtained >= (activeExam ? activeExam.passingMarks : 33);
+                    statusBadge = isPass 
+                        ? '<span class="badge-success px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700">Pass</span>'
+                        : '<span class="badge-error px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-rose-100 text-rose-700">Fail</span>';
+                    
+                    gradeClass = isPass ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700';
+                }
+
+                const progressWidth = res ? `${pct}%` : '0%';
+                const progressColor = (res && pct >= 50) ? 'bg-emerald-500' : 'bg-rose-500';
+
+                let nameCell = `<a href="student-profile.html?id=${s._id}" class="font-bold text-sm text-primary hover:underline flex items-center gap-1" title="Click to View Full Student Profile">
+                    ${s.fullName}
+                    <span class="material-symbols-outlined text-xs text-primary/70">account_box</span>
+                </a>`;
+
+                let obtainedCell = '--';
+                if (res) {
+                    obtainedCell = `<a href="results2.html?studentId=${s._id}&examId=${examId}" class="font-semibold text-primary hover:underline flex items-center justify-center gap-1" title="Click to View & Print Report Card">
+                        ${obtained}
+                        <span class="material-symbols-outlined text-xs text-primary/70">print</span>
+                    </a>`;
+                } else {
+                    obtainedCell = `<a href="add-result.html?examId=${examId}&class=${classLabel}&studentId=${s._id}" class="text-xs text-on-surface-variant hover:text-primary hover:underline flex items-center justify-center gap-1" title="Click to Enter Result">
+                        -- <span class="material-symbols-outlined text-xs text-outline">add_circle</span>
+                    </a>`;
+                }
+
+                return `
+                    <tr class="group hover:bg-surface-container-low transition-colors">
+                        <td class="text-xs font-bold text-on-surface-variant">${s.admissionNumber || 'N/A'}</td>
+                        <td>${nameCell}</td>
+                        <td class="text-center">${obtainedCell}</td>
+                        <td class="text-center text-on-surface-variant">${totalMarks}</td>
+                        <td class="text-center">
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="text-xs font-bold ${res ? (pct >= 50 ? 'text-emerald-600' : 'text-rose-600') : 'text-on-surface-variant'}">${res ? pct + '%' : '--'}</span>
+                                <div class="w-12 h-1 bg-surface-container rounded-full overflow-hidden">
+                                    <div class="h-full ${progressColor}" style="width: ${progressWidth}"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <span class="w-8 h-8 rounded-full ${gradeClass} flex items-center justify-center mx-auto font-black text-xs">${grade}</span>
+                        </td>
+                        <td class="text-right">${statusBadge}</td>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                ${res ? `
+                                <button class="p-1.5 hover:bg-surface-container rounded text-primary" title="Edit Result" onclick="window.location='add-result.html?examId=${examId}&class=${classLabel}&studentId=${s._id}'"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                <button class="p-1.5 hover:bg-rose-50 rounded text-rose-600" title="Delete Result" onclick="deleteResult('${res._id}')"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                                ` : `
+                                <button class="p-1.5 hover:bg-surface-container rounded text-on-surface-variant" title="Add Result" onclick="window.location='add-result.html?examId=${examId}&class=${classLabel}&studentId=${s._id}'"><span class="material-symbols-outlined text-[18px]">add_circle</span></button>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = html;
+
+            // Update class performance average card
+            if (scoredCount > 0) {
+                const classAverage = Math.round((totalObtained / totalMax) * 100);
+                document.getElementById('class-avg').textContent = `${classAverage}%`;
+                document.getElementById('class-trend').textContent = classAverage >= 50 ? '+2.4% ↑' : '-1.5% ↓';
+                document.getElementById('class-trend').className = `text-xs font-bold mb-1 ${classAverage >= 50 ? 'text-emerald-600' : 'text-rose-600'}`;
+            } else {
+                document.getElementById('class-avg').textContent = '0.0%';
+                document.getElementById('class-trend').textContent = '--';
+                document.getElementById('class-trend').className = 'text-xs text-on-surface-variant font-bold mb-1';
+            }
+        }
+
+        async function deleteResult(resultId) {
+            if (!confirm('Are you sure you want to permanently delete this student\'s result for this exam?')) return;
+            try {
+                const res = await fetch(`/api/results/${resultId}`, { method: 'DELETE' });
+                if (res.ok) {
+                    await loadResultsSheet();
+                } else {
+                    alert('Failed to delete result.');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('An error occurred.');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadDropdowns();
+            await loadResultsSheet();
+        });
+    </script>
+</body>
+</html>

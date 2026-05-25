@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Facilities List - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        headline: ["Inter"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Gallery Management" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Facilities & Gallery</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Manage the images and descriptions shown in the public gallery.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-primary" onclick="window.location='add-facility.html'">
+                        <span class="material-symbols-outlined text-[18px]">add_photo_alternate</span>
+                        Add Facility
+                    </button>
+                </div>
+            </div>
+
+            <!-- Facilities Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Facility 1 -->
+                <div class="card overflow-hidden group">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800" alt="Main Building" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
+                        <div class="absolute top-3 right-3 flex gap-2">
+                            <button class="w-8 h-8 rounded-full bg-white/90 text-primary flex items-center justify-center shadow-sm hover:bg-white transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                            <button class="w-8 h-8 rounded-full bg-white/90 text-error flex items-center justify-center shadow-sm hover:bg-white transition-all"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold text-on-surface">Main Campus Building</h3>
+                        <p class="text-xs text-on-surface-variant mt-2 line-clamp-2">Our modern campus provides a perfect environment for learning and growth.</p>
+                    </div>
+                </div>
+
+                <!-- Facility 2 -->
+                <div class="card overflow-hidden group">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&q=80&w=800" alt="Science Lab" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/>
+                        <div class="absolute top-3 right-3 flex gap-2">
+                            <button class="w-8 h-8 rounded-full bg-white/90 text-primary flex items-center justify-center shadow-sm hover:bg-white transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                            <button class="w-8 h-8 rounded-full bg-white/90 text-error flex items-center justify-center shadow-sm hover:bg-white transition-all"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold text-on-surface">Advanced Science Lab</h3>
+                        <p class="text-xs text-on-surface-variant mt-2 line-clamp-2">Equipped with the latest tools for practical experiments and research.</p>
+                    </div>
+                </div>
+
+                <!-- Add New Placeholder -->
+                <div class="card border-dashed border-2 flex items-center justify-center p-12 bg-surface-container-low hover:bg-surface-container-high transition-colors cursor-pointer" onclick="window.location='add-facility.html'">
+                    <div class="text-center">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
+                            <span class="material-symbols-outlined text-[28px]">add_a_photo</span>
+                        </div>
+                        <p class="font-bold text-on-surface text-sm">Add New Facility</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+</body>
+</html>

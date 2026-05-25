@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Admission - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        headline: ["Inter"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Admission Management" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">New Admissions</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Process and track new student admission requests.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-primary" onclick="window.location='student-registration.html'">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        New Admission Form
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" id="admission-stats">
+                <div class="card p-5">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Total Requests</p>
+                    <p class="text-3xl font-black text-on-surface" id="stat-total">0</p>
+                    <p class="text-xs text-on-surface-variant mt-1">This academic session</p>
+                </div>
+                <div class="card p-5">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Pending Review</p>
+                    <p class="text-3xl font-black text-amber-600" id="stat-pending">0</p>
+                    <p class="text-xs text-on-surface-variant mt-1">Requires coordinator approval</p>
+                </div>
+                <div class="card p-5">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Approved</p>
+                    <p class="text-3xl font-black text-emerald-600" id="stat-approved">0</p>
+                    <p class="text-xs text-on-surface-variant mt-1">Ready for fee submission</p>
+                </div>
+            </div>
+
+            <!-- Requests Table -->
+            <div class="card overflow-hidden">
+                <div class="card-header flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-on-surface">Admission Queue</h3>
+                    <div class="flex gap-2">
+                        <select class="input-field py-1.5 px-3 w-auto text-xs" onchange="filterAdmissions(this.value)">
+                            <option value="All">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Applicant</th>
+                                <th>Program / Class</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Submitted</th>
+                                <th>Status</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admission-table-body">
+                            <!-- Dynamically loaded -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        let allAdmissions = [];
+
+        function asList(data) {
+            if (Array.isArray(data)) return data;
+            if (data && Array.isArray(data.data)) return data.data;
+            return [];
+        }
+
+        async function loadAdmissions() {
+            try {
+                const res = await fetch('/api/admissions');
+                const json = await res.json();
+                if (!res.ok) throw new Error(json.message || 'Failed to load admissions');
+                allAdmissions = asList(json);
+                renderAdmissions(allAdmissions);
+                updateStats();
+            } catch (e) {
+                console.error('Error loading admissions:', e);
+                document.getElementById('admission-table-body').innerHTML =
+                    '<tr><td colspan="7" class="text-center py-8 text-rose-600">Failed to load applications. Check database connection.</td></tr>';
+            }
+        }
+
+        function renderAdmissions(admissions) {
+            const body = document.getElementById('admission-table-body');
+            body.innerHTML = admissions.map(adm => `
+                <tr>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface font-bold">
+                                ${adm.fullName.charAt(0)}
+                            </div>
+                            <div>
+                                <p class="font-bold">${adm.fullName}</p>
+                                <p class="text-xs text-on-surface-variant">Father: ${adm.fatherName || 'N/A'}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${adm.appliedProgram || '—'}<br/><span class="text-xs text-on-surface-variant">${adm.appliedClass || '—'}</span></td>
+                    <td class="text-sm">${adm.email || '—'}</td>
+                    <td>${adm.phone || '—'}</td>
+                    <td>${adm.appliedDate || adm.createdAt ? new Date(adm.appliedDate || adm.createdAt).toLocaleDateString() : '—'}</td>
+                    <td>
+                        <span class="badge-${getStatusBadgeClass(adm.status)} px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                            ${adm.status}
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            ${adm.status === 'Pending' ? `
+                                <button onclick="updateStatus('${adm._id}', 'Approved')" class="btn-primary py-1 px-3 text-[10px]">Approve</button>
+                                <button onclick="updateStatus('${adm._id}', 'Rejected')" class="bg-error/10 text-error hover:bg-error/20 py-1 px-3 text-[10px] font-bold rounded">Reject</button>
+                            ` : ''}
+                            <button onclick="viewProfile('${adm._id}')" class="p-2 hover:bg-surface-container rounded" title="View profile">
+                                <span class="material-symbols-outlined text-[18px]">visibility</span>
+                            </button>
+                            <button onclick="deleteAdmission('${adm._id}')" class="p-2 hover:bg-error/10 text-error rounded" title="Delete">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusBadgeClass(status) {
+            if (status === 'Approved') return 'success';
+            if (status === 'Pending') return 'warning';
+            if (status === 'Rejected') return 'error';
+            return 'secondary';
+        }
+
+        async function updateStatus(id, status) {
+            if (!confirm(`Are you sure you want to set status to ${status}?`)) return;
+            try {
+                const res = await fetch(`/api/admissions/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(data.message || `Application ${status.toLowerCase()}.`);
+                    loadAdmissions();
+                } else {
+                    alert(data.message || 'Update failed');
+                }
+            } catch (e) {
+                alert(e.message || 'Network error');
+            }
+        }
+
+        async function deleteAdmission(id) {
+            if (!confirm('Delete this application permanently?')) return;
+            try {
+                const res = await fetch(`/api/admissions/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (res.ok) loadAdmissions();
+                else alert(data.message || 'Delete failed');
+            } catch (e) {
+                alert('Failed to delete application');
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').textContent = allAdmissions.length;
+            document.getElementById('stat-pending').textContent = allAdmissions.filter(a => a.status === 'Pending').length;
+            document.getElementById('stat-approved').textContent = allAdmissions.filter(a => a.status === 'Approved').length;
+        }
+
+        function filterAdmissions(status) {
+            if (status === 'All') {
+                renderAdmissions(allAdmissions);
+            } else {
+                renderAdmissions(allAdmissions.filter(a => a.status === status));
+            }
+        }
+
+        function viewProfile(id) {
+            window.location.href = `student-profile.html?id=${id}&type=admission`;
+        }
+
+        window.addEventListener('DOMContentLoaded', loadAdmissions);
+    </script>
+</body>
+</html>

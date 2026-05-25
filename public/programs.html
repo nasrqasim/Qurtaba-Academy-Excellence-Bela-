@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Academic Programs - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "on-surface": "#1b1b24",
+                        "surface-container": "#f0ecf9",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline-variant": "#c7c4d8"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased">
+    <!-- TopNavBar -->
+    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-white/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm">
+        <div class="flex items-center gap-3">
+            <img src="logo.jpg" alt="Logo" class="w-12 h-12 object-contain"/>
+            <span class="text-xl font-headline font-black tracking-tight text-primary">Qurtaba School of Excellence Bela</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+            <a class="text-on-surface-variant hover:text-primary transition-colors pb-1" href="index.html">Home</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors pb-1" href="about.html">About</a>
+            <a class="text-primary font-bold border-b-2 border-primary pb-1" href="programs.html">Programs</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors pb-1" href="gallery.html">Gallery</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors pb-1" href="verification.html">Verification</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors pb-1" href="contact.html">Contact</a>
+        </div>
+        <div class="flex items-center gap-2">
+            <button id="theme-toggle" class="p-2 text-on-surface-variant hover:bg-primary/10 rounded-full transition-colors">
+                <span class="material-symbols-outlined">dark_mode</span>
+            </button>
+            <div class="h-6 w-px bg-outline-variant/30 mx-1"></div>
+            <a href="student-admission.html" class="hidden sm:block px-5 py-2.5 rounded-lg bg-primary/10 text-primary font-bold hover:bg-primary/20 transition-all text-sm">Apply Now</a>
+            <button onclick="window.location='login.html'" class="px-5 py-2.5 rounded-lg bg-primary text-on-primary font-medium hover:opacity-90 transition-all shadow-sm">Dashboard</button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="pt-32 pb-16 bg-primary text-white text-center">
+        <div class="container mx-auto px-6">
+            <h1 class="text-4xl md:text-5xl font-headline font-black mb-4">Academic Programs</h1>
+            <p class="text-indigo-100 max-w-2xl mx-auto">Explore our diverse range of educational programs and vocational courses.</p>
+        </div>
+    </header>
+
+    <!-- Programs Grid -->
+    <section class="py-24">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <div id="programs-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Programs will be dynamically injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (Same as index.html) -->
+    <footer class="bg-white border-t border-outline-variant/20 py-16">
+        <div class="container mx-auto px-6 max-w-6xl grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="space-y-4">
+                <div class="flex items-center gap-2">
+                    <img src="logo.jpg" alt="Logo" class="w-8 h-8 object-contain"/>
+                    <span class="font-headline font-bold text-lg text-on-surface">Qurtaba School of Excellence Bela</span>
+                </div>
+                <p class="text-on-surface-variant text-sm">Empowering minds, building character, and shaping the future since 2009.</p>
+            </div>
+            <div class="flex flex-col space-y-3">
+                <h4 class="font-bold text-on-surface">Quick Links</h4>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="about.html">About Us</a>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="programs.html">Programs</a>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="gallery.html">Gallery</a>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="contact.html">Contact</a>
+            </div>
+            <div class="flex flex-col space-y-3">
+                <h4 class="font-bold text-on-surface">Admissions</h4>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="student-admission.html">Apply Now</a>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="verification.html">Verify Certificate</a>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="login.html">Student Portal</a>
+            </div>
+            <div class="flex flex-col space-y-3">
+                <h4 class="font-bold text-on-surface">Contact</h4>
+                <p class="text-on-surface-variant text-sm">Main Road, Bela, Pakistan</p>
+                <p class="text-on-surface-variant text-sm">info@qurtabaschoolbela.edu.pk</p>
+                <p class="text-on-surface-variant text-sm">+92 3XX XXXXXXX</p>
+            </div>
+        </div>
+        <div class="container mx-auto px-6 max-w-6xl mt-12 pt-8 border-t border-outline-variant/10 text-center">
+            <p class="text-on-surface-variant text-xs">© 2024 Qurtaba School of Excellence Bela. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        const toggle = document.getElementById('theme-toggle');
+        const applyTheme = (dark) => {
+            document.documentElement.classList.toggle('dark', dark);
+            toggle.querySelector('span').textContent = dark ? 'light_mode' : 'dark_mode';
+        };
+        const isDark = localStorage.getItem('qurtaba-dark') === 'true';
+        applyTheme(isDark);
+        toggle.addEventListener('click', () => {
+            const nowDark = !document.documentElement.classList.contains('dark');
+            localStorage.setItem('qurtaba-dark', nowDark);
+            applyTheme(nowDark);
+        });
+
+        async function loadPublicPrograms() {
+            try {
+                const res = await fetch('/api/programs');
+                const programs = await res.json();
+                
+                const container = document.getElementById('programs-container');
+                container.innerHTML = programs.map(p => `
+                <div class="bg-white rounded-2xl overflow-hidden border border-outline-variant/30 shadow-sm hover:shadow-lg transition-all flex flex-col">
+                    <img src="${p.image || 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800'}" alt="${p.name}" class="w-full h-48 object-cover"/>
+                    <div class="p-6 flex flex-col flex-1">
+                        <h3 class="text-xl font-bold mb-2">${p.name}</h3>
+                        <p class="text-on-surface-variant text-sm mb-4 flex-1">${p.description}</p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-outline-variant/20">
+                            <span class="text-xs font-bold text-primary px-3 py-1 bg-primary/10 rounded-full">Duration: ${p.duration}</span>
+                            <button onclick="window.location='student-admission.html'" class="text-sm font-bold text-primary hover:underline">Apply Now</button>
+                        </div>
+                    </div>
+                </div>
+                `).join('');
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadPublicPrograms);
+    </script>
+</body>
+</html>

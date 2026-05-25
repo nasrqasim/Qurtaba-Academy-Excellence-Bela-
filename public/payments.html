@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Salary Payments - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        headline: ["Inter"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Salary Payments" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Salary Payment Records</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Manage and track individual salary disbursements.</p>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="card p-6 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined">payments</span>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-on-surface-variant uppercase">Total Paid</p>
+                        <p class="text-xl font-black text-on-surface" id="totalPaidDisplay">₨ 0</p>
+                    </div>
+                </div>
+                <div class="card p-6 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center">
+                        <span class="material-symbols-outlined">pending_actions</span>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-on-surface-variant uppercase">Pending Payments</p>
+                        <p class="text-xl font-black text-on-surface" id="pendingDisplay">₨ 0</p>
+                    </div>
+                </div>
+                <div class="card p-6 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                        <span class="material-symbols-outlined">group</span>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-on-surface-variant uppercase">Employees Paid</p>
+                        <p class="text-xl font-black text-on-surface" id="employeesPaidDisplay">0 / 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="card overflow-hidden">
+                <div class="card-header flex justify-between items-center bg-surface-container-low px-6 py-4">
+                    <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider">Disbursement List</h3>
+                    <div class="flex gap-2">
+                        <button class="btn-secondary text-xs py-1.5 px-3" onclick="exportCSV()">Export CSV</button>
+                        <button class="btn-primary text-xs py-1.5 px-3" onclick="markAllAsPaid()">Mark All as Paid</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Month</th>
+                                <th>Net Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payroll-table-body" class="text-sm">
+                            <!-- Dynamically loaded -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        let allRecords = [];
+
+        async function loadPayments() {
+            try {
+                const res = await fetch('/api/payroll');
+                allRecords = await res.json();
+                renderRecords(allRecords);
+                calculateStats(allRecords);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function renderRecords(records) {
+            const body = document.getElementById('payroll-table-body');
+            if (records.length === 0) {
+                body.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-on-surface-variant">No salary records found.</td></tr>`;
+                return;
+            }
+            body.innerHTML = records.map(p => `
+                <tr>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                                ${p.employeeName.charAt(0)}
+                            </div>
+                            <div>
+                                <p class="font-bold">${p.employeeName}</p>
+                                <p class="text-xs text-on-surface-variant">ID: ${p.employeeId || 'N/A'}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${p.month}</td>
+                    <td class="font-bold">₨ ${p.netPay.toLocaleString()}</td>
+                    <td>
+                        <span class="badge-${p.status === 'Paid' ? 'success' : 'warning'}">
+                            ${p.status}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="flex gap-2 items-center">
+                            ${p.status === 'Pending' ? `
+                                <button class="px-3 py-1 bg-primary text-white rounded-lg text-xs font-bold hover:opacity-90 transition-all" onclick="releasePayment('${p._id}')">Pay Now</button>
+                            ` : `
+                                <span class="text-xs font-medium text-emerald-600 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                    Paid
+                                </span>
+                            `}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function calculateStats(records) {
+            const totalPaid = records.filter(r => r.status === 'Paid').reduce((sum, r) => sum + r.netPay, 0);
+            const pending = records.filter(r => r.status === 'Pending').reduce((sum, r) => sum + r.netPay, 0);
+            const paidCount = records.filter(r => r.status === 'Paid').length;
+            const totalCount = records.length;
+
+            document.getElementById('totalPaidDisplay').textContent = `₨ ${totalPaid.toLocaleString()}`;
+            document.getElementById('pendingDisplay').textContent = `₨ ${pending.toLocaleString()}`;
+            document.getElementById('employeesPaidDisplay').textContent = `${paidCount} / ${totalCount}`;
+        }
+
+        async function releasePayment(id) {
+            if (!confirm('Confirm salary release for this record?')) return;
+            try {
+                const res = await fetch(`/api/payroll/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'Paid', paymentDate: new Date() })
+                });
+                if (res.ok) {
+                    alert('Payment released successfully!');
+                    loadPayments();
+                } else {
+                    alert('Error releasing payment');
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function markAllAsPaid() {
+            const pendings = allRecords.filter(r => r.status === 'Pending');
+            if (pendings.length === 0) return alert('No pending payments to process.');
+            if (!confirm(`Mark all ${pendings.length} pending payments as Paid?`)) return;
+
+            try {
+                let successCount = 0;
+                for (const p of pendings) {
+                    const res = await fetch(`/api/payroll/${p._id}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'Paid', paymentDate: new Date() })
+                    });
+                    if (res.ok) successCount++;
+                }
+                alert(`Successfully processed payments for ${successCount} records!`);
+                loadPayments();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function exportCSV() {
+            let csv = 'Employee Name,Employee ID,Month,Net Pay,Status\n';
+            allRecords.forEach(r => {
+                csv += `"${r.employeeName}","${r.employeeId}","${r.month}",${r.netPay},"${r.status}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `salary_payments_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+        }
+
+        window.addEventListener('DOMContentLoaded', loadPayments);
+    </script>
+</body>
+</html>

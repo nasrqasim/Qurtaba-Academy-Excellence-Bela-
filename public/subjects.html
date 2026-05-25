@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Subject Management - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Academic Subjects" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Subject Directory</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Manage curriculum subjects, syllabi, and assigned teachers.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-primary">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        Add New Subject
+                    </button>
+                </div>
+            </div>
+
+            <!-- Subject Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                <!-- Subject Card -->
+                <div class="card p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-4">
+                            <span class="material-symbols-outlined text-2xl">functions</span>
+                        </div>
+                        <h3 class="font-bold text-lg text-on-surface">Mathematics</h3>
+                        <p class="text-xs text-on-surface-variant mb-4">Core Subject • Compulsory</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-[11px] font-bold text-on-surface-variant">
+                                <span>TEACHER</span>
+                                <span class="text-primary uppercase">Dr. M. Ali</span>
+                            </div>
+                            <div class="flex justify-between text-[11px] font-bold text-on-surface-variant">
+                                <span>CLASSES</span>
+                                <span>9th, 10th, 11th</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="mt-6 py-2 border border-outline-variant/30 rounded-lg text-xs font-bold hover:bg-surface-container transition-all">View Syllabus</button>
+                </div>
+
+                <!-- Subject Card -->
+                <div class="card p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-700 mb-4">
+                            <span class="material-symbols-outlined text-2xl">biotech</span>
+                        </div>
+                        <h3 class="font-bold text-lg text-on-surface">Biology</h3>
+                        <p class="text-xs text-on-surface-variant mb-4">Science Subject • Elective</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-[11px] font-bold text-on-surface-variant">
+                                <span>TEACHER</span>
+                                <span class="text-primary uppercase">Prof. Fatima K.</span>
+                            </div>
+                            <div class="flex justify-between text-[11px] font-bold text-on-surface-variant">
+                                <span>CLASSES</span>
+                                <span>9th, 10th</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="mt-6 py-2 border border-outline-variant/30 rounded-lg text-xs font-bold hover:bg-surface-container transition-all">View Syllabus</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+</body>
+</html>

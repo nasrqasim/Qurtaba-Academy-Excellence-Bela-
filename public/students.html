@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Student List - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        headline: ["Inter"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Student List" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Student Directory</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Manage and view all registered students in the system.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-secondary">
+                        <span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        Filter
+                    </button>
+                    <button class="btn-primary" onclick="window.location='student-registration.html'">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        Add Student
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="card p-4 mb-6 flex flex-wrap items-center gap-4">
+                <div class="flex-1 min-w-[240px] relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+                    <input type="text" id="student-search" placeholder="Search by name, ID, or phone..." class="input-field pl-10"/>
+                </div>
+                <select id="class-filter" class="input-field w-auto min-w-[140px]">
+                    <option value="">All Classes</option>
+                    <option>Class 9</option>
+                    <option>Class 10</option>
+                    <option>Class 11</option>
+                </select>
+                <select id="status-filter" class="input-field w-auto min-w-[140px]">
+                    <option value="">All Status</option>
+                    <option>Active</option>
+                    <option>Inactive</option>
+                    <option>Graduated</option>
+                </select>
+            </div>
+
+            <!-- Table -->
+            <div class="card overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Admission Date</th>
+                                <th>Parent Phone</th>
+                                <th>Status</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <!-- Data will be loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-header bg-surface-container-low flex flex-col gap-2 py-3 px-4">
+                    <p id="showing-count" class="text-xs text-on-surface-variant">Showing 0 of 0 students</p>
+                    <div id="students-pagination"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        let allStudentsCount = 0;
+        let currentPage = 1;
+        const pageSize = 25;
+
+        async function loadStudents(page = 1) {
+            currentPage = page;
+            const body = document.querySelector('tbody');
+            if (typeof showTableSkeleton === 'function') showTableSkeleton(body, 7, 6);
+            try {
+                const search = document.getElementById('student-search').value;
+                const classVal = document.getElementById('class-filter').value;
+                const statusVal = document.getElementById('status-filter').value;
+                
+                const params = new URLSearchParams();
+                params.append('page', String(page));
+                params.append('limit', String(pageSize));
+                if (search) params.append('search', search);
+                if (classVal) params.append('class', classVal);
+                if (statusVal) params.append('status', statusVal);
+                
+                const res = await fetch('/api/students?' + params.toString());
+                const payload = await res.json();
+                
+                let students = [];
+                if (Array.isArray(payload)) {
+                    students = payload;
+                    allStudentsCount = students.length;
+                } else if (payload && Array.isArray(payload.data)) {
+                    students = payload.data;
+                    allStudentsCount = payload.pagination?.total ?? students.length;
+                    renderPagination(payload.pagination);
+                } else {
+                    console.error('Unexpected response:', payload);
+                    renderStudents([]);
+                    return;
+                }
+                
+                renderStudents(students);
+            } catch (e) {
+                console.error('Error loading students:', e);
+                renderStudents([]);
+            }
+        }
+
+        function renderPagination(pagination) {
+            const el = document.getElementById('students-pagination');
+            if (!el || !pagination) {
+                if (el) el.innerHTML = '';
+                return;
+            }
+            const prev = pagination.page > 1
+                ? `<button type="button" class="btn-secondary text-sm" onclick="loadStudents(${pagination.page - 1})">Previous</button>`
+                : '';
+            const next = pagination.hasMore
+                ? `<button type="button" class="btn-secondary text-sm" onclick="loadStudents(${pagination.page + 1})">Next</button>`
+                : '';
+            el.innerHTML = `<div class="flex items-center justify-between gap-4 mt-4">${prev}<span class="text-sm text-on-surface-variant">Page ${pagination.page} of ${pagination.totalPages}</span>${next}</div>`;
+        }
+
+        function renderStudents(students) {
+            const body = document.querySelector('tbody');
+            
+            if (students.length === 0) {
+                body.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-8">
+                            <div class="flex flex-col items-center justify-center text-on-surface-variant">
+                                <span class="material-symbols-outlined text-4xl mb-2">person_off</span>
+                                <p class="text-lg font-medium">No students found</p>
+                                <p class="text-sm">There are no students matching your criteria or database is empty.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                body.innerHTML = students.map(stu => `
+                    <tr>
+                        <td class="font-medium text-primary">${stu.admissionNumber || 'N/A'}</td>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs uppercase">
+                                    ${(stu.fullName || 'U').charAt(0)}
+                                </div>
+                                <div>
+                                    <p class="font-semibold cursor-pointer hover:text-primary transition-colors" onclick="viewProfile('${stu._id}')">${stu.fullName || 'Unknown'}</p>
+                                    <p class="text-xs text-on-surface-variant">${stu.email || ''}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${stu.class || 'N/A'} ${stu.section ? '- ' + stu.section : ''}</td>
+                        <td class="text-on-surface-variant">${new Date(stu.admissionDate || stu.createdAt || Date.now()).toLocaleDateString()}</td>
+                        <td class="text-on-surface-variant">${stu.phone || 'N/A'}</td>
+                        <td><span class="badge-success px-2.5 py-1 rounded-full text-xs font-semibold">${stu.status || 'Active'}</span></td>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <button class="p-1.5 hover:bg-surface-container rounded text-on-surface-variant" title="View Details" onclick="viewProfile('${stu._id}')"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+                                <button class="p-1.5 hover:bg-surface-container rounded text-primary" title="Edit" onclick="editStudent('${stu._id}')"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                <button class="p-1.5 hover:bg-rose-50 rounded text-rose-600" title="Delete" onclick="deleteStudent('${stu._id}')"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            document.getElementById('showing-count').textContent = `Showing ${students.length} of ${allStudentsCount > 0 ? allStudentsCount : students.length} students`;
+        }
+
+        function viewProfile(id) {
+            window.location.href = `student-profile.html?id=${id}&type=student`;
+        }
+
+        async function deleteStudent(id) {
+            if (!confirm('Are you sure you want to delete this student?')) return;
+            try {
+                const res = await fetch(`/api/students/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    loadStudents();
+                } else {
+                    alert('Failed to delete student');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('An error occurred');
+            }
+        }
+        
+        function editStudent(id) {
+            window.location.href = `student-registration.html?edit=${id}`;
+        }
+
+        function filterStudents() {
+            loadStudents();
+        }
+
+        window.onPageLoad(() => {
+            loadStudents();
+            document.getElementById('student-search').addEventListener('input', filterStudents);
+            document.getElementById('class-filter').addEventListener('change', filterStudents);
+            document.getElementById('status-filter').addEventListener('change', filterStudents);
+        });
+    </script>

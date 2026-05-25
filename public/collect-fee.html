@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Collect Fee - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Fee Collection" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Process Fee Payment</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Search for a student and record their fee collection details.</p>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- Student Selection -->
+                    <div class="card p-6">
+                        <div class="flex flex-col md:flex-row gap-6 items-end">
+                            <div class="flex-1 space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Select Class</label>
+                                <select id="classSelect" class="input-field" required>
+                                    <option value="" disabled selected>Loading classes...</option>
+                                </select>
+                            </div>
+                            <div class="flex-1 space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Select Student</label>
+                                <select id="studentSelect" class="input-field" required disabled>
+                                    <option value="" disabled selected>Select a class first</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Form -->
+                    <form id="feeForm" class="card overflow-hidden">
+                        <div class="card-header bg-surface-container-low/30">
+                            <h3 class="font-bold text-on-surface flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">payments</span>
+                                Collection Details
+                            </h3>
+                        </div>
+                        <div class="card-body p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Fee Month</label>
+                                <input type="month" name="month" class="input-field" required/>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Payment Date</label>
+                                <input type="date" class="input-field" required/>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Amount Being Paid</label>
+                                <input type="number" name="amount" class="input-field" placeholder="Enter amount" required/>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Payment Method</label>
+                                <select name="paymentMethod" class="input-field" required>
+                                    <option>Cash</option>
+                                    <option>Bank Transfer</option>
+                                    <option>Cheque</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-header bg-surface-container-low/30 flex justify-end gap-3">
+                            <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
+                            <button type="submit" class="btn-primary px-8">Process & Print Receipt</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        let studentsData = [];
+        let isEditing = false;
+        let editId = null;
+
+        async function loadStudents() {
+            try {
+                const res = await fetch('/api/students');
+                studentsData = await res.json();
+                
+                const classSelect = document.getElementById('classSelect');
+                const studentSelect = document.getElementById('studentSelect');
+                
+                if(studentsData.length > 0) {
+                    const classes = [...new Set(studentsData.map(s => s.class))].filter(Boolean).sort();
+                    classSelect.innerHTML = '<option value="" disabled selected>Select a Class</option>' + 
+                        classes.map(c => `<option value="${c}">${c}</option>`).join('');
+                } else {
+                    classSelect.innerHTML = '<option value="" disabled selected>No students found</option>';
+                }
+                
+                classSelect.addEventListener('change', (e) => {
+                    const selectedClass = e.target.value;
+                    const filteredStudents = studentsData.filter(s => s.class === selectedClass);
+                    
+                    if (filteredStudents.length > 0) {
+                        studentSelect.disabled = false;
+                        studentSelect.innerHTML = '<option value="" disabled selected>Select a Student</option>' + 
+                            filteredStudents.map(s => `<option value="${s._id}">${s.fullName}</option>`).join('');
+                    } else {
+                        studentSelect.disabled = true;
+                        studentSelect.innerHTML = '<option value="" disabled selected>No students in this class</option>';
+                    }
+                });
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        async function loadFeeData(id) {
+            try {
+                const res = await fetch(`/api/fees/${id}`);
+                if (!res.ok) throw new Error('Fee record not found');
+                const fee = await res.json();
+
+                const classSelect = document.getElementById('classSelect');
+                const studentSelect = document.getElementById('studentSelect');
+                
+                const student = studentsData.find(s => s.fullName === fee.studentName);
+                if (student) {
+                    classSelect.value = student.class;
+                    classSelect.dispatchEvent(new Event('change'));
+                    studentSelect.value = student._id;
+                }
+
+                const form = document.getElementById('feeForm');
+                Object.keys(fee).forEach(key => {
+                    const input = form.elements[key];
+                    if (input) {
+                        input.value = fee[key];
+                    }
+                });
+
+                document.querySelector('h2').textContent = 'Edit Fee Payment';
+                document.querySelector('button[type="submit"]').textContent = 'Update Fee Record';
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        document.getElementById('feeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const studentId = document.getElementById('studentSelect').value;
+            if(!studentId) return alert('Please select a student');
+
+            const student = studentsData.find(s => s._id === studentId);
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            data.amount = parseFloat(data.amount);
+            data.studentName = student.fullName;
+            data.studentClass = student.class || '';
+            if (!isEditing) {
+                data.transactionId = `INV-${Math.floor(Math.random() * 100000).toString().padStart(5, '0')}`;
+            }
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = isEditing ? 'Updating...' : 'Processing...';
+
+            try {
+                const url = isEditing ? `/api/fees/${editId}` : '/api/fees';
+                const method = isEditing ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    alert(`Fee ${isEditing ? 'updated' : 'collected'} successfully!`);
+                    window.location.href = 'fees.html';
+                } else {
+                    const err = await res.json();
+                    alert(err.message || `Failed to ${isEditing ? 'update' : 'collect'} fee`);
+                }
+            } catch(err) {
+                console.error(err);
+                alert('An error occurred');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadStudents();
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('edit')) {
+                isEditing = true;
+                editId = params.get('edit');
+                await loadFeeData(editId);
+            }
+        });
+    </script>
+</body>
+</html>

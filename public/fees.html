@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Fee Management - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Fee Management" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Fee Collection</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Automate invoicing, track payments, and manage fee defaulters.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-secondary">
+                        <span class="material-symbols-outlined text-[18px]">history</span>
+                        Transaction History
+                    </button>
+                    <button class="btn-primary" onclick="window.location='collect-fee.html'">
+                        <span class="material-symbols-outlined text-[18px]">add_card</span>
+                        Collect Fee
+                    </button>
+                </div>
+            </div>
+
+            <!-- Fee Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="card p-5 border-l-4 border-l-primary">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Expected (Monthly)</p>
+                    <p class="text-2xl font-black text-on-surface" id="summary-expected">₨ 0</p>
+                </div>
+                <div class="card p-5 border-l-4 border-l-emerald-500">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Collected</p>
+                    <p class="text-2xl font-black text-emerald-600" id="summary-collected">₨ 0</p>
+                </div>
+                <div class="card p-5 border-l-4 border-l-rose-500">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Pending/Defaulters</p>
+                    <p class="text-2xl font-black text-rose-600" id="summary-pending">₨ 0</p>
+                </div>
+                <div class="card p-5 border-l-4 border-l-amber-500">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Scholarships</p>
+                    <p class="text-2xl font-black text-amber-600" id="summary-scholarships">₨ 0</p>
+                </div>
+            </div>
+
+            <!-- Invoices Table -->
+            <div class="card overflow-hidden">
+                <div class="card-header flex flex-wrap justify-between items-center gap-4">
+                    <h3 class="text-lg font-bold text-on-surface">Recent Invoices</h3>
+                    <div class="flex gap-3 items-center">
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+                            <input type="text" placeholder="Search Invoice..." class="input-field pl-9 py-1.5 text-xs w-48"/>
+                        </div>
+                        <button class="btn-secondary py-1.5 px-3 text-xs">
+                            <span class="material-symbols-outlined text-[16px]">filter_alt</span>
+                            Filter
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Invoice ID</th>
+                                <th>Student</th>
+                                <th>Fee Type</th>
+                                <th>Due Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fees-tbody">
+                            <!-- Data will be loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        async function loadFees() {
+            try {
+                const res = await fetch('/api/fees');
+                const fees = await res.json();
+                const tbody = document.getElementById('fees-tbody');
+                
+                tbody.innerHTML = fees.map(fee => {
+                    const initials = fee.studentName.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+                    const statusBadge = fee.status === 'Paid' 
+                        ? '<span class="badge-success px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">Paid</span>'
+                        : '<span class="badge-error px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">Unpaid</span>';
+                    
+                    return `
+                    <tr>
+                        <td class="font-bold text-xs">${fee.transactionId || '#INV-XXXX'}</td>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-700 font-bold text-[10px]">${initials}</div>
+                                <p class="font-semibold text-sm">${fee.studentName} (${fee.studentClass})</p>
+                            </div>
+                        </td>
+                        <td class="text-sm">Monthly Fee - ${fee.month}</td>
+                        <td class="text-sm text-on-surface-variant">${new Date(fee.createdAt).toLocaleDateString()}</td>
+                        <td class="text-sm font-bold">₨ ${fee.amount.toLocaleString()}</td>
+                        <td>${statusBadge}</td>
+                        <td class="text-right">
+                            <div class="flex gap-2 justify-end">
+                                <button class="p-1 hover:bg-surface-container rounded text-primary" title="Edit" onclick="editFee('${fee._id}')"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                <button class="p-1 hover:bg-rose-50 rounded text-rose-600" title="Delete" onclick="deleteFee('${fee._id}')"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                            </div>
+                        </td>
+                    </tr>`;
+                }).join('');
+
+                let expected = 0;
+                let collected = 0;
+                let pending = 0;
+                let scholarships = 0;
+
+                fees.forEach(fee => {
+                    expected += fee.amount || 0;
+                    if (fee.status === 'Paid') {
+                        collected += fee.amount || 0;
+                    } else if (fee.status === 'Unpaid' || fee.status === 'Pending') {
+                        pending += fee.amount || 0;
+                    }
+                });
+
+                document.getElementById('summary-expected').textContent = `₨ ${expected.toLocaleString()}`;
+                document.getElementById('summary-collected').textContent = `₨ ${collected.toLocaleString()}`;
+                document.getElementById('summary-pending').textContent = `₨ ${pending.toLocaleString()}`;
+                document.getElementById('summary-scholarships').textContent = `₨ ${scholarships.toLocaleString()}`;
+            } catch (e) {
+                console.error('Error loading fees:', e);
+            }
+        }
+
+        function editFee(id) {
+            window.location.href = `collect-fee.html?edit=${id}`;
+        }
+
+        async function deleteFee(id) {
+            if (!confirm('Are you sure you want to delete this fee record?')) return;
+            try {
+                const res = await fetch(`/api/fees/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    loadFees();
+                } else {
+                    alert('Failed to delete fee record');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('An error occurred');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadFees();
+        });
+    </script>
+</body>
+</html>

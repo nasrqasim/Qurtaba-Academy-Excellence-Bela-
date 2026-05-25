@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Student Registration - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Student Registration" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="max-w-5xl mx-auto">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">New Student Enrollment</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Complete the form below to register a new student for the current session.</p>
+                </div>
+
+                <form id="studentForm" class="space-y-8">
+                    <!-- Student Identity -->
+                    <div class="card">
+                        <div class="card-header flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">account_circle</span>
+                            <h3 class="font-bold text-on-surface">Student Identity</h3>
+                        </div>
+                        <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="md:col-span-1 flex flex-col items-center justify-center border-r border-outline-variant/20 pr-6">
+                                <div id="dropzone" class="w-32 h-32 rounded-2xl bg-surface-container flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/50 cursor-pointer hover:bg-surface-container-high transition-colors">
+                                    <span class="material-symbols-outlined text-outline text-3xl">add_a_photo</span>
+                                    <p class="text-[10px] font-bold text-on-surface-variant mt-2 text-center">Upload Photo</p>
+                                </div>
+                                <input type="file" id="thumb-input" class="hidden" accept="image/*" />
+                            </div>
+                            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Full Name</label>
+                                    <input type="text" name="fullName" class="input-field" placeholder="Full name as per B-Form" required/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">B-Form / CNIC</label>
+                                    <input type="text" name="cnic" class="input-field" placeholder="00000-0000000-0"/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Date of Birth</label>
+                                    <input type="date" name="dob" class="input-field" required/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Gender</label>
+                                    <select name="gender" class="input-field" required>
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Father's Name</label>
+                                    <input type="text" name="fatherName" class="input-field" placeholder="Father's Full Name" required/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Father's Contact Number</label>
+                                    <input type="text" name="fatherPhone" class="input-field" placeholder="+92 3XX XXXXXXX" required/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Father's Occupation</label>
+                                    <input type="text" name="fatherOccupation" class="input-field" placeholder="Father's Occupation"/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Email</label>
+                                    <input type="email" name="email" class="input-field" placeholder="student@example.com"/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Student Phone</label>
+                                    <input type="text" name="phone" class="input-field" placeholder="+92 3XX XXXXXXX"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Academic Placement -->
+                    <div class="card">
+                        <div class="card-header flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">school</span>
+                            <h3 class="font-bold text-on-surface">Academic Placement</h3>
+                        </div>
+                        <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Class</label>
+                                <select id="classSelect" name="class" class="input-field" required>
+                                    <option value="" disabled selected>Select Class</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Section</label>
+                                <input type="text" name="section" class="input-field" placeholder="e.g. A" required/>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Admission Number (Auto)</label>
+                                <input type="text" id="admissionNumber" name="admissionNumber" class="input-field bg-surface-container-low" readonly/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Previous Academic Record -->
+                    <div class="card">
+                        <div class="card-header flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">history_edu</span>
+                            <h3 class="font-bold text-on-surface">Previous Academic Record</h3>
+                        </div>
+                        <div class="card-body grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase">Previous School Name</label>
+                                <input type="text" name="previousSchool" class="input-field" placeholder="Enter school name"/>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Last Class Attended</label>
+                                    <input type="text" name="previousClass" class="input-field" placeholder="e.g. 9th"/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-on-surface-variant uppercase">Marks / Grade</label>
+                                    <input type="text" name="previousMarks" class="input-field" placeholder="e.g. 940 or A+"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4">
+                        <button type="button" class="btn-secondary" onclick="window.history.back()">Back</button>
+                        <button type="submit" class="btn-primary px-10">Register Student</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        let isEditing = false;
+        let editId = null;
+
+        async function loadClasses() {
+            try {
+                const res = await fetch('/api/classes');
+                const classes = await res.json();
+                const select = document.getElementById('classSelect');
+                if (classes.length > 0) {
+                    select.innerHTML = '<option value="" disabled selected>Select Class</option>' + 
+                        classes.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function uploadFile(file) {
+            if (!file) return null;
+            return uploadOptimizedFile(file, 'student');
+        }
+
+        async function loadStudentData(id) {
+            try {
+                const res = await fetch(`/api/students/${id}`);
+                if (!res.ok) throw new Error('Failed to load student data');
+                const student = await res.json();
+
+                // Populate form fields
+                const form = document.getElementById('studentForm');
+                Object.keys(student).forEach(key => {
+                    const input = form.elements[key];
+                    if (input) {
+                        if (input.type === 'date' && student[key]) {
+                            input.value = new Date(student[key]).toISOString().split('T')[0];
+                        } else {
+                            input.value = student[key];
+                        }
+                    }
+                });
+
+                if (student.image) {
+                    const dropzone = document.getElementById('dropzone');
+                    dropzone.innerHTML = `<img src="${student.image}" class="w-full h-full object-cover rounded-2xl" />`;
+                }
+
+                document.querySelector('h2').textContent = 'Edit Student Enrollment';
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Update Student';
+            } catch (error) {
+                console.error(error);
+                alert('Error loading student data');
+            }
+        }
+
+        document.getElementById('studentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = isEditing ? 'Updating...' : 'Registering...';
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            const file = document.getElementById('thumb-input').files[0];
+
+            try {
+                const imageUrl = await uploadFile(file);
+                const payload = {
+                    ...data,
+                    status: 'Active',
+                };
+                if (imageUrl) {
+                    payload.image = imageUrl;
+                }
+                if (!isEditing) {
+                    payload.admissionDate = new Date();
+                }
+
+                const url = isEditing ? `/api/students/${editId}` : '/api/students';
+                const method = isEditing ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    alert(`Student ${isEditing ? 'updated' : 'registered'} successfully!`);
+                    window.location.href = 'students.html';
+                } else {
+                    const error = await res.json();
+                    alert(error.message || `Failed to ${isEditing ? 'update' : 'register'} student`);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+
+        window.onPageLoad(async () => {
+            await loadClasses();
+            
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('edit')) {
+                isEditing = true;
+                editId = params.get('edit');
+                await loadStudentData(editId);
+            } else {
+                // Set dynamic admission number
+                const rand = Math.floor(1000 + Math.random() * 9000);
+                document.getElementById('admissionNumber').value = `STU-2026-${rand}`;
+            }
+
+            const dropzone = document.getElementById('dropzone');
+            const input = document.getElementById('thumb-input');
+            dropzone.addEventListener('click', () => input.click());
+            input.addEventListener('change', (e) => {
+                if (e.target.files[0]) {
+                    dropzone.innerHTML = `<p class="text-[10px] font-bold text-on-surface-variant mt-2 text-center p-2 break-all">${e.target.files[0].name}</p>`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

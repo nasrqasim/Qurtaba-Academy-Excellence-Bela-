@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Process Month - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        headline: ["Inter"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Process Payroll" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-2xl font-headline font-bold text-on-surface">Process Monthly Payroll</h2>
+                        <p class="text-on-surface-variant mt-1 text-sm">Select a month to calculate salaries and generate payroll.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Step 1: Selection -->
+                    <div class="card p-6 h-fit">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs">1</span>
+                            Select Month
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant">Year</label>
+                                <input type="number" id="yearSelect" value="2026" min="2000" max="2100" class="w-full px-4 py-2 bg-surface-container border border-outline-variant/50 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-on-surface-variant">Month</label>
+                                <select id="monthSelect" class="w-full px-4 py-2 bg-surface-container border border-outline-variant/50 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 transition-all">
+                                    <option>January</option>
+                                    <option>February</option>
+                                    <option>March</option>
+                                    <option>April</option>
+                                    <option>May</option>
+                                    <option>June</option>
+                                    <option>July</option>
+                                    <option>August</option>
+                                    <option>September</option>
+                                    <option>October</option>
+                                    <option>November</option>
+                                    <option>December</option>
+                                </select>
+                            </div>
+                            <button class="w-full btn-primary mt-2" onclick="fetchStaffForPayroll()">
+                                Fetch Records
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Generation -->
+                    <div id="payroll-generation-div" class="lg:col-span-2 card p-6 opacity-50 pointer-events-none transition-all">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs">2</span>
+                            Payroll Generation
+                        </h3>
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                                <div>
+                                    <p class="text-sm font-bold text-on-surface">Staff Count</p>
+                                    <p class="text-2xl font-black text-primary" id="staffCountDisplay">0 Employees</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-bold text-on-surface">Estimated Total</p>
+                                    <p class="text-2xl font-black text-primary" id="estimatedTotalDisplay">₨ 0</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <h4 class="text-sm font-bold text-on-surface">Processing Options</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <label class="flex items-center gap-3 p-4 border border-outline-variant/30 rounded-xl cursor-pointer hover:bg-surface-container-low transition-colors">
+                                        <input type="checkbox" checked class="rounded text-primary focus:ring-primary"/>
+                                        <div>
+                                            <p class="text-sm font-bold">Auto-Calculate Deductions</p>
+                                            <p class="text-xs text-on-surface-variant">Based on attendance & leaves</p>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-4 border border-outline-variant/30 rounded-xl cursor-pointer hover:bg-surface-container-low transition-colors">
+                                        <input type="checkbox" checked class="rounded text-primary focus:ring-primary"/>
+                                        <div>
+                                            <p class="text-sm font-bold">Apply Standard Bonuses</p>
+                                            <p class="text-xs text-on-surface-variant">As per contract rules</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-4 pt-4">
+                                <button class="flex-1 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all shadow-md flex items-center justify-center gap-2" id="generatePayrollBtn" onclick="generatePayroll()">
+                                    <span class="material-symbols-outlined">settings_suggest</span>
+                                    Generate Payroll
+                                </button>
+                                <button class="flex-1 py-4 bg-primary text-white rounded-xl font-bold hover:opacity-90 transition-all shadow-md flex items-center justify-center gap-2" id="approvePayrollBtn" onclick="approvePayroll()" disabled>
+                                    <span class="material-symbols-outlined">verified</span>
+                                    Approve Payroll
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Staff List & Individual Payments -->
+                <div id="staff-payment-sheet-div" class="mt-12 card p-6 hidden">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-on-surface">
+                        <span class="material-symbols-outlined text-primary text-[24px]">account_balance_wallet</span>
+                        Individual Staff Payroll Sheet — <span id="sheetMonthDisplay" class="text-primary font-black"></span>
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="data-table w-full">
+                            <thead>
+                                <tr class="bg-surface-container-low text-left">
+                                    <th class="p-3 text-xs font-bold uppercase">Staff Name</th>
+                                    <th class="p-3 text-xs font-bold uppercase">Designation</th>
+                                    <th class="p-3 text-xs font-bold uppercase text-center">Base Salary</th>
+                                    <th class="p-3 text-xs font-bold uppercase text-center">Net Paid</th>
+                                    <th class="p-3 text-xs font-bold uppercase text-center">Status</th>
+                                    <th class="p-3 text-xs font-bold uppercase text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="staff-payroll-tbody" class="text-sm">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Processed History Small -->
+                <div class="mt-12">
+                    <h3 class="text-lg font-bold text-on-surface mb-4">Last 3 Months Status</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="card p-4 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-bold text-on-surface-variant">OCT 2024</p>
+                                <p class="text-sm font-bold text-emerald-600">Finalized</p>
+                            </div>
+                            <span class="material-symbols-outlined text-emerald-600">check_circle</span>
+                        </div>
+                        <div class="card p-4 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-bold text-on-surface-variant">SEP 2024</p>
+                                <p class="text-sm font-bold text-emerald-600">Finalized</p>
+                            </div>
+                            <span class="material-symbols-outlined text-emerald-600">check_circle</span>
+                        </div>
+                        <div class="card p-4 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-bold text-on-surface-variant">AUG 2024</p>
+                                <p class="text-sm font-bold text-emerald-600">Finalized</p>
+                            </div>
+                            <span class="material-symbols-outlined text-emerald-600">check_circle</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        // Global Diagnostic Listeners
+        window.addEventListener('error', function(e) {
+            alert('GLOBAL ERROR: ' + e.message + '\nFile: ' + e.filename + '\nLine: ' + e.lineno);
+        });
+        window.addEventListener('unhandledrejection', function(e) {
+            alert('UNHANDLED REJECTION: ' + e.reason);
+        });
+
+        let fetchedStaff = [];
+        let selectedMonthStr = '';
+        let generatedPayrolls = [];
+
+        async function fetchStaffForPayroll() {
+            const year = document.getElementById('yearSelect').value;
+            const month = document.getElementById('monthSelect').value;
+            selectedMonthStr = `${month} ${year}`;
+            
+            try {
+                const res = await fetch('/api/staff');
+                fetchedStaff = await res.json();
+                
+                document.getElementById('staffCountDisplay').textContent = `${fetchedStaff.length} Employees`;
+                
+                const total = fetchedStaff.reduce((sum, s) => sum + (s.salary || 0), 0);
+                document.getElementById('estimatedTotalDisplay').textContent = `₨ ${total.toLocaleString()}`;
+                
+                // Show the Generation section
+                document.getElementById('payroll-generation-div').classList.remove('opacity-50', 'pointer-events-none');
+                
+                // Check if payroll already generated for this month
+                const prRes = await fetch('/api/payroll');
+                const payrolls = await prRes.json();
+                generatedPayrolls = payrolls.filter(p => p.month === selectedMonthStr);
+                
+                // Render individual staff list
+                document.getElementById('sheetMonthDisplay').textContent = selectedMonthStr;
+                document.getElementById('staff-payment-sheet-div').classList.remove('hidden');
+                
+                const tbody = document.getElementById('staff-payroll-tbody');
+                tbody.innerHTML = fetchedStaff.map(s => {
+                    const record = generatedPayrolls.find(p => p.employeeId === (s.empId || s._id) || p.employeeId === s._id);
+                    let netPaidText = '—';
+                    let statusBadge = '<span class="px-2 py-0.5 bg-slate-100 text-slate-800 rounded font-bold text-[10px] uppercase">Unprocessed</span>';
+                    let actionBtn = `<button onclick="window.payIndividual('${s.empId || s._id}', '${s.fullName || s.name}', ${s.salary || 0})" class="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-bold hover:opacity-90 transition-all shadow-sm">💰 Pay Salary</button>`;
+                    
+                    if (record) {
+                        netPaidText = `₨ ${(record.netPay || 0).toLocaleString()}`;
+                        if (record.status === 'Paid') {
+                            statusBadge = '<span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded font-bold text-[10px] uppercase border border-emerald-200">Paid</span>';
+                            actionBtn = '<span class="text-emerald-600 font-bold text-xs flex items-center gap-1 justify-end"><span class="material-symbols-outlined text-[16px]">check_circle</span> Paid</span>';
+                        } else if (record.status === 'Pending') {
+                            statusBadge = '<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded font-bold text-[10px] uppercase border border-amber-200">Pending</span>';
+                            actionBtn = `<button onclick="window.payIndividual('${record.employeeId || s.empId || s._id}', '${s.fullName || s.name}', ${record.basicSalary || s.salary || 0}, '${record._id}')" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 transition-all shadow-sm">✅ Approve & Pay</button>`;
+                        }
+                    }
+                    
+                    return `
+                        <tr id="row-${s.empId || s._id}" class="hover:bg-surface-container-low/20 transition-colors border-b border-outline-variant/10">
+                            <td class="p-3 font-bold text-on-surface">${s.fullName || s.name}</td>
+                            <td class="p-3 text-on-surface-variant">${s.designation || 'Staff'}</td>
+                            <td class="p-3 text-center font-semibold">₨ ${(s.salary || 0).toLocaleString()}</td>
+                            <td class="p-3 text-center text-primary font-bold net-paid-cell">${netPaidText}</td>
+                            <td class="p-3 text-center status-cell">${statusBadge}</td>
+                            <td class="p-3 text-right action-cell">${actionBtn}</td>
+                        </tr>
+                    `;
+                }).join('');
+                
+                const approveBtn = document.getElementById('approvePayrollBtn');
+                const generateBtn = document.getElementById('generatePayrollBtn');
+                
+                if (generatedPayrolls.length > 0) {
+                    generateBtn.disabled = true;
+                    generateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    generateBtn.textContent = 'Payroll Generated';
+                    
+                    const hasPending = generatedPayrolls.some(p => p.status === 'Pending');
+                    if (hasPending) {
+                        approveBtn.disabled = false;
+                        approveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    } else {
+                        approveBtn.disabled = true;
+                        approveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                        approveBtn.textContent = 'All Paid';
+                    }
+                } else {
+                    generateBtn.disabled = false;
+                    generateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    generateBtn.textContent = 'Generate Payroll';
+                    approveBtn.disabled = true;
+                    approveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        window.payIndividual = async function(staffId, fullName, baseSalary, payrollId = null) {
+            console.log('window.payIndividual called with:', { staffId, fullName, baseSalary, payrollId });
+            const baseSalaryNum = Number(baseSalary) || 0;
+            const entered = prompt(`Enter salary amount to pay to ${fullName} (Base Salary: ₨ ${baseSalaryNum.toLocaleString()}):`, baseSalaryNum);
+            if (entered === null) return;
+            const amount = parseFloat(entered);
+            if (isNaN(amount) || amount <= 0) return;
+
+            // OPTIMISTIC FRONTEND UPDATE: Instantly change the DOM state
+            const row = document.getElementById(`row-${staffId}`);
+            if (row) {
+                const netPaidCell = row.querySelector('.net-paid-cell');
+                const statusCell = row.querySelector('.status-cell');
+                const actionCell = row.querySelector('.action-cell');
+                
+                if (netPaidCell) netPaidCell.textContent = `₨ ${amount.toLocaleString()}`;
+                if (statusCell) statusCell.innerHTML = '<span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded font-bold text-[10px] uppercase border border-emerald-200">Paid</span>';
+                if (actionCell) actionCell.innerHTML = '<span class="text-emerald-600 font-bold text-xs flex items-center gap-1 justify-end"><span class="material-symbols-outlined text-[16px]">check_circle</span> Paid</span>';
+            }
+
+            try {
+                if (payrollId) {
+                    const res = await fetch(`/api/payroll/${payrollId}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'Paid', netPay: amount, paymentDate: new Date() })
+                    });
+                    if (res.ok) {
+                        fetchStaffForPayroll();
+                    } else {
+                        alert('Failed to update payroll.');
+                    }
+                } else {
+                    const res = await fetch('/api/payroll', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            employeeId: staffId,
+                            employeeName: fullName,
+                            month: selectedMonthStr,
+                            basicSalary: baseSalary,
+                            bonus: 0,
+                            deductions: 0,
+                            netPay: amount,
+                            status: 'Paid',
+                            paymentDate: new Date()
+                        })
+                    });
+                    if (res.ok) {
+                        fetchStaffForPayroll();
+                    } else {
+                        alert('Failed to process payment.');
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function generatePayroll() {
+            if (fetchedStaff.length === 0) return;
+            
+            const btn = document.getElementById('generatePayrollBtn');
+            btn.disabled = true;
+            btn.textContent = 'Generating...';
+
+            try {
+                for (const staff of fetchedStaff) {
+                    await fetch('/api/payroll', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            employeeId: staff.empId || staff._id,
+                            employeeName: staff.fullName || staff.name,
+                            month: selectedMonthStr,
+                            basicSalary: staff.salary || 0,
+                            bonus: 0,
+                            deductions: 0,
+                            netPay: staff.salary || 0,
+                            status: 'Pending'
+                        })
+                    });
+                }
+                fetchStaffForPayroll();
+            } catch (e) {
+                console.error(e);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function approvePayroll() {
+            if (generatedPayrolls.length === 0) return;
+            
+            const btn = document.getElementById('approvePayrollBtn');
+            btn.disabled = true;
+            btn.textContent = 'Approving...';
+            
+            try {
+                const promises = generatedPayrolls
+                    .filter(p => p.status === 'Pending')
+                    .map(p => fetch(`/api/payroll/${p._id}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'Paid', paymentDate: new Date() })
+                    }));
+                await Promise.all(promises);
+                fetchStaffForPayroll();
+            } catch (e) {
+                console.error(e);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

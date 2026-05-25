@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login – Qurtaba School of Excellence Bela</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary":"#3525cd","on-primary":"#ffffff","surface":"#fcf8ff","surface-container":"#f0ecf9","surface-container-low":"#f5f2ff","surface-container-lowest":"#ffffff","surface-container-high":"#eae6f4","surface-variant":"#e4e1ee","on-surface":"#1b1b24","on-surface-variant":"#464555","background":"#fcf8ff","outline":"#777587","outline-variant":"#c7c4d8","error":"#ba1a1a"},fontFamily:{body:["Inter","sans-serif"],headline:["Inter","sans-serif"]}}}}
+</script>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.auth-left{background:linear-gradient(135deg,#3525cd 0%,#4f46e5 50%,#7c3aed 100%);}
+.float-blob{position:absolute;border-radius:50%;background:rgba(255,255,255,.07);animation:flt 7s ease-in-out infinite;}
+@keyframes flt{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-18px) rotate(4deg)}}
+input.form-input{width:100%;padding:12px 12px 12px 44px;border:1.5px solid #c7c4d8;border-radius:10px;font-size:14px;color:#1b1b24;background:#fff;transition:.2s;outline:none;}
+input.form-input:focus{border-color:#3525cd;box-shadow:0 0 0 3px rgba(53,37,205,.12);}
+input.form-input.err{border-color:#ba1a1a;box-shadow:0 0 0 3px rgba(186,26,26,.1);}
+.input-wrap{position:relative;}
+.input-wrap .iico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#777587;font-size:20px;pointer-events:none;}
+.input-wrap .itgl{position:absolute;right:13px;top:50%;transform:translateY(-50%);cursor:pointer;color:#777587;font-size:20px;}
+.err-msg{color:#ba1a1a;font-size:12px;margin-top:4px;display:none;}
+.err-msg.show{display:block;}
+.btn-main{background:linear-gradient(135deg,#3525cd,#4f46e5);box-shadow:0 4px 14px rgba(53,37,205,.35);transition:.25s;}
+.btn-main:hover{box-shadow:0 6px 20px rgba(53,37,205,.45);transform:translateY(-1px);}
+.btn-main:active{transform:none;}
+.g-btn{border:1.5px solid #c7c4d8;transition:.2s;}
+.g-btn:hover{background:#f5f2ff;border-color:#3525cd;}
+</style>
+</head>
+<body class="min-h-screen flex font-body" style="background:#f5f2ff">
+
+<!-- Left decorative panel -->
+<div class="auth-left hidden lg:flex flex-col justify-between p-12 w-[44%] shrink-0 relative overflow-hidden">
+  <div class="float-blob w-72 h-72 -top-16 -left-20" style="animation-delay:0s"></div>
+  <div class="float-blob w-44 h-44 bottom-20 right-8" style="animation-delay:2.5s"></div>
+  <div class="float-blob w-28 h-28 top-1/2 left-1/3" style="animation-delay:5s"></div>
+  <div class="relative z-10 flex items-center gap-3">
+    <img src="logo.jpg" alt="Logo" class="w-12 h-12 object-contain bg-white/20 rounded-xl p-1"/>
+    <span class="text-white font-bold text-xl">Qurtaba School of Excellence Bela</span>
+  </div>
+  <div class="relative z-10 space-y-5 max-w-xs">
+    <div class="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center">
+      <span class="material-symbols-outlined text-white text-3xl">school</span>
+    </div>
+    <h2 class="text-3xl font-bold text-white leading-snug">Smart School<br/>Management Platform</h2>
+    <p class="text-white/70 text-sm leading-relaxed">Manage students, staff, fees, exams and more — all in one powerful system.</p>
+    <div class="space-y-3 pt-2">
+      <div class="flex items-center gap-3 text-white/80 text-sm"><div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[18px]">verified</span></div><span>4,500+ students managed</span></div>
+      <div class="flex items-center gap-3 text-white/80 text-sm"><div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[18px]">shield</span></div><span>Enterprise-grade security</span></div>
+      <div class="flex items-center gap-3 text-white/80 text-sm"><div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[18px]">devices</span></div><span>Access from any device</span></div>
+    </div>
+  </div>
+  <div class="relative z-10 text-white/40 text-sm">© 2024 Qurtaba School of Excellence Bela</div>
+</div>
+
+<!-- Right form panel -->
+<div class="flex-1 flex items-center justify-center p-6 sm:p-12 relative">
+  <!-- Back to Home -->
+  <a href="index.html" class="absolute top-6 right-6 flex items-center gap-1.5 text-sm font-bold text-on-surface-variant hover:text-primary transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    Back to Website
+  </a>
+  <div class="w-full max-w-md space-y-7">
+    <div class="lg:hidden flex items-center gap-3 mb-2">
+      <img src="logo.jpg" alt="Logo" class="w-10 h-10 object-contain"/>
+      <span class="text-primary font-bold text-lg">Qurtaba School of Excellence Bela</span>
+    </div>
+    <div>
+      <h1 class="text-3xl font-headline font-black text-on-surface tracking-tight">Welcome back</h1>
+      <p class="text-on-surface-variant mt-1.5 text-sm">Sign in to your admin account to continue.</p>
+    </div>
+    <form id="lform" class="space-y-5" onsubmit="doLogin(event)" novalidate>
+      <div>
+        <label class="block text-sm font-semibold text-on-surface mb-1.5" for="lemail">Email or Username</label>
+        <div class="input-wrap">
+          <span class="ico material-symbols-outlined iico" id="mail-icon">person</span>
+          <input type="text" id="lemail" class="form-input" placeholder="admin@qurtaba.edu.pk or username" oninput="checkInputIcon(this, 'mail-icon')"/>
+        </div>
+        <p class="err-msg" id="eem">Please enter your email address or username.</p>
+      </div>
+      <div>
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-sm font-semibold text-on-surface" for="lpass">Password</label>
+          <a href="#" onclick="openFP(event)" class="text-sm text-primary font-medium hover:underline">Forgot password?</a>
+        </div>
+        <div class="input-wrap">
+          <span class="ico material-symbols-outlined iico" id="lock-icon">lock</span>
+          <input type="password" id="lpass" class="form-input" placeholder="Enter your password" style="padding-right:44px" oninput="checkInputIcon(this, 'lock-icon')"/>
+          <span class="material-symbols-outlined itgl" id="ptgl" onclick="tglPass()">visibility_off</span>
+        </div>
+        <p class="err-msg" id="pem">Password must be at least 6 characters.</p>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <input type="checkbox" id="remme" class="w-4 h-4 rounded cursor-pointer" style="accent-color:#3525cd"/>
+        <label for="remme" class="text-sm text-on-surface-variant cursor-pointer">Remember me for 30 days</label>
+      </div>
+      <!-- Quick Demo Login -->
+      <div class="p-3.5 rounded-xl border border-primary/20 bg-primary/5 text-sm space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-primary flex items-center gap-1">
+            <span class="material-symbols-outlined text-[18px]">verified_user</span>
+            Quick Admin Login
+          </span>
+          <button type="button" onclick="fillQuickLogin()" class="text-xs text-primary font-semibold hover:underline">Auto-Fill</button>
+        </div>
+        <div class="text-xs text-on-surface-variant flex justify-between gap-2">
+          <span>Email: <code class="bg-white/80 px-1 py-0.5 rounded font-mono">admin@qurtaba.edu.pk</code></span>
+          <span>Password: <code class="bg-white/80 px-1.5 py-0.5 rounded font-mono">admin123</code></span>
+        </div>
+      </div>
+      <button type="submit" id="lbtn" class="btn-main w-full text-white font-semibold py-3.5 rounded-xl text-sm flex items-center justify-center gap-2">
+        <span id="lbtxt">Sign In to Dashboard</span>
+        <div class="spinner hidden" id="lspin"></div>
+      </button>
+      <div class="flex items-center gap-3">
+        <div class="flex-1 h-px bg-outline-variant/40"></div>
+        <span class="text-xs text-on-surface-variant font-medium">or</span>
+        <div class="flex-1 h-px bg-outline-variant/40"></div>
+      </div>
+      <button type="button" class="g-btn w-full py-3 rounded-xl text-sm font-semibold text-on-surface flex items-center justify-center gap-2 bg-white">
+        <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+    </form>
+    <p class="text-center text-sm text-on-surface-variant">Don't have an account? <a href="signup.html" class="text-primary font-semibold hover:underline">Create account</a></p>
+  </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div id="fp-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(0,0,0,.45);backdrop-filter:blur(4px)">
+  <div class="bg-white rounded-2xl p-8 w-full max-w-sm shadow-2xl space-y-5">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-bold text-on-surface">Reset Password</h3>
+      <button onclick="closeFP()" class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <p class="text-sm text-on-surface-variant">Enter your registered email and we'll send a reset link.</p>
+    <div class="input-wrap">
+      <span class="ico material-symbols-outlined iico">mail</span>
+      <input type="email" id="fp-email" class="form-input" placeholder="admin@qurtaba.edu.pk"/>
+    </div>
+    <button onclick="sendReset()" class="btn-main w-full text-white font-semibold py-3 rounded-xl text-sm">Send Reset Link</button>
+  </div>
+</div>
+
+<script>
+function checkInputIcon(inputEl, iconId) {
+    const icon = document.getElementById(iconId);
+    if (inputEl.value.length > 0) {
+        icon.style.display = 'none';
+        inputEl.style.paddingLeft = '12px';
+    } else {
+        icon.style.display = 'block';
+        inputEl.style.paddingLeft = '44px';
+    }
+}
+
+function fillQuickLogin() {
+    const em = document.getElementById('lemail');
+    const pw = document.getElementById('lpass');
+    em.value = 'admin@qurtaba.edu.pk';
+    pw.value = 'admin123';
+    checkInputIcon(em, 'mail-icon');
+    checkInputIcon(pw, 'lock-icon');
+}
+
+function tglPass(){const i=document.getElementById('lpass'),t=document.getElementById('ptgl');i.type=i.type==='password'?'text':'password';t.textContent=i.type==='password'?'visibility_off':'visibility';}
+function openFP(e){e.preventDefault();document.getElementById('fp-modal').classList.remove('hidden');}
+function closeFP(){document.getElementById('fp-modal').classList.add('hidden');}
+function sendReset(){closeFP();alert('Reset link sent to your email!');}
+async function doLogin(e){
+  e.preventDefault();
+  const em=document.getElementById('lemail'),pw=document.getElementById('lpass');
+  const eem=document.getElementById('eem'),pem=document.getElementById('pem');
+  let ok=true;
+  if(!em.value.trim()){em.classList.add('err');eem.classList.add('show');ok=false;}
+  else{em.classList.remove('err');eem.classList.remove('show');}
+  if(!pw.value||pw.value.length<6){pw.classList.add('err');pem.classList.add('show');ok=false;}
+  else{pw.classList.remove('err');pem.classList.remove('show');}
+  if(!ok)return;
+
+  const btn=document.getElementById('lbtn'),t=document.getElementById('lbtxt'),s=document.getElementById('lspin');
+  btn.disabled=true;t.textContent='Signing in...';s.classList.remove('hidden');
+
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: em.value, password: pw.value })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('qurtaba_token', data.token);
+      localStorage.setItem('qurtaba_user', JSON.stringify(data.user));
+      const role = data.user.role;
+      if (role === 'Super Admin' || role === 'Admin') {
+        window.location.href = 'dashboard.html';
+      } else if (role === 'Student') {
+        window.location.href = 'student-dashboard.html';
+      } else if (role === 'Teacher') {
+        window.location.href = 'teacher-dashboard.html';
+      } else if (role === 'Staff') {
+        window.location.href = 'staff-dashboard.html';
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    } else {
+      alert(data.message || 'Login failed');
+      btn.disabled = false; t.textContent = 'Sign In to Dashboard'; s.classList.add('hidden');
+    }
+  } catch (error) {
+    console.error(error);
+    alert('An error occurred connecting to the server. Please check your network and try again.');
+    btn.disabled = false; t.textContent = 'Sign In to Dashboard'; s.classList.add('hidden');
+  }
+}
+</script>
+</body>
+</html>

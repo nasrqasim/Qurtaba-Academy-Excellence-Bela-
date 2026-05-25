@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Add New Notification - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        headline: ["Inter"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Add Notification" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="max-w-4xl mx-auto">
+                <!-- Breadcrumbs -->
+                <nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-6">
+                    <a href="dashboard.html" class="hover:text-primary transition-colors">Dashboard</a>
+                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    <a href="notifications.html" class="hover:text-primary transition-colors">Notifications</a>
+                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    <span class="text-on-surface font-semibold">Add New Notification</span>
+                </nav>
+
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-2xl font-headline font-bold text-on-surface">Send New Notification</h2>
+                        <p class="text-on-surface-variant mt-1 text-sm">Create and broadcast alerts to students, parents, or staff.</p>
+                    </div>
+                </div>
+
+                <div class="card p-8">
+                    <form id="notificationForm" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Notification Title -->
+                            <div class="md:col-span-2 space-y-2">
+                                <label class="text-sm font-bold text-on-surface">Notification Title <span class="text-error">*</span></label>
+                                <input type="text" name="title" placeholder="e.g. Winter Vacation Announcement" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required/>
+                            </div>
+
+                            <!-- Message -->
+                            <div class="md:col-span-2 space-y-2">
+                                <label class="text-sm font-bold text-on-surface">Message <span class="text-error">*</span></label>
+                                <textarea name="message" rows="5" placeholder="Type your message here..." class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none" required></textarea>
+                            </div>
+
+                            <!-- Send To -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-on-surface">Send To <span class="text-error">*</span></label>
+                                <select name="sendTo" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required onchange="this.value === 'Specific Class' ? document.getElementById('class-selection-div').classList.remove('hidden') : document.getElementById('class-selection-div').classList.add('hidden')">
+                                    <option value="" disabled selected>Select Audience</option>
+                                    <option>All Students</option>
+                                    <option>All Parents</option>
+                                    <option>All Staff</option>
+                                    <option>Specific Class</option>
+                                </select>
+                            </div>
+
+                            <!-- Class Selection (Conditional) -->
+                            <div id="class-selection-div" class="space-y-2 hidden">
+                                <label class="text-sm font-bold text-on-surface">Class Selection <span class="text-error">*</span></label>
+                                <select id="targetClass" name="targetClass" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                                    <option value="" disabled selected>Select Class</option>
+                                    <option>Grade 9</option>
+                                    <option>Grade 10</option>
+                                    <option>Grade 11</option>
+                                    <option>Grade 12</option>
+                                </select>
+                            </div>
+
+                            <!-- Date -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-on-surface">Date <span class="text-error">*</span></label>
+                                <input type="date" name="date" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required/>
+                            </div>
+
+                            <!-- Priority -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-on-surface">Priority <span class="text-error">*</span></label>
+                                <select name="priority" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required>
+                                    <option>Normal</option>
+                                    <option>High</option>
+                                    <option>Urgent</option>
+                                </select>
+                            </div>
+
+                            <!-- Attachment Upload -->
+                            <div class="md:col-span-2 space-y-2">
+                                <label class="text-sm font-bold text-on-surface">Attachment (Optional)</label>
+                                <input type="file" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all bg-white"/>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex items-center justify-end gap-4 pt-6 border-t border-outline-variant/20">
+                            <button type="button" class="btn-secondary px-8" onclick="window.location='notifications.html'">Cancel</button>
+                            <button type="submit" class="btn-primary px-8">Send Notification</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        async function loadClasses() {
+            try {
+                const res = await fetch('/api/classes');
+                const classes = await res.json();
+                const select = document.getElementById('targetClass');
+                if (classes.length > 0) {
+                    select.innerHTML = '<option value="" disabled selected>Select Class</option>' + 
+                        classes.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function handleNotification(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            const payload = {
+                title: data.title,
+                message: data.message,
+                type: data.priority === 'Normal' ? 'Info' : 'Alert',
+                targetGroup: data.sendTo === 'Specific Class' ? (data.targetClass || '') : data.sendTo,
+                priority: data.priority !== 'Normal',
+                date: data.date
+            };
+
+            try {
+                const res = await fetch('/api/notifications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    alert('Notification sent!');
+                    window.location.href = 'notifications.html';
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Failed to send notification');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Send Notification';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadClasses();
+            document.getElementById('notificationForm').addEventListener('submit', handleNotification);
+        });
+    </script>

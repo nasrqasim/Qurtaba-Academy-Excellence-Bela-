@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Enter Results - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Result Entry" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Mark Sheet Entry</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Enter student marks for <span class="text-primary font-bold">Mid-Term: Mathematics (Class 10-A)</span></p>
+                </div>
+                <div class="flex gap-4">
+                    <button class="btn-secondary">
+                        <span class="material-symbols-outlined text-[18px]">upload</span>
+                        Import CSV
+                    </button>
+                    <button class="btn-primary">
+                        <span class="material-symbols-outlined text-[18px]">save</span>
+                        Save Draft
+                    </button>
+                </div>
+            </div>
+
+            <div class="card p-5 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-on-surface-variant uppercase">Examination</label>
+                        <select class="input-field py-1.5 text-sm" id="exam-select">
+                            <option value="">Select Examination</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-on-surface-variant uppercase">Class / Section</label>
+                        <select class="input-field py-1.5 text-sm" id="class-select">
+                            <option value="">Select Class</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-on-surface-variant uppercase">Student</label>
+                        <select class="input-field py-1.5 text-sm" id="student-select" disabled>
+                            <option value="">Select Class First</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Subject Selection Panel -->
+                <div class="card p-6 lg:col-span-1">
+                    <h3 class="font-bold text-on-surface mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">menu_book</span>
+                        Select Subjects
+                    </h3>
+                    <p class="text-xs text-on-surface-variant mb-4">Choose the subjects included in this student's exam term.</p>
+                    <div id="subjects-container" class="space-y-2.5 max-h-[300px] overflow-y-auto pr-2">
+                        <p class="text-xs text-on-surface-variant italic">Select a student context first...</p>
+                    </div>
+                </div>
+
+                <!-- Marks Entry Panel -->
+                <div class="card overflow-hidden lg:col-span-2">
+                    <div class="card-header bg-surface-container-low/20 flex justify-between items-center">
+                        <h3 class="font-bold text-on-surface flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">edit_note</span>
+                            Enter Marks
+                        </h3>
+                        <div class="text-right">
+                            <span class="text-xs font-bold text-on-surface-variant" id="overall-summary">Overall: 0/0 (0%)</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th class="text-left">Subject</th>
+                                    <th class="text-center w-32">Total Marks</th>
+                                    <th class="text-center w-32">Obtained Marks</th>
+                                    <th class="text-center w-24">Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm" id="marks-tbody">
+                                <tr>
+                                    <td colspan="4" class="text-center py-6 text-on-surface-variant">Select subjects from the left panel to enter marks.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="p-6 bg-surface-container-low/10 border-t border-outline-variant/20 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                            <div class="space-y-1.5 md:col-span-2">
+                                <label class="text-[10px] font-bold text-on-surface-variant uppercase">Overall Remarks</label>
+                                <input type="text" id="overall-remarks" class="input-field py-1.5 text-sm" placeholder="e.g. Outstanding performance across all subjects!"/>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-bold text-on-surface-variant uppercase">Overall Grade</label>
+                                <input type="text" id="overall-grade" class="input-field py-1.5 text-sm font-bold text-center bg-surface-container" readonly value="F"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-header bg-surface-container-low/20 flex justify-end p-4 gap-3">
+                        <button onclick="window.history.back()" class="btn-secondary px-6 py-2.5">Discard</button>
+                        <button onclick="saveResults()" class="btn-primary px-8 py-2.5 shadow-lg shadow-primary/20">Save Complete Result</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        let examId = urlParams.get('examId');
+        let classLabel = urlParams.get('class');
+        let studentId = urlParams.get('studentId');
+
+        let allStudents = [];
+        let allSubjects = [];
+        let selectedSubjectsData = []; // [{ name, total, obtained, grade }]
+        let existingResultId = null;
+
+        function calculateLetterGrade(pct) {
+            if (pct >= 90) return 'A+';
+            if (pct >= 80) return 'A';
+            if (pct >= 70) return 'B';
+            if (pct >= 60) return 'C';
+            if (pct >= 50) return 'D';
+            return 'F';
+        }
+
+        async function loadDropdowns() {
+            try {
+                // Load Exams
+                const examRes = await fetch('/api/exams');
+                const exams = await examRes.json();
+                const examSelect = document.getElementById('exam-select');
+                exams.forEach(e => {
+                    const opt = document.createElement('option');
+                    opt.value = e._id;
+                    opt.textContent = `${e.name}`;
+                    if (e._id === examId) opt.selected = true;
+                    examSelect.appendChild(opt);
+                });
+
+                // Load Classes
+                const classRes = await fetch('/api/classes');
+                const classes = await classRes.json();
+                const classSelect = document.getElementById('class-select');
+                classes.forEach(c => {
+                    const opt = document.createElement('option');
+                    const val = `${c.name}-${c.section}`;
+                    opt.value = val;
+                    opt.textContent = val;
+                    if (val === classLabel) opt.selected = true;
+                    classSelect.appendChild(opt);
+                });
+
+                // Set listeners
+                examSelect.addEventListener('change', () => {
+                    examId = examSelect.value;
+                    checkLoadContext();
+                });
+                classSelect.addEventListener('change', () => {
+                    classLabel = classSelect.value;
+                    loadStudentsForClass();
+                });
+
+                // Initial loads if query params exist
+                if (classLabel) {
+                    await loadStudentsForClass();
+                }
+            } catch (e) {
+                console.error('Error loading dropdowns:', e);
+            }
+        }
+
+        async function loadStudentsForClass() {
+            const studentSelect = document.getElementById('student-select');
+            studentSelect.disabled = true;
+            studentSelect.innerHTML = '<option value="">Loading students...</option>';
+
+            if (!classLabel) {
+                studentSelect.innerHTML = '<option value="">Select Class First</option>';
+                return;
+            }
+
+            try {
+                const [className, section] = classLabel.split('-');
+                const studentsRes = await fetch(`/api/students?class=${className}&section=${section}`);
+                allStudents = await studentsRes.json();
+
+                if (allStudents.length === 0) {
+                    studentSelect.innerHTML = '<option value="">No students in this class</option>';
+                    return;
+                }
+
+                studentSelect.innerHTML = '<option value="">Select Student</option>' +
+                    allStudents.map(s => `<option value="${s._id}" ${s._id === studentId ? 'selected' : ''}>${s.fullName} (${s.admissionNumber || 'N/A'})</option>`).join('');
+                studentSelect.disabled = false;
+
+                studentSelect.addEventListener('change', (e) => {
+                    studentId = e.target.value;
+                    checkLoadContext();
+                });
+
+                if (studentId) {
+                    checkLoadContext();
+                }
+            } catch (e) {
+                console.error('Error loading students:', e);
+            }
+        }
+
+        async function checkLoadContext() {
+            const subjectsContainer = document.getElementById('subjects-container');
+            const tbody = document.getElementById('marks-tbody');
+
+            if (!examId || !classLabel || !studentId) {
+                subjectsContainer.innerHTML = '<p class="text-xs text-on-surface-variant italic">Select exam, class, and student above...</p>';
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-on-surface-variant">Select context above to enter marks.</td></tr>';
+                return;
+            }
+
+            try {
+                // Fetch all subjects
+                const subRes = await fetch('/api/subjects');
+                allSubjects = await subRes.json();
+
+                // Fetch any existing results for this student and exam
+                const resultsRes = await fetch(`/api/results?examId=${examId}&studentId=${studentId}`);
+                const existingResults = await resultsRes.json();
+                
+                existingResultId = null;
+                selectedSubjectsData = [];
+                let existingRemarks = '';
+
+                if (existingResults && existingResults.length > 0) {
+                    const resDoc = existingResults[0];
+                    existingResultId = resDoc._id;
+                    existingRemarks = resDoc.remarks || '';
+                    if (resDoc.subjects && resDoc.subjects.length > 0) {
+                        selectedSubjectsData = resDoc.subjects;
+                    }
+                }
+
+                document.getElementById('overall-remarks').value = existingRemarks;
+
+                // Render subject checkboxes
+                renderSubjectsList();
+                renderMarksTable();
+            } catch (e) {
+                console.error('Error loading result context:', e);
+            }
+        }
+
+        function renderSubjectsList() {
+            const container = document.getElementById('subjects-container');
+            if (allSubjects.length === 0) {
+                container.innerHTML = '<p class="text-xs text-on-surface-variant italic">No subjects configured. Add some in Subjects menu.</p>';
+                return;
+            }
+
+            container.innerHTML = allSubjects.map(sub => {
+                const isChecked = selectedSubjectsData.some(s => s.name === sub.name);
+                return `
+                    <label class="flex items-center gap-3 p-2 hover:bg-surface-container rounded-lg cursor-pointer transition-colors text-xs font-bold text-on-surface">
+                        <input type="checkbox" class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4" 
+                            value="${sub.name}" ${isChecked ? 'checked' : ''} onchange="toggleSubject('${sub.name}', this.checked)"/>
+                        <span>${sub.name}</span>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        function toggleSubject(subName, checked) {
+            if (checked) {
+                // Add subject
+                if (!selectedSubjectsData.some(s => s.name === subName)) {
+                    selectedSubjectsData.push({
+                        name: subName,
+                        total: 100,
+                        obtained: 0,
+                        grade: 'F'
+                    });
+                }
+            } else {
+                // Remove subject
+                selectedSubjectsData = selectedSubjectsData.filter(s => s.name !== subName);
+            }
+            renderMarksTable();
+        }
+
+        function renderMarksTable() {
+            const tbody = document.getElementById('marks-tbody');
+            
+            if (selectedSubjectsData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-on-surface-variant">Select subjects from the left panel to enter marks.</td></tr>';
+                updateOverallSummary(0, 0);
+                return;
+            }
+
+            tbody.innerHTML = selectedSubjectsData.map((sub, idx) => {
+                return `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="font-bold text-xs text-on-surface pl-4">${sub.name}</td>
+                        <td class="text-center">
+                            <input type="number" class="input-field py-1.5 w-24 text-center font-bold text-xs" 
+                                value="${sub.total || 100}" oninput="updateSubjectTotal(${idx}, this.value)"/>
+                        </td>
+                        <td class="text-center">
+                            <input type="number" class="input-field py-1.5 w-24 text-center font-black text-xs text-primary" 
+                                value="${sub.obtained || 0}" oninput="updateSubjectObtained(${idx}, this.value)"/>
+                        </td>
+                        <td class="text-center font-black text-xs">
+                            <span id="grade-badge-${idx}" class="px-2.5 py-1 rounded bg-surface-container text-on-surface-variant">${sub.grade || 'F'}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            recalculateOverall();
+        }
+
+        function updateSubjectTotal(idx, val) {
+            selectedSubjectsData[idx].total = parseFloat(val) || 0;
+            recalculateOverall();
+        }
+
+        function updateSubjectObtained(idx, val) {
+            const sub = selectedSubjectsData[idx];
+            sub.obtained = parseFloat(val) || 0;
+            
+            const pct = sub.total > 0 ? Math.round((sub.obtained / sub.total) * 100) : 0;
+            sub.grade = calculateLetterGrade(pct);
+
+            const badge = document.getElementById(`grade-badge-${idx}`);
+            if (badge) {
+                badge.textContent = sub.grade;
+                if (sub.grade === 'F') {
+                    badge.className = 'px-2.5 py-1 rounded bg-rose-100 text-rose-700 font-bold';
+                } else {
+                    badge.className = 'px-2.5 py-1 rounded bg-emerald-100 text-emerald-700 font-bold';
+                }
+            }
+
+            recalculateOverall();
+        }
+
+        function recalculateOverall() {
+            let totalObtained = 0;
+            let totalMax = 0;
+
+            selectedSubjectsData.forEach(sub => {
+                totalObtained += sub.obtained || 0;
+                totalMax += sub.total || 100;
+            });
+
+            updateOverallSummary(totalObtained, totalMax);
+        }
+
+        function updateOverallSummary(obtained, max) {
+            const pct = max > 0 ? Math.round((obtained / max) * 100) : 0;
+            const overallGrade = calculateLetterGrade(pct);
+
+            document.getElementById('overall-summary').textContent = `Overall: ${obtained}/${max} (${pct}%)`;
+            document.getElementById('overall-grade').value = overallGrade;
+        }
+
+        async function saveResults() {
+            if (!examId || !classLabel || !studentId) {
+                alert('Please select Exam, Class, and Student first!');
+                return;
+            }
+
+            if (selectedSubjectsData.length === 0) {
+                alert('Please select at least one subject to publish a complete result.');
+                return;
+            }
+
+            let totalObtained = 0;
+            let totalMax = 0;
+
+            selectedSubjectsData.forEach(sub => {
+                totalObtained += sub.obtained || 0;
+                totalMax += sub.total || 0;
+            });
+
+            const pct = totalMax > 0 ? Math.round((totalObtained / totalMax) * 100) : 0;
+            const overallGrade = calculateLetterGrade(pct);
+            const overallRemarks = document.getElementById('overall-remarks').value;
+
+            const payload = {
+                studentId,
+                examId,
+                subjects: selectedSubjectsData,
+                marks: totalObtained,
+                totalMarks: totalMax,
+                grade: overallGrade,
+                remarks: overallRemarks
+            };
+
+            try {
+                const url = existingResultId ? `/api/results/${existingResultId}` : '/api/results';
+                const method = existingResultId ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    alert('Complete student result published successfully!');
+                    window.location.href = `results.html?examId=${examId}&class=${classLabel}`;
+                } else {
+                    const err = await res.json();
+                    alert(err.message || 'Failed to save results.');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('An error occurred while saving the complete result.');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadDropdowns();
+        });
+    </script>
+</body>
+</html>

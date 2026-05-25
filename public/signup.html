@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Create Account – Qurtaba School of Excellence Bela</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary":"#3525cd","on-primary":"#ffffff","surface":"#fcf8ff","surface-container":"#f0ecf9","surface-container-low":"#f5f2ff","surface-container-lowest":"#ffffff","surface-container-high":"#eae6f4","surface-variant":"#e4e1ee","on-surface":"#1b1b24","on-surface-variant":"#464555","background":"#fcf8ff","outline":"#777587","outline-variant":"#c7c4d8","error":"#ba1a1a"},fontFamily:{body:["Inter","sans-serif"],headline:["Inter","sans-serif"]}}}}
+</script>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.auth-left{background:linear-gradient(135deg,#7c3aed 0%,#4f46e5 50%,#3525cd 100%);}
+.float-blob{position:absolute;border-radius:50%;background:rgba(255,255,255,.07);animation:flt 7s ease-in-out infinite;}
+@keyframes flt{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-18px) rotate(4deg)}}
+input.form-input{width:100%;padding:12px 12px 12px 44px;border:1.5px solid #c7c4d8;border-radius:10px;font-size:14px;color:#1b1b24;background:#fff;transition:.2s;outline:none;}
+input.form-input:focus{border-color:#3525cd;box-shadow:0 0 0 3px rgba(53,37,205,.12);}
+input.form-input.err{border-color:#ba1a1a;box-shadow:0 0 0 3px rgba(186,26,26,.1);}
+.no-icon{padding-left:14px;}
+.input-wrap{position:relative;}
+.iico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#777587;font-size:20px;pointer-events:none;}
+.itgl{position:absolute;right:13px;top:50%;transform:translateY(-50%);cursor:pointer;color:#777587;font-size:20px;}
+.err-msg{color:#ba1a1a;font-size:12px;margin-top:4px;display:none;}
+.err-msg.show{display:block;}
+.btn-main{background:linear-gradient(135deg,#3525cd,#4f46e5);box-shadow:0 4px 14px rgba(53,37,205,.35);transition:.25s;}
+.btn-main:hover{box-shadow:0 6px 20px rgba(53,37,205,.45);transform:translateY(-1px);}
+.strength-bar{height:4px;border-radius:2px;transition:width .3s,background .3s;}
+.role-option{border:1.5px solid #c7c4d8;border-radius:10px;padding:12px;cursor:pointer;transition:.2s;}
+.role-option:hover{border-color:#3525cd;background:#f5f2ff;}
+.role-option.selected{border-color:#3525cd;background:#e2dfff;}
+</style>
+</head>
+<body class="min-h-screen flex font-body" style="background:#f5f2ff">
+
+<!-- Left panel -->
+<div class="auth-left hidden lg:flex flex-col justify-between p-12 w-[44%] shrink-0 relative overflow-hidden">
+  <div class="float-blob w-72 h-72 -top-16 -left-20" style="animation-delay:0s"></div>
+  <div class="float-blob w-44 h-44 bottom-20 right-8" style="animation-delay:3s"></div>
+  <div class="relative z-10 flex items-center gap-3">
+    <img src="logo.jpg" alt="Logo" class="w-12 h-12 object-contain bg-white/20 rounded-xl p-1"/>
+    <span class="text-white font-bold text-xl">Qurtaba School of Excellence Bela</span>
+  </div>
+  <div class="relative z-10 space-y-5 max-w-xs">
+    <div class="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center">
+      <span class="material-symbols-outlined text-white text-3xl">person_add</span>
+    </div>
+    <h2 class="text-3xl font-bold text-white leading-snug">Join Qurtaba<br/>Public School Today</h2>
+    <p class="text-white/70 text-sm leading-relaxed">Set up your institution's digital hub in minutes. Complete control over every aspect of school management.</p>
+    <div class="space-y-3 pt-2">
+      <div class="flex items-center gap-3 text-white/80 text-sm"><div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[18px]">rocket_launch</span></div><span>Get started in under 5 minutes</span></div>
+      <div class="flex items-center gap-3 text-white/80 text-sm"><div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[18px]">support_agent</span></div><span>24/7 dedicated support team</span></div>
+      <div class="flex items-center gap-3 text-white/80 text-sm"><div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[18px]">lock</span></div><span>Your data is always safe & private</span></div>
+    </div>
+  </div>
+  <div class="relative z-10 text-white/40 text-sm">© 2024 Qurtaba School of Excellence Bela</div>
+</div>
+
+<!-- Right form panel -->
+<div class="flex-1 flex items-center justify-center p-6 sm:p-10 overflow-y-auto relative">
+  <!-- Back to Home -->
+  <a href="index.html" class="absolute top-6 right-6 flex items-center gap-1.5 text-sm font-bold text-on-surface-variant hover:text-primary transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    Back to Website
+  </a>
+  <div class="w-full max-w-md space-y-6 py-4">
+    <div class="lg:hidden flex items-center gap-3 mb-2">
+      <img src="logo.jpg" alt="Logo" class="w-10 h-10 object-contain"/>
+      <span class="text-primary font-bold text-lg">Qurtaba School of Excellence Bela</span>
+    </div>
+    <div>
+      <h1 class="text-2xl font-headline font-black text-on-surface tracking-tight">Create your account</h1>
+      <p class="text-on-surface-variant mt-1.5 text-sm">Fill in your details to get started with Qurtaba School of Excellence Bela.</p>
+    </div>
+
+    <!-- Role selection -->
+    <div>
+      <p class="text-sm font-semibold text-on-surface mb-3">I am a...</p>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="role-option selected text-center" onclick="selectRole(this,'Admin')">
+          <span class="material-symbols-outlined text-primary text-2xl">admin_panel_settings</span>
+          <p class="text-xs font-semibold text-on-surface mt-1">Admin</p>
+        </div>
+        <div class="role-option text-center" onclick="selectRole(this,'Teacher')">
+          <span class="material-symbols-outlined text-on-surface-variant text-2xl">school</span>
+          <p class="text-xs font-semibold text-on-surface mt-1">Teacher</p>
+        </div>
+        <div class="role-option text-center" onclick="selectRole(this,'Staff')">
+          <span class="material-symbols-outlined text-on-surface-variant text-2xl">badge</span>
+          <p class="text-xs font-semibold text-on-surface mt-1">Staff</p>
+        </div>
+      </div>
+    </div>
+
+    <form id="sform" class="space-y-4" onsubmit="doSignup(event)" novalidate>
+      <!-- Name row -->
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm font-semibold text-on-surface mb-1.5">First Name</label>
+          <input type="text" id="sfname" class="form-input no-icon" placeholder="Ahmad" style="padding-left:14px"/>
+          <p class="err-msg" id="fnem">Required</p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-on-surface mb-1.5">Last Name</label>
+          <input type="text" id="slname" class="form-input no-icon" placeholder="Khan" style="padding-left:14px"/>
+          <p class="err-msg" id="lnem">Required</p>
+        </div>
+      </div>
+      <!-- Email -->
+      <div>
+        <label class="block text-sm font-semibold text-on-surface mb-1.5">Email Address</label>
+        <div class="input-wrap">
+          <span class="material-symbols-outlined iico">mail</span>
+          <input type="email" id="semail" class="form-input" placeholder="you@qurtaba.edu.pk"/>
+        </div>
+        <p class="err-msg" id="seem">Enter a valid email address.</p>
+      </div>
+      <!-- Phone -->
+      <div>
+        <label class="block text-sm font-semibold text-on-surface mb-1.5">Phone Number</label>
+        <div class="input-wrap">
+          <span class="material-symbols-outlined iico">phone</span>
+          <input type="tel" id="sphone" class="form-input" placeholder="+92 300 0000000"/>
+        </div>
+      </div>
+      <!-- Password -->
+      <div>
+        <label class="block text-sm font-semibold text-on-surface mb-1.5">Password</label>
+        <div class="input-wrap">
+          <span class="material-symbols-outlined iico">lock</span>
+          <input type="password" id="spass" class="form-input" placeholder="Create a strong password" style="padding-right:44px" oninput="checkStrength(this.value)"/>
+          <span class="material-symbols-outlined itgl" id="sptgl" onclick="tglPass('spass','sptgl')">visibility_off</span>
+        </div>
+        <!-- Strength bar -->
+        <div class="mt-2 space-y-1">
+          <div class="flex gap-1.5">
+            <div class="strength-bar flex-1 bg-outline-variant/30" id="sb1"></div>
+            <div class="strength-bar flex-1 bg-outline-variant/30" id="sb2"></div>
+            <div class="strength-bar flex-1 bg-outline-variant/30" id="sb3"></div>
+            <div class="strength-bar flex-1 bg-outline-variant/30" id="sb4"></div>
+          </div>
+          <p class="text-xs text-on-surface-variant" id="stxt">Use 8+ characters with numbers & symbols</p>
+        </div>
+        <p class="err-msg" id="spem">Password must be at least 8 characters.</p>
+      </div>
+      <!-- Confirm Password -->
+      <div>
+        <label class="block text-sm font-semibold text-on-surface mb-1.5">Confirm Password</label>
+        <div class="input-wrap">
+          <span class="material-symbols-outlined iico">lock_reset</span>
+          <input type="password" id="scpass" class="form-input" placeholder="Repeat your password" style="padding-right:44px"/>
+          <span class="material-symbols-outlined itgl" id="sctgl" onclick="tglPass('scpass','sctgl')">visibility_off</span>
+        </div>
+        <p class="err-msg" id="scpem">Passwords do not match.</p>
+      </div>
+      <!-- Terms -->
+      <div class="flex items-start gap-2.5">
+        <input type="checkbox" id="terms" class="w-4 h-4 mt-0.5 rounded cursor-pointer shrink-0" style="accent-color:#3525cd"/>
+        <label for="terms" class="text-sm text-on-surface-variant cursor-pointer">I agree to the <a href="#" class="text-primary font-medium hover:underline">Terms of Service</a> and <a href="#" class="text-primary font-medium hover:underline">Privacy Policy</a></label>
+      </div>
+      <p class="err-msg" id="term-err">You must accept the terms to continue.</p>
+      <button type="submit" id="sbtn" class="btn-main w-full text-white font-semibold py-3.5 rounded-xl text-sm flex items-center justify-center gap-2">
+        <span id="sbtxt">Create Account</span>
+        <div class="spinner hidden" id="sspin"></div>
+      </button>
+    </form>
+    <p class="text-center text-sm text-on-surface-variant">Already have an account? <a href="login.html" class="text-primary font-semibold hover:underline">Sign in</a></p>
+  </div>
+</div>
+
+<script>
+function tglPass(id,tid){const i=document.getElementById(id),t=document.getElementById(tid);i.type=i.type==='password'?'text':'password';t.textContent=i.type==='password'?'visibility_off':'visibility';}
+function checkStrength(v){
+  const bars=[1,2,3,4].map(i=>document.getElementById('sb'+i));
+  const txt=document.getElementById('stxt');
+  let s=0;
+  if(v.length>=8)s++;
+  if(/[A-Z]/.test(v)&&/[a-z]/.test(v))s++;
+  if(/[0-9]/.test(v))s++;
+  if(/[^A-Za-z0-9]/.test(v))s++;
+  const colors=['#ba1a1a','#f59e0b','#3b82f6','#10b981'];
+  const labels=['Weak','Fair','Good','Strong'];
+  bars.forEach((b,i)=>{b.style.background=i<s?colors[s-1]:'#e4e1ee';});
+  txt.textContent=s===0?'Use 8+ characters with numbers & symbols':(labels[s-1]+' password');
+  txt.style.color=s>0?colors[s-1]:'#464555';
+}
+
+let selectedRole = 'Admin';
+function selectRole(el,role){
+  document.querySelectorAll('.role-option').forEach(r=>r.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedRole = role;
+}
+
+async function doSignup(e){
+  e.preventDefault();
+  let ok=true;
+  const fn=document.getElementById('sfname'),ln=document.getElementById('slname');
+  const em=document.getElementById('semail'),pw=document.getElementById('spass'),cpw=document.getElementById('scpass');
+  const tc=document.getElementById('terms');
+  if(!fn.value){fn.classList.add('err');document.getElementById('fnem').classList.add('show');ok=false;}
+  else{fn.classList.remove('err');document.getElementById('fnem').classList.remove('show');}
+  if(!ln.value){ln.classList.add('err');document.getElementById('lnem').classList.add('show');ok=false;}
+  else{ln.classList.remove('err');document.getElementById('lnem').classList.remove('show');}
+  if(!em.value||!/\S+@\S+\.\S+/.test(em.value)){em.classList.add('err');document.getElementById('seem').classList.add('show');ok=false;}
+  else{em.classList.remove('err');document.getElementById('seem').classList.remove('show');}
+  if(!pw.value||pw.value.length<8){pw.classList.add('err');document.getElementById('spem').classList.add('show');ok=false;}
+  else{pw.classList.remove('err');document.getElementById('spem').classList.remove('show');}
+  if(cpw.value!==pw.value){cpw.classList.add('err');document.getElementById('scpem').classList.add('show');ok=false;}
+  else{cpw.classList.remove('err');document.getElementById('scpem').classList.remove('show');}
+  if(!tc.checked){document.getElementById('term-err').classList.add('show');ok=false;}
+  else{document.getElementById('term-err').classList.remove('show');}
+  if(!ok)return;
+
+  const btn=document.getElementById('sbtn'),t=document.getElementById('sbtxt'),s=document.getElementById('sspin');
+  btn.disabled=true;t.textContent='Creating account...';s.classList.remove('hidden');
+
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        name: `${fn.value} ${ln.value}`, 
+        email: em.value, 
+        password: pw.value,
+        role: selectedRole
+      })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert('Account created! Please sign in.');
+      window.location.href = 'login.html';
+    } else {
+      alert(data.message || 'Signup failed');
+      btn.disabled = false; t.textContent = 'Create Account'; s.classList.add('hidden');
+    }
+  } catch (error) {
+    alert('An error occurred. Please try again.');
+    btn.disabled = false; t.textContent = 'Create Account'; s.classList.add('hidden');
+  }
+}
+</script>
+</body>
+</html>

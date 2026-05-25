@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Staff Dashboard – Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        headline: ["Inter"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Staff Portal" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface" id="welcome-title">Welcome back, Staff Member</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Review your tasks, manage school bulletins, post announcements, and check your salary logs.</p>
+                </div>
+                <div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800" id="staff-badge">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        Active Staff
+                    </span>
+                </div>
+            </div>
+
+            <!-- Tab Buttons Navigation -->
+            <div class="border-b border-outline-variant/30 mb-8 flex gap-2 overflow-x-auto">
+                <button onclick="switchTab('overview')" id="tab-btn-overview" class="tab-btn active px-4 py-2.5 font-semibold text-sm border-b-2 border-primary text-primary transition-all flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">dashboard</span> Overview
+                </button>
+                <button onclick="switchTab('announcements')" id="tab-btn-announcements" class="tab-btn px-4 py-2.5 font-semibold text-sm text-on-surface-variant hover:text-primary transition-all flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">campaign</span> Announcements
+                </button>
+                <button onclick="switchTab('attendance')" id="tab-btn-attendance" class="tab-btn px-4 py-2.5 font-semibold text-sm text-on-surface-variant hover:text-primary transition-all flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">how_to_reg</span> Attendance Mark
+                </button>
+                <button onclick="switchTab('grading')" id="tab-btn-grading" class="tab-btn px-4 py-2.5 font-semibold text-sm text-on-surface-variant hover:text-primary transition-all flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">quiz</span> Gradebook Sheet
+                </button>
+                <button onclick="switchTab('payroll')" id="tab-btn-payroll" class="tab-btn px-4 py-2.5 font-semibold text-sm text-on-surface-variant hover:text-primary transition-all flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">account_balance</span> Payroll & Salary
+                </button>
+            </div>
+
+            <!-- Tab Contents -->
+            <div id="tab-contents">
+
+                <!-- ================== Tab: Overview ================== -->
+                <div id="tab-overview" class="tab-pane space-y-6">
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="card p-6 flex items-center justify-between">
+                            <div>
+                                <p class="text-on-surface-variant text-sm font-medium mb-1">Your Salary Base</p>
+                                <h3 id="stat-salary-amount" class="text-3xl font-headline font-bold text-on-surface">₨ --</h3>
+                                <p class="text-xs text-on-surface-variant mt-1" id="stat-salary-desc">Active status</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[24px]">payments</span>
+                            </div>
+                        </div>
+                        <div class="card p-6 flex items-center justify-between">
+                            <div>
+                                <p class="text-on-surface-variant text-sm font-medium mb-1">Payments Received</p>
+                                <h3 id="stat-payroll-count" class="text-3xl font-headline font-bold text-on-surface">--</h3>
+                                <p class="text-xs text-on-surface-variant mt-1">Processed months</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[24px]">history</span>
+                            </div>
+                        </div>
+                        <div class="card p-6 flex items-center justify-between">
+                            <div>
+                                <p class="text-on-surface-variant text-sm font-medium mb-1">Active Announcements</p>
+                                <h3 id="stat-notif-count" class="text-3xl font-headline font-bold text-on-surface">--</h3>
+                                <p class="text-xs text-on-surface-variant mt-1">School-wide notices</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[24px]">campaign</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Profile Card -->
+                        <div class="card p-6 lg:col-span-1 flex flex-col items-center text-center space-y-4">
+                            <div class="w-24 h-24 rounded-full bg-primary/10 text-primary flex items-center justify-center border-4 border-outline-variant/30 overflow-hidden">
+                                <span class="material-symbols-outlined text-[48px]">support_agent</span>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-on-surface" id="profile-name">Staff Name</h4>
+                                <p class="text-xs text-on-surface-variant" id="profile-dept-designation">Department Designation</p>
+                            </div>
+                            <div class="w-full h-px bg-outline-variant/20 my-2"></div>
+                            <div class="w-full text-left space-y-2.5 text-sm">
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-medium">Employee ID:</span><span class="font-semibold text-on-surface" id="profile-emp-id">--</span></div>
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-medium">Joining Date:</span><span class="font-semibold text-on-surface" id="profile-joining">--</span></div>
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-medium">Phone:</span><span class="font-semibold text-on-surface" id="profile-phone">--</span></div>
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-medium">Email:</span><span class="font-semibold text-on-surface overflow-hidden truncate max-w-[150px]" id="profile-email">--</span></div>
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-medium">Work Status:</span><span class="font-semibold text-on-surface" id="profile-status">Active</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Class Attendance & Registrar Shortcuts Card -->
+                        <div class="card p-6 lg:col-span-2 space-y-4">
+                            <h4 class="text-md font-bold text-on-surface flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-[20px]">info</span>
+                                Administrative Support Portal
+                            </h4>
+                            <p class="text-sm text-on-surface-variant leading-relaxed">
+                                Welcome to the Qurtaba School of Excellence Bela Staff Portal. As part of our professional administration and school operations team, you have the permissions to post bulletins, check payroll pay slips, and aid in managing student attendance sheets or grader scores.
+                            </p>
+                            <div class="w-full h-px bg-outline-variant/10"></div>
+                            <h5 class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Quick Actions</h5>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <button onclick="switchTab('announcements')" class="flex items-center gap-3 p-3 bg-surface-container border border-outline-variant/20 rounded-xl hover:bg-primary/5 transition-all text-left">
+                                    <span class="material-symbols-outlined text-primary text-[20px]">campaign</span>
+                                    <div>
+                                        <p class="text-xs font-bold text-on-surface">Manage Announcements</p>
+                                        <p class="text-[10px] text-on-surface-variant">Post new school notices</p>
+                                    </div>
+                                </button>
+                                <button onclick="switchTab('attendance')" class="flex items-center gap-3 p-3 bg-surface-container border border-outline-variant/20 rounded-xl hover:bg-primary/5 transition-all text-left">
+                                    <span class="material-symbols-outlined text-indigo-600 text-[20px]">how_to_reg</span>
+                                    <div>
+                                        <p class="text-xs font-bold text-on-surface">Roster Roster</p>
+                                        <p class="text-[10px] text-on-surface-variant">Mark student attendance</p>
+                                    </div>
+                                </button>
+                                <button onclick="switchTab('grading')" class="flex items-center gap-3 p-3 bg-surface-container border border-outline-variant/20 rounded-xl hover:bg-primary/5 transition-all text-left">
+                                    <span class="material-symbols-outlined text-emerald-600 text-[20px]">quiz</span>
+                                    <div>
+                                        <p class="text-xs font-bold text-on-surface">Grading Marks</p>
+                                        <p class="text-[10px] text-on-surface-variant">Enter class test results</p>
+                                    </div>
+                                </button>
+                                <button onclick="switchTab('payroll')" class="flex items-center gap-3 p-3 bg-surface-container border border-outline-variant/20 rounded-xl hover:bg-primary/5 transition-all text-left">
+                                    <span class="material-symbols-outlined text-amber-600 text-[20px]">account_balance</span>
+                                    <div>
+                                        <p class="text-xs font-bold text-on-surface">Payroll History</p>
+                                        <p class="text-[10px] text-on-surface-variant">Review salary pay slips</p>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== Tab: Announcements ================== -->
+                <div id="tab-announcements" class="tab-pane hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Post Announcement Form -->
+                        <div class="card p-6 lg:col-span-1 space-y-4">
+                            <h4 class="text-lg font-bold text-on-surface">Post Announcement</h4>
+                            <form id="notice-form" onsubmit="submitNotice(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-on-surface-variant mb-1.5" for="ntc-title">Notice Title</label>
+                                    <input type="text" id="ntc-title" class="input-field" placeholder="e.g. Summer Vacation Notice" required/>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-on-surface-variant mb-1.5" for="ntc-type">Audience / Type</label>
+                                        <select id="ntc-type" class="input-field" required>
+                                            <option value="General">General</option>
+                                            <option value="Academic">Academic</option>
+                                            <option value="Exam">Exam</option>
+                                            <option value="Fee">Fee</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-on-surface-variant mb-1.5" for="ntc-date">Date</label>
+                                        <input type="date" id="ntc-date" class="input-field" required/>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-on-surface-variant mb-1.5" for="ntc-desc">Description</label>
+                                    <textarea id="ntc-desc" rows="4" class="input-field" placeholder="Notice bulletin details..." required></textarea>
+                                </div>
+                                <button type="submit" id="btn-save-ntc" class="btn-primary w-full flex justify-center py-3">
+                                    <span class="material-symbols-outlined text-[18px]">publish</span>
+                                    Publish Announcement
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Active Bulletins -->
+                        <div class="card p-6 lg:col-span-2 space-y-4">
+                            <h4 class="text-lg font-bold text-on-surface">School Bulletin List</h4>
+                            <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2" id="notices-list-container">
+                                <div class="text-center text-on-surface-variant py-4">Loading notifications...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== Tab: Mark Attendance ================== -->
+                <div id="tab-attendance" class="tab-pane hidden space-y-6">
+                    <div class="card p-6">
+                        <h4 class="text-lg font-bold text-on-surface mb-4">Mark Student Attendance</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end mb-6">
+                            <div>
+                                <label class="block text-xs font-bold text-on-surface-variant mb-1.5" for="att-class">Select Class</label>
+                                <select id="att-class" class="input-field"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-on-surface-variant mb-1.5" for="att-date">Select Date</label>
+                                <input type="date" id="att-date" class="input-field"/>
+                            </div>
+                            <button onclick="loadStudentsForAttendance()" class="btn-primary flex justify-center py-2.5 h-[42px] w-full">
+                                <span class="material-symbols-outlined text-[18px]">group</span>
+                                Load Students
+                            </button>
+                        </div>
+
+                        <!-- Roster Table -->
+                        <div class="overflow-x-auto hidden" id="att-table-container">
+                            <table class="data-table mb-4">
+                                <thead>
+                                    <tr>
+                                        <th>Roll / Admission</th>
+                                        <th>Student Name</th>
+                                        <th class="text-center">Status</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="att-roster-body"></tbody>
+                            </table>
+                            <div class="flex justify-end gap-3 mt-4">
+                                <button onclick="clearAttendanceRoster()" class="btn-secondary">Clear</button>
+                                <button onclick="submitAttendanceRoster()" id="btn-save-att" class="btn-primary">
+                                    <span class="material-symbols-outlined text-[18px]">save</span>
+                                    Save Roster
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== Tab: Gradebook Entry ================== -->
+                <div id="tab-grading" class="tab-pane hidden space-y-6">
+                    <div class="card p-6">
+                        <h4 class="text-lg font-bold text-on-surface mb-4">Enter Student Marks & Exams</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mb-6 border-b border-outline-variant/20 pb-6">
+                            <div>
+                                <label class="block text-xs font-bold text-on-surface-variant mb-1.5" for="res-class">Select Class</label>
+                                <select id="res-class" class="input-field"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-on-surface-variant mb-1.5" for="res-exam">Select Exam</label>
+                                <select id="res-exam" class="input-field"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-on-surface-variant mb-1.5" for="res-subject">Subject</label>
+                                <input type="text" id="res-subject" class="input-field" placeholder="e.g. Science"/>
+                            </div>
+                            <button onclick="loadStudentsForResults()" class="btn-primary flex justify-center py-2.5 h-[42px] w-full">
+                                <span class="material-symbols-outlined text-[18px]">edit_note</span>
+                                Load Grading Sheet
+                            </button>
+                        </div>
+
+                        <!-- Results Form Sheet -->
+                        <div class="overflow-x-auto hidden" id="res-table-container">
+                            <table class="data-table mb-4">
+                                <thead>
+                                    <tr>
+                                        <th>Admission No</th>
+                                        <th>Student Name</th>
+                                        <th>Total Marks</th>
+                                        <th>Obtained Marks</th>
+                                        <th>Remarks / Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="res-grading-body"></tbody>
+                            </table>
+                            <div class="flex justify-end gap-3 mt-4">
+                                <button onclick="clearGradingSheet()" class="btn-secondary">Clear</button>
+                                <button onclick="submitGradingSheet()" id="btn-save-res" class="btn-primary">
+                                    <span class="material-symbols-outlined text-[18px]">save</span>
+                                    Save Grading Sheet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== Tab: My Payroll History ================== -->
+                <div id="tab-payroll" class="tab-pane hidden space-y-6">
+                    <div class="card p-6">
+                        <div class="border-b border-outline-variant/20 pb-4 mb-4 flex justify-between items-center">
+                            <div>
+                                <h4 class="text-lg font-bold text-on-surface">Your Payroll Transactions</h4>
+                                <p class="text-xs text-on-surface-variant mt-1">Review pay slips, processed months, and bank ledger records.</p>
+                            </div>
+                            <div>
+                                <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">Status: Active Payroll</span>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice ID</th>
+                                        <th>Salary Month</th>
+                                        <th>Base Salary</th>
+                                        <th>Bonus / Allowances</th>
+                                        <th>Deductions</th>
+                                        <th>Net Paid</th>
+                                        <th>Paid Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payroll-history-body">
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4 text-on-surface-variant">Loading payroll sheets...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="shared.js"></script>
+    <script>
+        let currentTabId = 'overview';
+        let staffProfile = null;
+        let classesList = [];
+        let examsList = [];
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-b-2', 'border-primary', 'text-primary');
+                btn.classList.add('text-on-surface-variant');
+            });
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'border-b-2', 'border-primary', 'text-primary');
+                activeBtn.classList.remove('text-on-surface-variant');
+            }
+
+            const activePane = document.getElementById(`tab-${tabId}`);
+            if (activePane) activePane.classList.remove('hidden');
+
+            currentTabId = tabId;
+        }
+
+        async function initStaffDashboard() {
+            try {
+                const user = JSON.parse(localStorage.getItem('qurtaba_user'));
+                if (!user || user.role !== 'Staff') {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Set initial greeting
+                document.getElementById('welcome-title').textContent = `Welcome back, ${user.name}`;
+
+                // Fetch Staff Profile
+                const profileRes = await apiFetch(`/staff/${user.id}`);
+                if (profileRes) {
+                    staffProfile = profileRes;
+                    populateProfile(profileRes);
+
+                    // Load dropdown lists
+                    await loadClasses();
+                    await loadExams();
+
+                    // Load bulletins & payrolls
+                    fetchAnnouncements();
+                    fetchPayrollHistory();
+                }
+            } catch (e) {
+                console.error("Error loading staff dashboard", e);
+            }
+        }
+
+        function populateProfile(staff) {
+            document.getElementById('profile-name').textContent = staff.fullName || 'N/A';
+            document.getElementById('profile-dept-designation').textContent = `${staff.designation || 'N/A'} – ${staff.department || 'N/A'}`;
+            document.getElementById('profile-emp-id').textContent = staff.empId || 'N/A';
+            document.getElementById('profile-joining').textContent = staff.joiningDate ? new Date(staff.joiningDate).toLocaleDateString() : 'N/A';
+            document.getElementById('profile-phone').textContent = staff.phone || 'N/A';
+            document.getElementById('profile-email').textContent = staff.email || 'N/A';
+            document.getElementById('profile-status').textContent = staff.status || 'Active';
+
+            document.getElementById('stat-salary-amount').textContent = `₨ ${(staff.salary || 0).toLocaleString()}`;
+            document.getElementById('stat-salary-desc').textContent = `${staff.status || 'Active'} Payroll`;
+        }
+
+        async function loadClasses() {
+            const data = await apiFetch('/classes');
+            if (data && Array.isArray(data)) {
+                classesList = data;
+                const dps = ['att-class', 'res-class'];
+                dps.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.innerHTML = '<option value="">-- Choose Class --</option>' + 
+                            data.map(c => `<option value="${c.name}">${c.name} (${c.section || ''})</option>`).join('');
+                    }
+                });
+            }
+        }
+
+        async function loadExams() {
+            const data = await apiFetch('/exams');
+            if (data && Array.isArray(data)) {
+                examsList = data;
+                const el = document.getElementById('res-exam');
+                if (el) {
+                    el.innerHTML = '<option value="">-- Choose Exam Term --</option>' +
+                        data.map(e => `<option value="${e._id}">${e.name} (${e.term} - ${e.year})</option>`).join('');
+                }
+            }
+        }
+
+        // ================== ANNOUNCEMENTS SECTION ==================
+        async function fetchAnnouncements() {
+            const data = await apiFetch('/notifications');
+            if (data && Array.isArray(data)) {
+                document.getElementById('stat-notif-count').textContent = data.length;
+
+                const listContainer = document.getElementById('notices-list-container');
+                if (data.length > 0) {
+                    listContainer.innerHTML = data.map(item => `
+                        <div class="card p-5 space-y-2 hover:scale-[1.005] transition-all">
+                            <div class="flex justify-between items-center">
+                                <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary uppercase">${item.type || 'General'}</span>
+                                <span class="text-xs text-on-surface-variant font-medium">${item.date ? new Date(item.date).toLocaleDateString() : new Date(item.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            <h5 class="text-md font-bold text-on-surface">${item.title}</h5>
+                            <p class="text-sm text-on-surface-variant leading-relaxed">${item.description}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    listContainer.innerHTML = `<div class="text-center text-on-surface-variant py-4">No active notices posted in database.</div>`;
+                }
+            }
+        }
+
+        async function submitNotice(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-ntc');
+            btn.disabled = true;
+            btn.textContent = 'Publishing...';
+
+            const payload = {
+                title: document.getElementById('ntc-title').value,
+                type: document.getElementById('ntc-type').value,
+                date: document.getElementById('ntc-date').value,
+                description: document.getElementById('ntc-desc').value
+            };
+
+            try {
+                const res = await fetch('/api/notifications', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('qurtaba_token')}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    alert("Notice posted successfully!");
+                    document.getElementById('notice-form').reset();
+                    fetchAnnouncements();
+                } else {
+                    const err = await res.json();
+                    alert(err.message || "Failed to post notice.");
+                }
+            } catch (e) {
+                alert("Server error posting notice.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span class="material-symbols-outlined text-[18px]">publish</span> Publish Announcement`;
+            }
+        }
+
+        // ================== ATTENDANCE SECTION ==================
+        async function loadStudentsForAttendance() {
+            const cls = document.getElementById('att-class').value;
+            const date = document.getElementById('att-date').value;
+
+            if (!cls || !date) {
+                alert("Please select Class and Date first.");
+                return;
+            }
+
+            const tbody = document.getElementById('att-roster-body');
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-on-surface-variant">Loading student class list...</td></tr>`;
+            document.getElementById('att-table-container').classList.remove('hidden');
+
+            try {
+                const existing = await apiFetch(`/attendance?class=${encodeURIComponent(cls)}&date=${encodeURIComponent(date)}`);
+                const existingMap = {};
+                if (existing && existing.length > 0) {
+                    existing.forEach(rec => {
+                        existingMap[rec.studentId?._id || rec.studentId] = rec;
+                    });
+                }
+
+                const students = await apiFetch(`/students?class=${encodeURIComponent(cls)}&status=Active`);
+                if (students && students.length > 0) {
+                    tbody.innerHTML = students.map((std, index) => {
+                        const savedRecord = existingMap[std._id] || {};
+                        const status = savedRecord.status || 'Present';
+                        const remarks = savedRecord.remarks || '';
+
+                        return `
+                            <tr data-student-id="${std._id}">
+                                <td class="text-sm text-on-surface-variant">${std.admissionNumber || 'N/A'}</td>
+                                <td class="text-sm text-on-surface font-semibold">${std.fullName}</td>
+                                <td>
+                                    <div class="flex items-center justify-center gap-4">
+                                        <label class="inline-flex items-center gap-1 cursor-pointer">
+                                            <input type="radio" name="status-${index}" value="Present" ${status === 'Present' ? 'checked' : ''} class="w-4 h-4 rounded-full text-emerald-600 focus:ring-emerald-500" style="accent-color:#15803d"/>
+                                            <span class="text-xs font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">Present</span>
+                                        </label>
+                                        <label class="inline-flex items-center gap-1 cursor-pointer">
+                                            <input type="radio" name="status-${index}" value="Absent" ${status === 'Absent' ? 'checked' : ''} class="w-4 h-4 rounded-full text-red-600 focus:ring-red-500" style="accent-color:#ba1a1a"/>
+                                            <span class="text-xs font-semibold text-red-800 bg-red-50 px-2 py-0.5 rounded">Absent</span>
+                                        </label>
+                                        <label class="inline-flex items-center gap-1 cursor-pointer">
+                                            <input type="radio" name="status-${index}" value="Leave" ${status === 'Leave' ? 'checked' : ''} class="w-4 h-4 rounded-full text-amber-600 focus:ring-amber-500" style="accent-color:#a16207"/>
+                                            <span class="text-xs font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">Leave</span>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="text" value="${remarks}" placeholder="Remarks..." class="input-field py-1 text-xs max-w-[200px] att-remarks-field"/>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-on-surface-variant">No students found.</td></tr>`;
+                }
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-error">Failed to load student list.</td></tr>`;
+            }
+        }
+
+        function clearAttendanceRoster() {
+            document.getElementById('att-roster-body').innerHTML = '';
+            document.getElementById('att-table-container').classList.add('hidden');
+        }
+
+        async function submitAttendanceRoster() {
+            const cls = document.getElementById('att-class').value;
+            const date = document.getElementById('att-date').value;
+            const btn = document.getElementById('btn-save-att');
+
+            const rows = document.querySelectorAll('#att-roster-body tr');
+            if (rows.length === 0) return;
+
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            const payload = [];
+            rows.forEach((row, index) => {
+                const studentId = row.getAttribute('data-student-id');
+                const status = row.querySelector(`input[name="status-${index}"]:checked`).value;
+                const remarks = row.querySelector('.att-remarks-field').value;
+
+                payload.push({ studentId, class: cls, date, status, remarks });
+            });
+
+            try {
+                const res = await fetch('/api/attendance', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('qurtaba_token')}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    alert("Attendance marked successfully!");
+                    clearAttendanceRoster();
+                } else {
+                    const err = await res.json();
+                    alert(err.message || "Failed to save attendance.");
+                }
+            } catch (e) {
+                alert("Server error.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span class="material-symbols-outlined text-[18px]">save</span> Save Roster`;
+            }
+        }
+
+        // ================== GRADING SHEET SECTION ==================
+        async function loadStudentsForResults() {
+            const cls = document.getElementById('res-class').value;
+            const examId = document.getElementById('res-exam').value;
+            const sub = document.getElementById('res-subject').value;
+
+            if (!cls || !examId || !sub) {
+                alert("Please select Class, Exam, and Subject details first.");
+                return;
+            }
+
+            const tbody = document.getElementById('res-grading-body');
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-on-surface-variant">Loading student grade roster...</td></tr>`;
+            document.getElementById('res-table-container').classList.remove('hidden');
+
+            try {
+                const exam = examsList.find(e => e._id === examId);
+                const totalMarks = exam ? exam.totalMarks : 100;
+
+                const existing = await apiFetch(`/results?examId=${encodeURIComponent(examId)}`);
+                const existingMap = {};
+                if (existing && existing.length > 0) {
+                    existing.forEach(r => {
+                        existingMap[r.studentId?._id || r.studentId] = r;
+                    });
+                }
+
+                const students = await apiFetch(`/students?class=${encodeURIComponent(cls)}&status=Active`);
+                if (students && students.length > 0) {
+                    tbody.innerHTML = students.map((std, index) => {
+                        const savedRecord = existingMap[std._id] || {};
+                        const obtained = savedRecord.obtainedMarks !== undefined ? savedRecord.obtainedMarks : '';
+                        const remarks = savedRecord.remarks || '';
+
+                        return `
+                            <tr data-student-id="${std._id}">
+                                <td class="text-sm text-on-surface-variant">${std.admissionNumber || 'N/A'}</td>
+                                <td class="text-sm text-on-surface font-semibold">${std.fullName}</td>
+                                <td class="text-sm text-on-surface-variant font-bold">${totalMarks}</td>
+                                <td>
+                                    <input type="number" value="${obtained}" max="${totalMarks}" min="0" required placeholder="0" class="input-field py-1 text-xs max-w-[100px] res-obtained-field"/>
+                                </td>
+                                <td>
+                                    <input type="text" value="${remarks}" placeholder="Grading remarks..." class="input-field py-1 text-xs res-remarks-field"/>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-on-surface-variant">No active student records found.</td></tr>`;
+                }
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-error">Failed to load grade roster.</td></tr>`;
+            }
+        }
+
+        function clearGradingSheet() {
+            document.getElementById('res-grading-body').innerHTML = '';
+            document.getElementById('res-table-container').classList.add('hidden');
+        }
+
+        async function submitGradingSheet() {
+            const examId = document.getElementById('res-exam').value;
+            const sub = document.getElementById('res-subject').value;
+            const btn = document.getElementById('btn-save-res');
+
+            const rows = document.querySelectorAll('#res-grading-body tr');
+            if (rows.length === 0) return;
+
+            const exam = examsList.find(e => e._id === examId);
+            const totalMarks = exam ? exam.totalMarks : 100;
+
+            const payload = [];
+            let valid = true;
+
+            rows.forEach(row => {
+                const studentId = row.getAttribute('data-student-id');
+                const obtainedVal = row.querySelector('.res-obtained-field').value;
+                const remarks = row.querySelector('.res-remarks-field').value;
+
+                if (obtainedVal === '') {
+                    alert("Please enter obtained marks for each student.");
+                    valid = false;
+                    return;
+                }
+
+                const obtained = parseFloat(obtainedVal);
+                if (obtained < 0 || obtained > totalMarks) {
+                    alert(`Obtained marks must be between 0 and ${totalMarks}.`);
+                    valid = false;
+                    return;
+                }
+
+                payload.push({ studentId, examId, subject: sub, totalMarks, obtainedMarks: obtained, remarks });
+            });
+
+            if (!valid) return;
+
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            try {
+                const res = await fetch('/api/results', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('qurtaba_token')}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    alert("Grading Sheet saved successfully!");
+                    clearGradingSheet();
+                } else {
+                    const err = await res.json();
+                    alert(err.message || "Failed to save marks.");
+                }
+            } catch (e) {
+                alert("Server error.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span class="material-symbols-outlined text-[18px]">save</span> Save Grading Sheet`;
+            }
+        }
+
+        // ================== PAYROLL SECTION ==================
+        async function fetchPayrollHistory() {
+            const data = await apiFetch('/payroll/staff');
+            if (data && data.history) {
+                document.getElementById('stat-payroll-count').textContent = data.history.length;
+
+                const tbody = document.getElementById('payroll-history-body');
+                if (data.history.length > 0) {
+                    tbody.innerHTML = data.history.map(item => `
+                        <tr>
+                            <td class="text-sm text-on-surface font-semibold">${item.invoiceId || 'N/A'}</td>
+                            <td class="text-sm text-on-surface font-semibold text-primary">${item.month}</td>
+                            <td class="text-sm text-on-surface-variant">₨ ${(item.baseSalary || 0).toLocaleString()}</td>
+                            <td class="text-sm text-emerald-700 font-medium">+ ₨ ${(item.bonus || 0).toLocaleString()}</td>
+                            <td class="text-sm text-error font-medium">- ₨ ${(item.deductions || 0).toLocaleString()}</td>
+                            <td class="text-sm text-on-surface font-bold">₨ ${(item.netSalary || 0).toLocaleString()}</td>
+                            <td class="text-sm text-on-surface-variant font-medium">${item.paidDate ? new Date(item.paidDate).toLocaleDateString() : 'Pending'}</td>
+                            <td>
+                                <span class="px-2 py-0.5 rounded text-xs font-bold ${
+                                    item.status === 'Paid' ? 'badge-success' : 'badge-warning'
+                                }">${item.status}</span>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-on-surface-variant">No salary processed records found.</td></tr>`;
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', initStaffDashboard);
+    </script>
+</body>
+</html>

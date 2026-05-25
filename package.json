@@ -1,0 +1,39 @@
+{
+  "name": "qurtaba_school_erp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "db:verify": "node scripts/verify-atlas.mjs",
+    "db:migrate": "node scripts/migrate-local-to-atlas.mjs",
+    "db:seed": "node seed-admin.js",
+    "verify:prod": "node scripts/production-verify.mjs https://qurtaba-academy-of-excellence-bela-iota.vercel.app"
+  },
+  "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.10.0",
+    "dotenv": "^17.4.2",
+    "formidable": "^3.5.4",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.2",
+    "next": "^16.2.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

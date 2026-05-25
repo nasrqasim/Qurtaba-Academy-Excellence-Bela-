@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Mark Attendance - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Daily Attendance" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Mark Class Attendance</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Select class and date to record daily student attendance.</p>
+                </div>
+                <div class="flex gap-4 items-end">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black text-on-surface-variant uppercase">Date</label>
+                        <input type="date" id="attendance-date" class="input-field py-1.5" value="2024-10-28"/>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black text-on-surface-variant uppercase">Class</label>
+                        <select id="attendance-class" class="input-field py-1.5">
+                            <option>Class 10-A</option>
+                            <option>Class 10-B</option>
+                            <option>Class 9-A</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card overflow-hidden">
+                <div class="card-header flex justify-between items-center bg-surface-container-low/20">
+                    <h3 class="font-bold text-on-surface" id="student-count">Student List (0 Students)</h3>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 text-xs font-bold text-emerald-600 cursor-pointer">
+                            <input type="radio" name="bulk" class="w-4 h-4 text-emerald-600" onchange="markAll('Present')"/> Mark All Present
+                        </label>
+                        <label class="flex items-center gap-2 text-xs font-bold text-rose-600 cursor-pointer">
+                            <input type="radio" name="bulk" class="w-4 h-4 text-rose-600" onchange="markAll('Absent')"/> Mark All Absent
+                        </label>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Roll #</th>
+                                <th>Student Name</th>
+                                <th class="text-center">Status</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm" id="attendance-tbody">
+                            <tr><td colspan="4" class="text-center py-8">Select a class to load students</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-header bg-surface-container-low/20 flex justify-end p-4">
+                    <button class="btn-primary px-12 py-3 shadow-lg shadow-primary/20" onclick="submitAttendance()">Submit Attendance</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        let currentStudents = [];
+        
+        async function loadClassOptions() {
+            try {
+                const res = await fetch('/api/classes');
+                const classes = await res.json();
+                const select = document.getElementById('attendance-class');
+                if (classes.length > 0) {
+                    select.innerHTML = classes.map(c => {
+                        const classLabel = c.section ? `${c.name}-${c.section}` : c.name;
+                        const classValue = c.section ? `${c.name}|${c.section}` : `${c.name}|`;
+                        return `<option value="${classValue}">${classLabel}</option>`;
+                    }).join('');
+                } else {
+                    select.innerHTML = '<option value="">No classes found</option>';
+                }
+            } catch (e) {
+                console.error('Error loading classes:', e);
+            }
+        }
+        
+        async function fetchStudentsForClass(classVal) {
+            if (!classVal) return;
+            const [className, classSection] = classVal.split('|');
+            try {
+                const res = await fetch('/api/students');
+                const allStudents = await res.json();
+                
+                currentStudents = allStudents.filter(s => {
+                    const studentClassMatches = s.class && s.class.trim().toLowerCase() === className.trim().toLowerCase();
+                    const studentSectionMatches = !classSection || !s.section || s.section.trim().toLowerCase() === classSection.trim().toLowerCase();
+                    return studentClassMatches && studentSectionMatches;
+                });
+                
+                document.getElementById('student-count').textContent = `Student List (${currentStudents.length} Students)`;
+                
+                const tbody = document.getElementById('attendance-tbody');
+                if (currentStudents.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8">No students found in this class.</td></tr>';
+                    return;
+                }
+
+                // Fetch existing attendance records to pre-populate statuses
+                const dateVal = document.getElementById('attendance-date').value;
+                const classLabel = classSection ? `${className}-${classSection}` : className;
+                const attendanceRes = await fetch(`/api/attendance?date=${dateVal}&class=${encodeURIComponent(classLabel)}`);
+                const existingRecords = await attendanceRes.json();
+                
+                const statusMap = {};
+                existingRecords.forEach(rec => {
+                    if (rec.studentId) {
+                        statusMap[rec.studentId._id] = {
+                            status: rec.status,
+                            remarks: rec.remarks
+                        };
+                    }
+                });
+                
+                tbody.innerHTML = currentStudents.map((s, idx) => {
+                    const record = statusMap[s._id] || { status: 'Present', remarks: '' };
+                    return `
+                    <tr>
+                        <td class="font-bold text-primary">${s.admissionNumber || 'N/A'}</td>
+                        <td>${s.fullName}</td>
+                        <td>
+                            <div class="flex justify-center gap-6">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="status-${s._id}" value="Present" ${record.status === 'Present' ? 'checked' : ''} class="w-4 h-4 text-emerald-600 status-radio"/>
+                                    <span class="text-xs font-bold">Present</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="status-${s._id}" value="Absent" ${record.status === 'Absent' ? 'checked' : ''} class="w-4 h-4 text-rose-600 status-radio"/>
+                                    <span class="text-xs font-bold">Absent</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="status-${s._id}" value="Leave" ${record.status === 'Leave' ? 'checked' : ''} class="w-4 h-4 text-amber-600 status-radio"/>
+                                    <span class="text-xs font-bold">Leave</span>
+                                </label>
+                            </div>
+                        </td>
+                        <td><input type="text" id="remark-${s._id}" class="input-field py-1 text-xs" value="${record.remarks || ''}" placeholder="e.g. Medical leave"/></td>
+                    </tr>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        
+        function markAll(status) {
+            currentStudents.forEach(s => {
+                const radios = document.getElementsByName(`status-${s._id}`);
+                radios.forEach(r => {
+                    if (r.value === status) r.checked = true;
+                });
+            });
+        }
+        
+        async function submitAttendance() {
+            if (currentStudents.length === 0) return alert('No students to mark.');
+            
+            const date = document.getElementById('attendance-date').value;
+            const classVal = document.getElementById('attendance-class').value;
+            const [className, classSection] = classVal.split('|');
+            const classLabel = classSection ? `${className}-${classSection}` : className;
+            
+            const records = currentStudents.map(s => {
+                const radios = document.getElementsByName(`status-${s._id}`);
+                let status = 'Present';
+                for (const r of radios) {
+                    if (r.checked) status = r.value;
+                }
+                const remark = document.getElementById(`remark-${s._id}`).value;
+                return {
+                    studentId: s._id,
+                    class: classLabel,
+                    date: date,
+                    status: status,
+                    remarks: remark
+                };
+            });
+            
+            try {
+                const res = await fetch('/api/attendance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(records)
+                });
+                
+                if (res.ok) {
+                    alert('Attendance marked successfully!');
+                    window.location.href = 'attendance.html';
+                } else {
+                    alert('Error marking attendance.');
+                }
+            } catch(e) {
+                console.error(e);
+                alert('Error marking attendance.');
+            }
+        }
+        
+        document.getElementById('attendance-class').addEventListener('change', (e) => {
+            fetchStudentsForClass(e.target.value);
+        });
+
+        document.getElementById('attendance-date').addEventListener('change', (e) => {
+            fetchStudentsForClass(document.getElementById('attendance-class').value);
+        });
+        
+        window.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const classParam = urlParams.get('class');
+            const dateParam = urlParams.get('date');
+
+            if (dateParam) {
+                document.getElementById('attendance-date').value = dateParam;
+            } else {
+                document.getElementById('attendance-date').valueAsDate = new Date();
+            }
+
+            await loadClassOptions();
+
+            const select = document.getElementById('attendance-class');
+            if (classParam && select.options.length > 0) {
+                let matchedIndex = 0;
+                for (let i = 0; i < select.options.length; i++) {
+                    const opt = select.options[i];
+                    const [optName, optSec] = opt.value.split('|');
+                    const label = optSec ? `${optName}-${optSec}` : optName;
+                    if (label.trim().toLowerCase() === classParam.trim().toLowerCase()) {
+                        matchedIndex = i;
+                        break;
+                    }
+                }
+                select.selectedIndex = matchedIndex;
+            }
+
+            const initialClass = select.value;
+            fetchStudentsForClass(initialClass);
+        });
+    </script>
+</body>
+</html>

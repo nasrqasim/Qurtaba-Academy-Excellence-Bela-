@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Weekly Timetable - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+    <style>
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            #sidebar, #topbar, .card.p-4, .flex.gap-3, button, aside, header {
+                display: none !important;
+            }
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .card {
+                border: none !important;
+                box-shadow: none !important;
+                background: transparent !important;
+                padding: 0 !important;
+            }
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+            th, td {
+                border: 1px solid #111 !important;
+                padding: 6px 4px !important;
+            }
+            @page {
+                size: landscape;
+                margin: 0.4cm;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Weekly Timetable" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <!-- Print Header -->
+            <div class="hidden print:block text-center mb-6">
+                <h1 class="text-xl font-bold uppercase tracking-wider text-black">Qurtaba School of Excellence Bela</h1>
+                <p class="text-xs uppercase tracking-widest text-gray-600 font-bold mt-1">Faculty Academic Timetable</p>
+                <p class="text-xs font-medium text-gray-500 mt-0.5" id="print-subtitle"></p>
+                <div class="w-full border-b border-black mt-4"></div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 print:hidden">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Academic Timetable</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Schedule and manage weekly class routines for students and teachers.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-secondary" onclick="window.print()">
+                        <span class="material-symbols-outlined text-[18px]">print</span>
+                        Print Timetable
+                    </button>
+                    <button class="btn-primary" onclick="window.location='manage-timetable.html'">
+                        <span class="material-symbols-outlined text-[18px]">edit_calendar</span>
+                        Manage Schedule
+                    </button>
+                </div>
+            </div>
+
+            <!-- View Selector -->
+            <div class="card p-4 mb-6 flex flex-wrap items-center gap-4 print:hidden">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-on-surface-variant uppercase">Select Class:</span>
+                    <select class="input-field py-1.5 px-3 w-auto text-sm" id="class-select">
+                        <option value="">All Classes</option>
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+                <div class="h-6 w-px bg-outline-variant/30 hidden sm:block"></div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-on-surface-variant uppercase">Select Teacher:</span>
+                    <select class="input-field py-1.5 px-3 w-auto text-sm" id="teacher-select">
+                        <option value="">All Teachers</option>
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Timetable Grid -->
+            <div class="card overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <!-- Dynamic Columns -->
+                        </thead>
+                        <tbody class="text-sm">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        let allRoutines = [];
+        let allClasses = [];
+
+        async function loadDropdowns() {
+            try {
+                // Load Classes
+                const classRes = await fetch('/api/classes');
+                allClasses = await classRes.json();
+                const classSelect = document.getElementById('class-select');
+                
+                classSelect.innerHTML = '<option value="">All Classes</option>' + 
+                    allClasses.map(c => `<option value="Class ${c.name}-${c.section}">Class ${c.name}-${c.section}</option>`).join('');
+
+                // Load Teachers
+                const teacherRes = await fetch('/api/staff');
+                const teachers = await teacherRes.json();
+                const teacherSelect = document.getElementById('teacher-select');
+                teacherSelect.innerHTML = '<option value="">All Teachers</option>' + 
+                    teachers.map(t => `<option value="${t.fullName || t.name}">${t.fullName || t.name}</option>`).join('');
+
+                // Add event listeners
+                classSelect.addEventListener('change', loadTimetable);
+                teacherSelect.addEventListener('change', loadTimetable);
+            } catch (e) {
+                console.error('Error loading dropdowns:', e);
+            }
+        }
+
+        async function loadTimetable() {
+            const classSelect = document.getElementById('class-select');
+            const teacherSelect = document.getElementById('teacher-select');
+
+            const classVal = classSelect.value;
+            const teacherVal = teacherSelect.value;
+
+            const params = new URLSearchParams();
+            if (classVal) {
+                params.append('class', classVal);
+            }
+            if (teacherVal) {
+                params.append('teacher', teacherVal);
+            }
+
+            try {
+                const res = await fetch(`/api/timetable?` + params.toString());
+                allRoutines = await res.json();
+                renderTimetable();
+                
+                // Update print subtitle
+                document.getElementById('print-subtitle').textContent = `Generated on ${new Date().toLocaleDateString()} | Class: ${classVal || 'All Classes'} | Teacher: ${teacherVal || 'All Teachers'}`;
+            } catch (e) {
+                console.error('Error fetching timetable:', e);
+            }
+        }
+
+        function getSubjectColors(subject) {
+            const sub = (subject || '').toLowerCase();
+            if (sub.includes('math')) return { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', subText: 'text-blue-600' };
+            if (sub.includes('phys')) return { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-800', subText: 'text-emerald-600' };
+            if (sub.includes('chem') || sub.includes('bio') || sub.includes('sci')) return { bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-800', subText: 'text-rose-600' };
+            if (sub.includes('eng')) return { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-800', subText: 'text-purple-600' };
+            if (sub.includes('islam') || sub.includes('urdu') || sub.includes('pak')) return { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', subText: 'text-amber-600' };
+            return { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-800', subText: 'text-slate-600' };
+        }
+
+        function parseTimeToMinutes(timeStr) {
+            if (!timeStr) return 0;
+            let cleaned = timeStr.trim().toLowerCase();
+            let isPM = cleaned.includes('pm');
+            let isAM = cleaned.includes('am');
+            cleaned = cleaned.replace('am', '').replace('pm', '').trim();
+            let [hours, minutes] = cleaned.split(':').map(Number);
+            if (isNaN(hours)) hours = 0;
+            if (isNaN(minutes)) minutes = 0;
+
+            if (isPM && hours < 12) hours += 12;
+            if (isAM && hours === 12) hours = 0;
+
+            // Contextual fallback: if there is no AM/PM modifier and hours are < 7,
+            // it's highly likely PM in a school context (e.g. 01:15 is 13:15, since school starts at 7, 8, 9 AM)
+            if (!isAM && !isPM && hours < 7) {
+                hours += 12;
+            }
+            return hours * 60 + minutes;
+        }
+
+        function renderTimetable() {
+            const thead = document.querySelector('thead');
+            const tbody = document.querySelector('tbody');
+
+            if (allRoutines.length === 0) {
+                thead.innerHTML = `
+                    <tr class="bg-surface-container-low">
+                        <th class="p-4 border border-outline-variant/20 text-xs font-bold text-on-surface-variant uppercase w-32">Time / Day</th>
+                        <th class="p-4 border border-outline-variant/20 text-xs font-bold text-on-surface-variant uppercase">Schedule</th>
+                    </tr>
+                `;
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="2" class="p-8 text-center bg-surface-container-lowest border border-outline-variant/20">
+                            <div class="flex flex-col items-center justify-center text-on-surface-variant py-8">
+                                <span class="material-symbols-outlined text-4xl mb-2 text-outline">calendar_today</span>
+                                <p class="text-base font-bold">No routines scheduled yet</p>
+                                <p class="text-xs text-on-surface-variant mt-1">Click "Manage Schedule" to add the first class routing.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Extract unique time slots
+            const slotsMap = new Map();
+            allRoutines.forEach(r => {
+                const key = `${r.startTime}-${r.endTime}`;
+                if (!slotsMap.has(key)) {
+                    slotsMap.set(key, { startTime: r.startTime, endTime: r.endTime });
+                }
+            });
+            const slots = Array.from(slotsMap.values()).sort((a, b) => parseTimeToMinutes(a.startTime) - parseTimeToMinutes(b.startTime));
+
+            // Render table header dynamically
+            thead.innerHTML = `
+                <tr class="bg-surface-container-low print:bg-gray-100">
+                    <th class="p-3 border border-outline-variant/30 text-xs font-black text-on-surface-variant uppercase w-24 text-center">DAY</th>
+                    <th class="p-3 border border-outline-variant/30 text-xs font-black text-on-surface-variant uppercase w-28 text-center">CLASS</th>
+                    ${slots.map(slot => `
+                        <th class="p-3 border border-outline-variant/30 text-xs font-black text-on-surface-variant uppercase text-center min-w-[140px]">
+                            ${slot.startTime} - ${slot.endTime}
+                        </th>
+                    `).join('')}
+                </tr>
+            `;
+
+            // Get display classes
+            const classSelect = document.getElementById('class-select');
+            const classVal = classSelect.value;
+            let displayClasses = allClasses;
+            if (classVal) {
+                displayClasses = allClasses.filter(c => `Class ${c.name}-${c.section}` === classVal);
+            }
+
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            let html = '';
+
+            days.forEach(day => {
+                if (displayClasses.length === 0) return;
+
+                displayClasses.forEach((c, idx) => {
+                    const className = `Class ${c.name}-${c.section}`;
+                    const dayCells = slots.map(slot => {
+                        const match = allRoutines.find(r => r.day === day && r.class === className && r.startTime === slot.startTime && r.endTime === slot.endTime);
+                        if (match) {
+                            const colors = getSubjectColors(match.subject);
+                            return `
+                                <td class="p-2 border border-outline-variant/30 align-middle">
+                                    <div class="p-2 rounded-lg ${colors.bg} border ${colors.border} relative group shadow-sm transition-all hover:shadow-md flex flex-col justify-between min-h-[60px]">
+                                        <div class="flex justify-between items-start">
+                                            <div class="font-black ${colors.text} text-xs leading-snug">${match.subject}</div>
+                                            <!-- Action Buttons always visible -->
+                                            <div class="flex items-center gap-0.5 bg-white/95 p-0.5 rounded border border-outline-variant/30 shadow-sm print:hidden">
+                                                <button onclick="editEntry('${match._id}')" class="p-0.5 text-primary hover:bg-surface-container rounded" title="Edit Entry">
+                                                    <span class="material-symbols-outlined text-[12px]">edit</span>
+                                                </button>
+                                                <button onclick="deleteEntry('${match._id}')" class="p-0.5 text-rose-600 hover:bg-rose-50 rounded" title="Delete Entry">
+                                                    <span class="material-symbols-outlined text-[12px]">delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-between items-center text-[10px] ${colors.subText} mt-1.5 font-medium leading-none">
+                                            <span class="truncate pr-1 max-w-[100px]" title="${match.teacher}">${match.teacher}</span>
+                                            <span class="inline-flex items-center bg-white/80 border border-outline-variant/20 px-1 rounded text-[8px] font-black uppercase tracking-wider">${match.room || 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            `;
+                        }
+                        return `<td class="p-2 border border-outline-variant/30 bg-surface-container-low/10 align-middle"></td>`;
+                    }).join('');
+
+                    html += `
+                        <tr class="hover:bg-surface-container-low/20 transition-colors print:hover:bg-transparent">
+                            ${idx === 0 ? `
+                                <td rowspan="${displayClasses.length}" class="p-3 border border-outline-variant/30 bg-surface-container-low/30 font-black text-primary text-center align-middle whitespace-nowrap text-xs uppercase tracking-wider select-none print:bg-gray-50 print:text-black">
+                                    ${day}
+                                </td>
+                            ` : ''}
+                            <td class="p-3 border border-outline-variant/30 bg-surface-container-lowest font-bold text-on-surface text-center align-middle whitespace-nowrap text-xs">
+                                ${className}
+                            </td>
+                            ${dayCells}
+                        </tr>
+                    `;
+                });
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        window.editEntry = async function(id) {
+            window.location.href = `manage-timetable.html?edit=${id}`;
+        }
+
+        window.deleteEntry = async function(id) {
+            if (!confirm('Are you sure you want to delete this schedule entry?')) return;
+            try {
+                const res = await fetch(`/api/timetable/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    await loadTimetable();
+                } else {
+                    alert('Failed to delete timetable entry.');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('An error occurred.');
+            }
+        }
+
+        window.onPageLoad(async () => {
+            await loadDropdowns();
+            await loadTimetable();
+        });
+    </script>
+</body>
+</html>

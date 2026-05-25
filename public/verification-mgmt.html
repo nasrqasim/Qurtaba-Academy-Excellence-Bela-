@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Student Verification Management - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a",
+                        "success": "#1b873f"
+                    },
+                    fontFamily: {
+                        headline: ["Inter"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Student Verification System" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Student Verification</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Issue and manage secure public verification certificates for students.</p>
+                </div>
+                <div class="flex gap-3">
+                    <a href="verification.html" target="_blank" class="btn-secondary flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+                        Open Public Portal
+                    </a>
+                </div>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="card p-4 mb-6 flex flex-wrap items-center gap-4">
+                <div class="flex-1 min-w-[240px] relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+                    <input type="text" id="student-search" placeholder="Search student ID, name or Father name..." class="input-field pl-10" oninput="loadStudents()"/>
+                </div>
+                <select id="class-filter" class="input-field w-auto min-w-[140px]" onchange="loadStudents()">
+                    <option value="">All Classes</option>
+                    <option>Class 9</option>
+                    <option>Class 10</option>
+                    <option>Class 11</option>
+                </select>
+                <select id="verify-filter" class="input-field w-auto min-w-[150px]" onchange="loadStudents()">
+                    <option value="">All Verification</option>
+                    <option value="true">Verified Only</option>
+                    <option value="false">Unverified Only</option>
+                </select>
+            </div>
+
+            <!-- Table -->
+            <div class="card overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Father Name</th>
+                                <th>Class</th>
+                                <th>Verification Status</th>
+                                <th>Verification ID</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-table-body" class="text-sm">
+                            <tr>
+                                <td colspan="7" class="text-center py-8 text-on-surface-variant">Loading students database...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-header bg-surface-container-low flex justify-between items-center py-3">
+                    <p id="showing-count" class="text-xs text-on-surface-variant">Showing 0 students</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="shared.js"></script>
+    <script>
+        async function loadStudents() {
+            const tableBody = document.getElementById('students-table-body');
+            try {
+                const search = document.getElementById('student-search').value.trim();
+                const classFilter = document.getElementById('class-filter').value;
+                const verifyFilter = document.getElementById('verify-filter').value;
+
+                const params = new URLSearchParams();
+                if (search) params.append('search', search);
+                if (classFilter) params.append('class', classFilter);
+
+                const res = await apiFetch('/students?' + params.toString());
+                if (!res) return;
+
+                let students = res;
+                if (verifyFilter !== '') {
+                    const isVerifiedCheck = verifyFilter === 'true';
+                    students = students.filter(s => !!s.isVerified === isVerifiedCheck);
+                }
+
+                document.getElementById('showing-count').textContent = `Showing ${students.length} students`;
+
+                if (students.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center py-8 text-on-surface-variant">No student records found matching the criteria.</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tableBody.innerHTML = students.map(s => {
+                    const verifiedBadge = s.isVerified 
+                        ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-success/10 text-success"><span class="material-symbols-outlined text-[14px]">verified</span>VERIFIED</span>` 
+                        : `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-on-surface-variant/10 text-on-surface-variant"><span class="material-symbols-outlined text-[14px]">help</span>UNVERIFIED</span>`;
+
+                    const actionBtn = s.isVerified
+                        ? `<button onclick="toggleVerification('${s._id}', 'remove')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-error/10 text-error hover:bg-error/20 transition-all flex items-center gap-1">
+                             <span class="material-symbols-outlined text-[14px]">cancel</span> Remove Verification
+                           </button>`
+                        : `<button onclick="toggleVerification('${s._id}', 'verify')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-success/10 text-success hover:bg-success/20 transition-all flex items-center gap-1">
+                             <span class="material-symbols-outlined text-[14px]">verified</span> Verify Student
+                           </button>`;
+
+                    return `
+                        <tr>
+                            <td class="font-bold text-on-surface-variant">${s.admissionNumber}</td>
+                            <td class="font-bold text-on-surface">${s.fullName}</td>
+                            <td class="text-on-surface-variant">${s.fatherName || '-'}</td>
+                            <td class="text-on-surface-variant font-medium">${s.class}</td>
+                            <td>${verifiedBadge}</td>
+                            <td class="font-mono text-xs font-bold text-primary">${s.verificationId || '-'}</td>
+                            <td class="flex justify-end gap-2 py-3">${actionBtn}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error(err);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-8 text-error font-bold">Failed to load student verification records.</td>
+                    </tr>
+                `;
+            }
+        }
+
+        async function toggleVerification(studentId, action) {
+            const confirmMsg = action === 'verify' 
+                ? 'Are you sure you want to verify this student and issue an academic certificate?' 
+                : 'Are you sure you want to remove the verification from this student? This will invalidate the certificate.';
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                const res = await apiFetch(`/students/${studentId}/verify`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ action })
+                });
+
+                if (res) {
+                    alert(`Student verification status updated successfully!`);
+                    await loadStudents();
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while updating the verification status.');
+            }
+        }
+
+        // Initialize on page load
+        window.onPageLoad(loadStudents);
+    </script>
+</body>
+</html>

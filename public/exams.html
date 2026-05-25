@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Exam Management - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Exam Management" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Examinations</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Schedule exams, manage papers, and track invigilation duties.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-primary" onclick="window.location='create-exam.html'">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        Create New Exam
+                    </button>
+                </div>
+            </div>
+
+            <!-- Exam Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="card p-5">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Upcoming Exams</p>
+                    <p class="text-3xl font-black text-on-surface">12</p>
+                    <p class="text-xs text-primary mt-1 font-semibold">Next: Mathematics (Nov 12)</p>
+                </div>
+                <div class="card p-5">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Ongoing</p>
+                    <p class="text-3xl font-black text-amber-600">0</p>
+                    <p class="text-xs text-on-surface-variant mt-1">No active exams today</p>
+                </div>
+                <div class="card p-5">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Pending Grading</p>
+                    <p class="text-3xl font-black text-rose-600">8</p>
+                    <p class="text-xs text-on-surface-variant mt-1">Previous session papers</p>
+                </div>
+                <div class="card p-5">
+                    <p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Total Published</p>
+                    <p class="text-3xl font-black text-emerald-600">45</p>
+                    <p class="text-xs text-on-surface-variant mt-1">Last academic year</p>
+                </div>
+            </div>
+
+            <!-- Schedule Table -->
+            <div class="card overflow-hidden">
+                <div class="card-header flex justify-between items-center">
+                    <h3 class="font-bold text-on-surface">Current Exam Schedule</h3>
+                    <div class="flex gap-2">
+                        <button class="btn-secondary py-1.5 px-3 text-xs">Full Calendar</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Exam Name</th>
+                                <th>Class</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Invigilator</th>
+                                <th>Status</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exams-tbody">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        async function loadExams() {
+            try {
+                const res = await fetch('/api/exams');
+                const exams = await res.json();
+                const tbody = document.getElementById('exams-tbody');
+                
+                // Calculate dynamic stats
+                const now = new Date();
+                let upcoming = 0;
+                let ongoing = 0;
+                
+                exams.forEach(e => {
+                    const examDate = new Date(e.date);
+                    if (examDate.toDateString() === now.toDateString()) {
+                        ongoing++;
+                    } else if (examDate > now) {
+                        upcoming++;
+                    }
+                });
+
+                // Update Stats
+                const stats = document.querySelectorAll('.card p.text-3xl');
+                if (stats.length >= 4) {
+                    stats[0].textContent = upcoming;
+                    stats[1].textContent = ongoing;
+                    stats[3].textContent = exams.length;
+                }
+
+                if (exams.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8">No scheduled exams found.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = exams.map(e => {
+                    const examDate = new Date(e.date);
+                    const formattedDate = examDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                    
+                    let statusHtml = '<span class="badge-success px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700">Completed</span>';
+                    if (examDate.toDateString() === now.toDateString()) {
+                        statusHtml = '<span class="badge-warning px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-100 text-amber-700">Ongoing</span>';
+                    } else if (examDate > now) {
+                        statusHtml = '<span class="badge-info px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-sky-100 text-sky-700">Upcoming</span>';
+                    }
+
+                    return `
+                        <tr>
+                            <td class="font-bold text-sm">${e.name}</td>
+                            <td class="text-sm">${e.class}</td>
+                            <td class="text-sm">${formattedDate}</td>
+                            <td class="text-sm">${e.time || '09:00 AM'}</td>
+                            <td class="text-sm">${e.subject || 'All Subjects'}</td>
+                            <td>${statusHtml}</td>
+                            <td class="text-right">
+                                <div class="flex items-center justify-end gap-1">
+                                    <button onclick="window.location='create-exam.html?edit=${e._id}'" class="p-1.5 hover:bg-surface-container rounded text-primary" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                    <button onclick="deleteExam('${e._id}')" class="p-1.5 hover:bg-rose-50 rounded text-rose-600 ml-1" title="Delete"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error('Error loading exams:', e);
+            }
+        }
+
+        async function deleteExam(id) {
+            try {
+                // Delete immediately without confirmation prompt, as explicitly requested
+                await fetch(`/api/exams/${id}`, { method: 'DELETE' });
+                loadExams();
+            } catch (e) {
+                console.error('Error deleting exam:', e);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadExams();
+        });
+    </script>
+</body>
+</html>

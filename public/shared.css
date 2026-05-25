@@ -1,0 +1,209 @@
+/* =========================================
+   Qurtaba School of Excellence Bela – Shared Stylesheet
+   ========================================= */
+
+/* ---------- Fonts & Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; }
+
+/* ---------- Page Fade-In ---------- */
+@keyframes pageFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+body.page-fade-in main { animation: pageFadeIn .3s ease both; }
+
+/* ---------- Loading skeletons ---------- */
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #eae6f4 25%, #f5f2ff 50%, #eae6f4 75%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.2s ease-in-out infinite;
+}
+
+/* ---------- Sidebar ---------- */
+#sidebar {
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+  scrollbar-width: thin;
+  scrollbar-color: #c7c4d8 transparent;
+}
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-thumb { background: #c7c4d8; border-radius: 4px; }
+
+@media (max-width: 767px) {
+  #sidebar {
+    position: fixed; top: 0; left: 0; height: 100vh;
+    transform: translateX(-100%); display: flex !important;
+    z-index: 50; box-shadow: 0 8px 40px rgba(0,0,0,.18);
+  }
+  #sidebar.open { transform: translateX(0); }
+}
+
+/* ---------- Sidebar Overlay ---------- */
+#sidebar-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35);
+  z-index: 45; backdrop-filter: blur(2px);
+}
+#sidebar-overlay.active { display: block; }
+
+/* ---------- Nav Links ---------- */
+.nav-link {
+  position: relative; color: #464555;
+  text-decoration: none; font-size: .875rem;
+}
+.nav-link:hover { color: #3525cd; background: rgba(53,37,205,.08); }
+.nav-link.active {
+  background: linear-gradient(135deg, rgba(53,37,205,.12), rgba(79,70,229,.08));
+  color: #3525cd; font-weight: 600;
+}
+.nav-link.active::before {
+  content: ''; position: absolute; left: 0; top: 25%; bottom: 25%;
+  width: 3px; background: #3525cd; border-radius: 0 4px 4px 0;
+}
+
+/* ---------- Nav Parent Button ---------- */
+.nav-link-parent {
+  cursor: pointer; background: none; border: none;
+  font-size: .875rem; font-family: 'Inter', sans-serif;
+  color: #464555; text-decoration: none;
+}
+.nav-link-parent:hover { color: #3525cd; background: rgba(53,37,205,.08); }
+.nav-link-parent .arrow {
+  transition: transform .2s ease;
+  font-variation-settings: 'FILL' 0, 'wght' 400;
+}
+.nav-link-parent.open .arrow { transform: rotate(90deg); }
+
+/* ---------- Submenu ---------- */
+.submenu {
+  max-height: 0; overflow: hidden;
+  transition: max-height .25s ease;
+  padding-left: .75rem;
+}
+.submenu.open { max-height: 320px; }
+
+/* ---------- Topbar Notification Dot ---------- */
+.notif-dot {
+  position: absolute; top: 8px; right: 8px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #ba1a1a; border: 2px solid #fcf8ff;
+}
+
+/* ---------- Stat Card Hover ---------- */
+.stat-card { transition: transform .2s, box-shadow .2s; cursor: pointer; text-decoration: none; }
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(53,37,205,.10); }
+
+/* ---------- Data Table ---------- */
+.data-table { border-collapse: collapse; width: 100%; }
+.data-table th {
+  font-weight: 600; text-align: left;
+  font-size: 0.75rem; text-transform: uppercase;
+  letter-spacing: 0.05em; color: #464555;
+  background: #f5f2ff; padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(199,196,216,0.3);
+}
+.data-table td { padding: 1rem 1.25rem; border-bottom: 1px solid rgba(199,196,216,0.1); }
+.data-table tbody tr { transition: background .15s; }
+.data-table tbody tr:hover { background: rgba(240,236,249,0.4); }
+
+/* ---------- Cards ---------- */
+.card {
+  background: #ffffff; border-radius: 1rem;
+  border: 1px solid rgba(199,196,216,0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card:hover {
+  box-shadow: 0 12px 24px rgba(53,37,205,0.06);
+  border-color: rgba(53,37,205,0.15);
+}
+.card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(199,196,216,0.2); }
+.card-body { padding: 1.5rem; }
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+  background: #3525cd; color: #ffffff;
+  padding: 0.625rem 1.25rem; border-radius: 0.75rem;
+  font-weight: 600; font-size: 0.875rem;
+  transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.btn-primary:hover { background: #2a1da3; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(53,37,205,0.2); }
+
+.btn-secondary {
+  background: #ffffff; color: #1b1b24;
+  border: 1px solid rgba(199,196,216,0.5);
+  padding: 0.625rem 1.25rem; border-radius: 0.75rem;
+  font-weight: 600; font-size: 0.875rem;
+  transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.btn-secondary:hover { background: #fcf8ff; border-color: #3525cd; color: #3525cd; }
+
+/* ---------- Inputs ---------- */
+.input-field {
+  width: 100%; padding: 0.625rem 1rem;
+  border: 1.5px solid rgba(199,196,216,0.5);
+  border-radius: 0.75rem; font-size: 0.875rem;
+  transition: all 0.2s; background: #ffffff; outline: none;
+}
+.input-field:focus { border-color: #3525cd; box-shadow: 0 0 0 4px rgba(53,37,205,0.1); }
+
+/* ---------- Badges ---------- */
+.badge-success { background: #dcfce7; color: #15803d; }
+.badge-error   { background: #ffdad6; color: #ba1a1a; }
+.badge-warning { background: #fef9c3; color: #a16207; }
+.badge-info    { background: #dae2fd; color: #3525cd; }
+.badge-neutral { background: #e4e1ee; color: #464555; }
+
+/* ---------- Loading Spinner ---------- */
+.spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Dark Mode Overrides ---------- */
+.dark body { background: #0f0e17 !important; color: #e4e1ee !important; }
+.dark #sidebar { background: #1b1a26 !important; border-color: rgba(199,196,216,.12) !important; }
+.dark #topbar { background: #1b1a26 !important; border-color: rgba(199,196,216,.12) !important; }
+
+/* Surface Backgrounds */
+.dark .bg-surface-container-lowest { background: #211f2e !important; }
+.dark .bg-surface-container-low { background: #1b1a26 !important; }
+.dark .bg-surface-container { background: #161424 !important; }
+.dark .bg-background { background: #0f0e17 !important; }
+.dark .bg-surface { background: #1b1a26 !important; }
+
+/* Text Colors */
+.dark .text-on-surface { color: #e4e1ee !important; }
+.dark .text-on-surface-variant { color: #cac7d8 !important; }
+.dark .text-primary { color: #818cf8 !important; } /* Lighter primary for dark mode */
+
+/* Borders */
+.dark .border-outline-variant\/20,
+.dark .border-outline-variant\/30,
+.dark .border-outline-variant\/50,
+.dark .border-outline-variant { border-color: rgba(199,196,216,.15) !important; }
+
+/* Cards & Tables */
+.dark .card { background: #1b1a26 !important; border-color: rgba(199,196,216,0.15) !important; color: #e4e1ee !important; }
+.dark .card-header { border-bottom-color: rgba(199,196,216,0.15) !important; }
+.dark .data-table th { background: #211f2e !important; color: #cac7d8 !important; border-bottom-color: rgba(199,196,216,0.2) !important; }
+.dark .data-table td { border-bottom-color: rgba(199,196,216,0.08) !important; color: #e4e1ee !important; }
+.dark .data-table tbody tr:hover { background: rgba(129,140,248,0.08) !important; }
+
+/* Buttons & Inputs */
+.dark .btn-secondary { background: #211f2e !important; color: #e4e1ee !important; border-color: rgba(199,196,216,0.2) !important; }
+.dark .btn-secondary:hover { background: #2a283e !important; border-color: #818cf8 !important; color: #818cf8 !important; }
+.dark .input-field { background: #211f2e !important; border-color: rgba(199,196,216,0.2) !important; color: #e4e1ee !important; }
+.dark .input-field::placeholder { color: #777587 !important; }
+.dark input, .dark select, .dark textarea { background: #211f2e !important; color: #e4e1ee !important; border-color: rgba(199,196,216,.2) !important; }
+
+/* Navigation */
+.dark .nav-link { color: #cac7d8 !important; }
+.dark .nav-link:hover { color: #ffffff !important; background: rgba(255,255,255,0.05) !important; }
+.dark .nav-link.active { background: rgba(129,140,248,0.15) !important; color: #ffffff !important; }
+.dark .nav-link-parent { color: #cac7d8 !important; }
+.dark .nav-link-parent:hover { color: #ffffff !important; background: rgba(255,255,255,0.05) !important; }
+.dark .nav-link.active::before { background: #818cf8 !important; }

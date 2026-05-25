@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Student Profile - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: { headline: ["Inter"], body: ["Inter"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+    <style>
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            aside, header, #sidebar-overlay, #profile-actions, .no-print, button, .btn-primary, .btn-secondary {
+                display: none !important;
+            }
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white !important;
+            }
+            .card {
+                border: 1px solid #e2e8f0 !important;
+                box-shadow: none !important;
+                break-inside: avoid;
+                margin-bottom: 1.5rem !important;
+                padding: 1.5rem !important;
+            }
+            #academic-progress-content > div {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Student Profile" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="max-w-6xl mx-auto">
+                <!-- Profile Header -->
+                <div class="card p-8 mb-8">
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div id="profile-img-container" class="w-32 h-32 rounded-3xl bg-primary/10 flex items-center justify-center text-primary font-black text-4xl shadow-sm border border-primary/20">
+                            AH
+                        </div>
+                        <div class="flex-1 text-center md:text-left">
+                            <div class="flex flex-col md:flex-row md:items-center gap-3 mb-2">
+                                <h2 id="profile-name" class="text-3xl font-black text-on-surface">Ahmad Hassan Khan</h2>
+                                <span id="profile-status" class="badge-success px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Active</span>
+                            </div>
+                            <p class="text-on-surface-variant font-medium">Student ID: <span id="profile-id" class="text-primary font-black">#STU-2024-001</span> • <span id="profile-class-info">Class 10 - Section A</span></p>
+                            <div class="flex flex-wrap justify-center md:justify-start gap-4 mt-4">
+                                <div class="flex items-center gap-2 text-xs font-bold text-on-surface-variant bg-surface-container px-3 py-1.5 rounded-lg">
+                                    <span class="material-symbols-outlined text-[16px]">mail</span>
+                                    <span id="profile-email">ahmad.h@example.com</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-xs font-bold text-on-surface-variant bg-surface-container px-3 py-1.5 rounded-lg">
+                                    <span class="material-symbols-outlined text-[16px]">phone</span>
+                                    <span id="profile-phone">+92 300 1234567</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="profile-actions" class="flex gap-2">
+                            <button class="btn-secondary py-2.5 px-4"><span class="material-symbols-outlined text-[18px]">edit</span> Edit</button>
+                            <button class="btn-primary py-2.5 px-4"><span class="material-symbols-outlined text-[18px]">print</span> Print ID</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Left Column: Details -->
+                    <div class="lg:col-span-2 space-y-8">
+                        <!-- Personal & Educational Information -->
+                        <div class="card p-6">
+                            <h3 class="font-black text-on-surface mb-6 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">person</span>
+                                Information Details
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
+                                <div>
+                                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Father's Name</p>
+                                    <p id="detail-father" class="font-bold text-on-surface">Arshad Mehmood Khan</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Date of Birth</p>
+                                    <p id="detail-dob" class="font-bold text-on-surface">Aug 12, 2008 (16 Years)</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Gender</p>
+                                    <p id="detail-gender" class="font-bold text-primary capitalize">Male</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Previous School</p>
+                                    <p id="detail-prev-school" class="font-bold text-on-surface">City Public School, Lahore</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Previous Class & Marks</p>
+                                    <p id="detail-prev-marks" class="font-bold text-on-surface">9th Class / 940 Marks</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Admission Date</p>
+                                    <p id="detail-admission-date" class="font-bold text-on-surface">Aug 12, 2024</p>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Residential Address</p>
+                                    <p id="detail-address" class="font-bold text-on-surface">House #42, Street 7, Sector F-10/2, Islamabad</p>
+                                </div>
+                                <div id="detail-mother-wrap">
+                                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Mother's Name</p>
+                                    <p id="detail-mother" class="font-bold text-on-surface">—</p>
+                                </div>
+                                <div id="detail-cnic-wrap">
+                                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">CNIC / B-Form</p>
+                                    <p id="detail-cnic" class="font-bold text-on-surface">—</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card p-6" id="documents-card">
+                            <h3 class="font-black text-on-surface mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">folder_open</span>
+                                Uploaded Documents
+                            </h3>
+                            <div id="documents-list" class="space-y-3 text-sm text-on-surface-variant">
+                                Loading…
+                            </div>
+                        </div>
+
+                        <!-- Fee Payment History -->
+                        <div class="card overflow-hidden">
+                            <div class="card-header flex justify-between items-center">
+                                <h3 class="font-black text-on-surface flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-emerald-600">receipt_long</span>
+                                    Fee Payment History
+                                </h3>
+                                <button class="text-xs font-bold text-primary hover:underline">View All Invoices</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Month</th>
+                                            <th>Invoice #</th>
+                                            <th>Date Paid</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-sm">
+                                        <tr>
+                                            <td class="font-bold">October 2024</td>
+                                            <td class="text-xs font-mono">#INV-9902</td>
+                                            <td class="text-on-surface-variant">Oct 05, 2024</td>
+                                            <td class="font-black">₨ 12,500</td>
+                                            <td><span class="badge-success px-2 py-0.5 rounded text-[10px] font-bold uppercase">Paid</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-bold">September 2024</td>
+                                            <td class="text-xs font-mono">#INV-8841</td>
+                                            <td class="text-on-surface-variant">Sep 04, 2024</td>
+                                            <td class="font-black">₨ 12,500</td>
+                                            <td><span class="badge-success px-2 py-0.5 rounded text-[10px] font-bold uppercase">Paid</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-bold">August 2024</td>
+                                            <td class="text-xs font-mono">#INV-7720</td>
+                                            <td class="text-on-surface-variant">Aug 15, 2024</td>
+                                            <td class="font-black">₨ 15,000</td>
+                                            <td><span class="badge-success px-2 py-0.5 rounded text-[10px] font-bold uppercase">Paid</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Quick Stats & Actions -->
+                    <div class="space-y-8">
+                        <div class="card p-6 bg-primary text-white">
+                            <h4 class="font-bold mb-4 opacity-80 uppercase text-[10px] tracking-widest">Attendance Overview</h4>
+                            <div class="flex items-end gap-2 mb-2">
+                                <span class="text-4xl font-black">96.4%</span>
+                                <span class="text-xs font-bold opacity-75 mb-1">Present</span>
+                            </div>
+                            <div class="w-full h-2 bg-white/20 rounded-full overflow-hidden mt-4">
+                                <div class="h-full bg-white" style="width: 96.4%"></div>
+                            </div>
+                            <p class="text-[10px] mt-4 opacity-75 leading-relaxed">Total working days: 45<br/>Days present: 43 • Days absent: 02</p>
+                        </div>
+
+                        <div class="card p-6" id="academic-progress-card">
+                            <h4 class="font-bold text-on-surface mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-[20px]">assignment</span>
+                                Academic Progress
+                            </h4>
+                            <div id="academic-progress-content" class="space-y-6">
+                                <p class="text-xs text-on-surface-variant italic">Loading academic records...</p>
+                            </div>
+                        </div>
+
+                        <div class="card p-6 border-l-4 border-l-rose-500">
+                            <h4 class="font-bold text-on-surface mb-2">Security Warning</h4>
+                            <p class="text-xs text-on-surface-variant leading-relaxed">Account requires email verification for portal access. Send link to parent?</p>
+                            <button class="mt-4 text-xs font-black text-rose-600 hover:underline uppercase tracking-tighter">Resend Verification</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const profileId = urlParams.get('id');
+        const profileType = urlParams.get('type') || 'student';
+
+        async function loadProfile() {
+            if (!profileId) {
+                alert('No profile ID provided');
+                return;
+            }
+
+            try {
+                const endpoint = profileType === 'admission' ? `/api/admissions/${profileId}` : `/api/students/${profileId}`;
+                const res = await fetch(endpoint);
+                const data = await res.json();
+
+                if (!res.ok) throw new Error(data.message);
+
+                renderProfile(data);
+            } catch (e) {
+                console.error('Error loading profile:', e);
+                alert('Failed to load profile details.');
+            }
+        }
+
+        function renderProfile(data) {
+            // Header
+            document.getElementById('profile-name').textContent = data.fullName;
+            document.getElementById('profile-id').textContent = data.admissionNumber || 'N/A';
+            document.getElementById('profile-class-info').textContent = `${data.class || data.appliedClass || 'N/A'} - ${data.program || data.appliedProgram || 'N/A'}`;
+            document.getElementById('profile-email').textContent = data.email || 'N/A';
+            document.getElementById('profile-phone').textContent = data.phone || 'N/A';
+            document.getElementById('profile-status').textContent = data.status || 'Active';
+            
+            const imgUrl = typeof resolveImageUrl === 'function' ? resolveImageUrl(data.image) : data.image;
+            if (imgUrl) {
+                const imgContainer = document.getElementById('profile-img-container');
+                imgContainer.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover rounded-3xl" alt="Profile" loading="lazy"/>`;
+            } else {
+                document.getElementById('profile-img-container').textContent = data.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+            }
+
+            if (document.getElementById('detail-mother')) {
+                document.getElementById('detail-mother').textContent = data.motherName || 'N/A';
+            }
+            if (document.getElementById('detail-cnic')) {
+                document.getElementById('detail-cnic').textContent = data.cnic || 'N/A';
+            }
+
+            renderDocuments(data);
+
+            // Details
+            document.getElementById('detail-father').textContent = data.fatherName || 'N/A';
+            document.getElementById('detail-gender').textContent = data.gender || 'N/A';
+            document.getElementById('detail-dob').textContent = data.dob ? new Date(data.dob).toLocaleDateString() : 'N/A';
+            document.getElementById('detail-address').textContent = data.address || 'N/A';
+            document.getElementById('detail-prev-school').textContent = data.previousSchool || 'N/A';
+            document.getElementById('detail-prev-marks').textContent = data.previousMarks ? `${data.previousClass || '9th Class'} / ${data.previousMarks}` : 'N/A';
+            document.getElementById('detail-admission-date').textContent = data.appliedDate ? new Date(data.appliedDate).toLocaleDateString() : (data.admissionDate ? new Date(data.admissionDate).toLocaleDateString() : 'N/A');
+
+            // Clear dummy fee history so it doesn't look fake
+            const feeTableBody = document.querySelector('.data-table tbody');
+            if (feeTableBody) {
+                feeTableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-on-surface-variant">No fee payment history available.</td></tr>';
+            }
+
+            if (profileType === 'admission') {
+                const feeCard = document.querySelector('.card .data-table')?.closest('.card');
+                if (feeCard) feeCard.style.display = 'none';
+            } else {
+                loadAcademicProgress(data._id, data.class || data.appliedClass, data.section || 'A');
+            }
+
+            // Admission specific actions
+            if (profileType === 'admission' && data.status === 'Pending') {
+                document.getElementById('profile-actions').innerHTML = `
+                    <button onclick="updateAdmissionStatus('${data._id}', 'Approved')" class="btn-primary py-2.5 px-6">Approve Admission</button>
+                    <button onclick="updateAdmissionStatus('${data._id}', 'Rejected')" class="bg-error text-white py-2.5 px-6 rounded-xl font-bold">Reject</button>
+                `;
+            } else {
+                 document.getElementById('profile-actions').innerHTML = `
+                    <button onclick="window.location='student-registration.html?edit=${data._id}'" class="btn-secondary py-2.5 px-4"><span class="material-symbols-outlined text-[18px]">edit</span> Edit</button>
+                    <button onclick="window.print()" class="btn-primary py-2.5 px-4 flex items-center gap-1.5"><span class="material-symbols-outlined text-[18px]">print</span> Print Profile</button>
+                `;
+            }
+        }
+
+        function renderDocuments(data) {
+            const container = document.getElementById('documents-list');
+            if (!container) return;
+
+            const docs = Array.isArray(data.documents) ? data.documents.filter(Boolean) : [];
+            const items = [];
+
+            if (data.image) {
+                const img = typeof resolveImageUrl === 'function' ? resolveImageUrl(data.image) : data.image;
+                items.push({ label: 'Student Photo', url: img, type: 'image' });
+            }
+
+            docs.forEach((url, i) => {
+                const resolved = typeof resolveImageUrl === 'function' ? resolveImageUrl(url) : url;
+                const isPdf = resolved.toLowerCase().includes('.pdf');
+                items.push({ label: `Document ${i + 1}`, url: resolved, type: isPdf ? 'pdf' : 'image' });
+            });
+
+            if (items.length === 0) {
+                container.innerHTML = '<p class="italic">No document uploaded</p>';
+                return;
+            }
+
+            container.innerHTML = items.map((item) => {
+                const preview = item.type === 'image'
+                    ? `<img src="${item.url}" alt="${item.label}" class="max-h-40 rounded-lg border border-outline-variant/30 mt-2" loading="lazy"/>`
+                    : `<p class="text-xs mt-1">PDF document</p>`;
+                return `
+                    <div class="p-4 rounded-xl border border-outline-variant/20 bg-surface-container-low">
+                        <p class="font-bold text-on-surface">${item.label}</p>
+                        ${preview}
+                        <a href="${item.url}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 mt-2 text-primary font-bold text-xs hover:underline">
+                            <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                            View / Download
+                        </a>
+                    </div>`;
+            }).join('');
+        }
+
+        async function loadAcademicProgress(studentId, className, section) {
+            const container = document.getElementById('academic-progress-content');
+            if (!container) return;
+
+            try {
+                const res = await fetch(`/api/results?studentId=${studentId}`);
+                const results = await res.json();
+
+                if (!results || results.length === 0) {
+                    const classLabel = `${className || '9'}-${section || 'A'}`;
+                    container.innerHTML = `
+                        <div class="text-center py-4">
+                            <p class="text-xs text-on-surface-variant mb-3">No academic records found for this student.</p>
+                            <a href="add-result.html?studentId=${studentId}&class=${classLabel}" class="btn-primary py-1.5 px-4 text-xs inline-flex items-center gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[14px]">add</span> Enter Marks
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Render each exam term result
+                container.innerHTML = results.map(r => {
+                    const examName = r.examId?.name || 'Examination';
+                    const examSession = r.examId?.session || 'Current Term';
+                    const examIdVal = r.examId?._id || '';
+
+                    // Subjects list
+                    let subjectsListHtml = '';
+                    if (r.subjects && r.subjects.length > 0) {
+                        subjectsListHtml = `
+                            <div class="mt-3 space-y-2 border-t border-dashed border-outline-variant/30 pt-3">
+                                ${r.subjects.map(sub => `
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="text-on-surface-variant font-medium">${sub.name}</span>
+                                        <span class="font-black text-on-surface">${sub.obtained}/${sub.total} (${sub.grade})</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    } else {
+                        // Legacy single subject formatting
+                        subjectsListHtml = `
+                            <div class="mt-3 space-y-2 border-t border-dashed border-outline-variant/30 pt-3">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-on-surface-variant font-medium">${r.examId?.subject || 'All Subjects'}</span>
+                                    <span class="font-black text-on-surface">${r.marks}/${r.totalMarks} (${r.grade})</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    const classLabel = `${className || '9'}-${section || 'A'}`;
+
+                    return `
+                        <div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/20 hover:border-primary/25 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h5 class="text-sm font-black text-on-surface">${examName}</h5>
+                                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">${examSession}</p>
+                                </div>
+                                <span class="px-2.5 py-1 rounded bg-primary/10 text-primary font-black text-xs uppercase">${r.grade}</span>
+                            </div>
+                            
+                            <div class="flex items-baseline gap-1 mt-1">
+                                <span class="text-2xl font-black text-primary">${r.marks}</span>
+                                <span class="text-xs font-bold text-on-surface-variant">/ ${r.totalMarks} Marks</span>
+                            </div>
+
+                            ${subjectsListHtml}
+
+                            <div class="grid grid-cols-2 gap-2 mt-4">
+                                <button onclick="window.location='results2.html?studentId=${studentId}&examId=${examIdVal}'" 
+                                    class="py-2 bg-white border border-outline-variant/30 rounded-lg text-xs font-bold hover:bg-surface-container hover:text-primary transition-all flex items-center justify-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">print</span> View Card
+                                </button>
+                                <button onclick="window.location='add-result.html?studentId=${studentId}&examId=${examIdVal}&class=${classLabel}'" 
+                                    class="py-2 bg-primary text-white rounded-lg text-xs font-bold hover:bg-primary-high transition-all flex items-center justify-center gap-1 shadow-md shadow-primary/10">
+                                    <span class="material-symbols-outlined text-[14px]">edit</span> Edit Marks
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (e) {
+                console.error('Error loading academic progress:', e);
+                container.innerHTML = '<p class="text-xs text-rose-600 font-bold">Failed to load academic records.</p>';
+            }
+        }
+
+        async function updateAdmissionStatus(id, status) {
+            if (!confirm(`Are you sure you want to ${status} this admission?`)) return;
+            try {
+                const res = await fetch(`/api/admissions/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(data.message || `Admission ${status}!`);
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Action failed');
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadProfile);
+    </script>

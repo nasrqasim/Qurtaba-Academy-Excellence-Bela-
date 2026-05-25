@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Online Admission - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "surface": "#fcf8ff",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "outline-variant": "#c7c4d8",
+                    },
+                    fontFamily: {
+                        body: ["Inter", "sans-serif"],
+                        headline: ["Inter", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(53, 37, 205, 0.1); }
+        .form-card { background: #ffffff; border-radius: 24px; border: 1px solid rgba(199, 196, 216, 0.4); box-shadow: 0 20px 50px rgba(53, 37, 205, 0.05); }
+        .input-group label { display: block; font-size: 0.875rem; font-weight: 700; color: #1b1b24; margin-bottom: 0.5rem; }
+        .form-input { width: 100%; padding: 0.75rem 1rem; border-radius: 12px; border: 1.5px solid #c7c4d8; transition: all 0.2s; }
+        .form-input:focus { border-color: #3525cd; ring: 3px rgba(53, 37, 205, 0.15); outline: none; }
+        #formAlert { display: none; }
+        #formAlert.show { display: block; }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+
+    <nav class="glass-nav sticky top-0 z-50 py-4">
+        <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="logo.jpg" alt="Logo" class="w-10 h-10 object-contain"/>
+                <span class="font-black text-xl tracking-tight text-primary">Qurtaba Bela</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors">Home</a>
+                <a href="programs.html" class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors">Programs</a>
+                <a href="contact.html" class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors">Contact</a>
+            </div>
+            <a href="login.html" class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-full text-sm font-bold">Dashboard</a>
+        </div>
+    </nav>
+
+    <main class="py-16 px-6">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-black tracking-tight text-on-surface mb-4">Student Admission Form</h1>
+                <p class="text-on-surface-variant max-w-lg mx-auto">Apply for admission at Qurtaba School of Excellence Bela. Documents are optional — you may upload them now or later.</p>
+            </div>
+
+            <div id="formAlert" class="mb-6 p-4 rounded-xl text-sm font-bold"></div>
+
+            <div class="form-card p-8 md:p-12">
+                <form id="admissionForm" class="space-y-8" novalidate>
+                    <div>
+                        <h3 class="text-lg font-bold border-b border-outline-variant/30 pb-2 mb-6">Personal Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="input-group">
+                                <label>Full Name of Student *</label>
+                                <input type="text" name="fullName" class="form-input" required/>
+                            </div>
+                            <div class="input-group">
+                                <label>Date of Birth *</label>
+                                <input type="date" name="dob" class="form-input" required/>
+                            </div>
+                            <div class="input-group">
+                                <label>Gender *</label>
+                                <select name="gender" class="form-input" required>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>CNIC / B-Form No.</label>
+                                <input type="text" name="cnic" placeholder="Optional" class="form-input"/>
+                            </div>
+                            <div class="input-group">
+                                <label>Applying for Class *</label>
+                                <select id="appliedClass" name="appliedClass" class="form-input" required>
+                                    <option value="" disabled selected>Loading classes…</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Applying for Program *</label>
+                                <select id="appliedProgram" name="appliedProgram" class="form-input" required>
+                                    <option value="" disabled selected>Loading programs…</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold border-b border-outline-variant/30 pb-2 mb-6">Guardian Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="input-group">
+                                <label>Father/Guardian Name *</label>
+                                <input type="text" name="fatherName" class="form-input" required/>
+                            </div>
+                            <div class="input-group">
+                                <label>Mother Name</label>
+                                <input type="text" name="motherName" class="form-input"/>
+                            </div>
+                            <div class="input-group">
+                                <label>Contact Number *</label>
+                                <input type="tel" name="phone" class="form-input" required/>
+                            </div>
+                            <div class="input-group">
+                                <label>Email Address</label>
+                                <input type="email" name="email" class="form-input"/>
+                            </div>
+                            <div class="input-group md:col-span-2">
+                                <label>Home Address *</label>
+                                <textarea name="address" rows="3" class="form-input resize-none" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold border-b border-outline-variant/30 pb-2 mb-6">Academic History</h3>
+                        <div class="input-group">
+                            <label>Previous School Name</label>
+                            <input type="text" name="previousSchool" class="form-input"/>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold border-b border-outline-variant/30 pb-2 mb-1">Document Uploads <span class="text-sm font-normal text-on-surface-variant">(optional)</span></h3>
+                        <p class="text-sm text-on-surface-variant mb-6">You can submit without documents and provide them later at the school office.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="input-group">
+                                <label>Profile Picture</label>
+                                <input type="file" id="photo" class="form-input" accept="image/*"/>
+                            </div>
+                            <div class="input-group">
+                                <label>Student B-Form / CNIC</label>
+                                <input type="file" id="cnicDoc" class="form-input" accept=".pdf,image/*"/>
+                            </div>
+                            <div class="input-group">
+                                <label>Previous School Marksheet</label>
+                                <input type="file" id="marksheet" class="form-input" accept=".pdf,image/*"/>
+                            </div>
+                            <div class="input-group">
+                                <label>Other Documents</label>
+                                <input type="file" id="extraDoc" class="form-input" accept=".pdf,image/*"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-6">
+                        <button type="submit" id="submitBtn" class="w-full py-4 bg-primary text-white rounded-2xl font-bold text-lg hover:shadow-2xl hover:shadow-primary/40 transition-all">
+                            Submit Application
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-on-surface text-white py-12 px-6 mt-8">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-white/40 text-sm">© Qurtaba School of Excellence Bela</p>
+        </div>
+    </footer>
+
+    <script src="shared.js"></script>
+    <script>
+        function showAlert(message, type) {
+            const el = document.getElementById('formAlert');
+            el.textContent = message;
+            el.className = `mb-6 p-4 rounded-xl text-sm font-bold show ${type === 'success' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`;
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function asList(data) {
+            if (Array.isArray(data)) return data;
+            if (data && Array.isArray(data.data)) return data.data;
+            return [];
+        }
+
+        async function loadOptions() {
+            const pSelect = document.getElementById('appliedProgram');
+            const cSelect = document.getElementById('appliedClass');
+            try {
+                const [programsRes, classesRes] = await Promise.all([
+                    fetch('/api/programs'),
+                    fetch('/api/classes'),
+                ]);
+                const programs = asList(await programsRes.json());
+                const classes = asList(await classesRes.json());
+
+                if (programs.length > 0) {
+                    pSelect.innerHTML = programs.map((p) => `<option value="${p.name}">${p.name}</option>`).join('');
+                } else {
+                    pSelect.innerHTML = '<option value="General Education">General Education</option>';
+                }
+
+                if (classes.length > 0) {
+                    cSelect.innerHTML = classes.map((c) => {
+                        const label = c.section ? `${c.name} - ${c.section}` : c.name;
+                        return `<option value="${c.name}">${label}</option>`;
+                    }).join('');
+                } else {
+                    cSelect.innerHTML = `
+                        <option>Playgroup</option><option>Nursery</option>
+                        <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
+                        <option>Grade 4</option><option>Grade 5</option><option>Grade 6</option>
+                        <option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option>`;
+                }
+            } catch (e) {
+                console.error('Error loading options:', e);
+                pSelect.innerHTML = '<option value="General Education">General Education</option>';
+                cSelect.innerHTML = '<option value="Grade 1">Grade 1</option>';
+            }
+        }
+
+        async function uploadIfPresent(file, category) {
+            if (!file || !file.size) return null;
+            try {
+                return await uploadOptimizedFile(file, category);
+            } catch (err) {
+                throw new Error(err.message || 'File upload failed');
+            }
+        }
+
+        async function handleAdmission(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Submitting…';
+            document.getElementById('formAlert').classList.remove('show');
+
+            try {
+                const form = e.target;
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    throw new Error('Please fill in all required fields.');
+                }
+
+                const data = Object.fromEntries(new FormData(form).entries());
+
+                const photoFile = document.getElementById('photo').files[0];
+                const cnicFile = document.getElementById('cnicDoc').files[0];
+                const marksheetFile = document.getElementById('marksheet').files[0];
+                const extraFile = document.getElementById('extraDoc').files[0];
+
+                btn.textContent = 'Uploading files…';
+                const [photoUrl, cnicUrl, marksheetUrl, extraUrl] = await Promise.all([
+                    uploadIfPresent(photoFile, 'student'),
+                    uploadIfPresent(cnicFile, 'document'),
+                    uploadIfPresent(marksheetFile, 'document'),
+                    uploadIfPresent(extraFile, 'document'),
+                ]);
+
+                const documents = [cnicUrl, marksheetUrl, extraUrl].filter(Boolean);
+
+                const payload = {
+                    fullName: data.fullName,
+                    fatherName: data.fatherName,
+                    motherName: data.motherName || undefined,
+                    cnic: data.cnic || undefined,
+                    dob: data.dob,
+                    gender: data.gender,
+                    appliedClass: data.appliedClass,
+                    appliedProgram: data.appliedProgram,
+                    phone: data.phone,
+                    email: data.email || undefined,
+                    address: data.address,
+                    previousSchool: data.previousSchool || undefined,
+                    image: photoUrl || undefined,
+                    documents,
+                };
+
+                btn.textContent = 'Saving application…';
+                const res = await fetch('/api/admissions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+
+                const result = await res.json();
+                if (!res.ok) {
+                    throw new Error(result.message || `Submission failed (${res.status})`);
+                }
+
+                showAlert(result.message || 'Application submitted successfully.', 'success');
+                btn.textContent = 'Submitted ✓';
+                setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+            } catch (err) {
+                console.error(err);
+                showAlert(err.message || 'An error occurred during submission.', 'error');
+                btn.disabled = false;
+                btn.textContent = 'Submit Application';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadOptions();
+            document.getElementById('admissionForm').addEventListener('submit', handleAdmission);
+        });
+    </script>
+</body>
+</html>

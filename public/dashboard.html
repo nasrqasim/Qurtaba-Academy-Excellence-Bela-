@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Dashboard - Qurtaba School of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        headline: ["Inter"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Dashboard" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-headline font-bold text-on-surface">Dashboard Overview</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Welcome back, Administrator. Here's what's happening today.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn-secondary">
+                        <span class="material-symbols-outlined text-[18px]">download</span>
+                        Export Report
+                    </button>
+                    <button class="btn-primary" onclick="window.location='admission.html'">
+                        <span class="material-symbols-outlined text-[18px]">person_add</span>
+                        New Admission
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                <div class="card p-6 stat-card cursor-pointer hover:shadow-lg transition-all" onclick="window.location='students.html'">
+                    <p class="text-on-surface-variant text-sm font-medium mb-1">Total Students</p>
+                    <h3 id="stat-total-students" class="text-3xl font-headline font-bold text-on-surface">0</h3>
+                </div>
+                <div class="card p-6 stat-card cursor-pointer hover:shadow-lg transition-all" onclick="window.location='staff.html'">
+                    <p class="text-on-surface-variant text-sm font-medium mb-1">Total Teachers</p>
+                    <h3 id="stat-total-teachers" class="text-3xl font-headline font-bold text-on-surface">0</h3>
+                </div>
+                <div class="card p-6 stat-card cursor-pointer hover:shadow-lg transition-all" onclick="window.location='staff.html'">
+                    <p class="text-on-surface-variant text-sm font-medium mb-1">Total Staff</p>
+                    <h3 id="stat-total-staff" class="text-3xl font-headline font-bold text-on-surface">0</h3>
+                </div>
+                <div class="card p-6 stat-card cursor-pointer hover:shadow-lg transition-all" onclick="window.location='academic-setup.html'">
+                    <p class="text-on-surface-variant text-sm font-medium mb-1">Total Classes</p>
+                    <h3 id="stat-total-classes" class="text-3xl font-headline font-bold text-on-surface">0</h3>
+                </div>
+                <div class="card p-6 stat-card cursor-pointer hover:shadow-lg transition-all" onclick="window.location='admission.html'">
+                    <p class="text-on-surface-variant text-sm font-medium mb-1">Pending Admissions</p>
+                    <h3 id="stat-pending-admissions" class="text-3xl font-headline font-bold text-on-surface">0</h3>
+                </div>
+                <div class="card p-6 stat-card cursor-pointer hover:shadow-lg transition-all" onclick="window.location='accounting.html'">
+                    <p class="text-on-surface-variant text-sm font-medium mb-1">Total Revenue</p>
+                    <h3 id="stat-total-revenue" class="text-3xl font-headline font-bold text-on-surface">₨ 0</h3>
+                </div>
+                <div class="card p-6 stat-card cursor-pointer hover:shadow-lg transition-all" onclick="window.location='fees.html'">
+                    <p class="text-on-surface-variant text-sm font-medium mb-1">Fee Collections</p>
+                    <h3 id="stat-fee-collections" class="text-3xl font-headline font-bold text-on-surface">₨ 0</h3>
+                </div>
+                <div class="card p-6 stat-card cursor-pointer hover:shadow-lg transition-all" onclick="window.location='notifications.html'">
+                    <p class="text-on-surface-variant text-sm font-medium mb-1">Notifications Count</p>
+                    <h3 id="stat-notifications" class="text-3xl font-headline font-bold text-on-surface">0</h3>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mb-8">
+                <h3 class="text-lg font-headline font-bold text-on-surface mb-4">Quick Management Actions</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <button class="flex flex-col items-center gap-2 p-4 bg-surface-container-lowest border border-outline-variant/20 rounded-2xl hover:bg-primary/5 hover:border-primary/30 transition-all group" onclick="window.location='add-assignment.html'">
+                        <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-[20px]">add_task</span>
+                        </div>
+                        <span class="text-xs font-bold text-on-surface">Add Assignment</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-2 p-4 bg-surface-container-lowest border border-outline-variant/20 rounded-2xl hover:bg-primary/5 hover:border-primary/30 transition-all group" onclick="window.location='add-notification.html'">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-[20px]">add_comment</span>
+                        </div>
+                        <span class="text-xs font-bold text-on-surface">Add Notification</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-2 p-4 bg-surface-container-lowest border border-outline-variant/20 rounded-2xl hover:bg-primary/5 hover:border-primary/30 transition-all group" onclick="window.location='add-program.html'">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-[20px]">add_box</span>
+                        </div>
+                        <span class="text-xs font-bold text-on-surface">Add Program</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-2 p-4 bg-surface-container-lowest border border-outline-variant/20 rounded-2xl hover:bg-primary/5 hover:border-primary/30 transition-all group" onclick="window.location='add-facility.html'">
+                        <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-[20px]">add_photo_alternate</span>
+                        </div>
+                        <span class="text-xs font-bold text-on-surface">Add Facility</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-2 p-4 bg-surface-container-lowest border border-outline-variant/20 rounded-2xl hover:bg-primary/5 hover:border-primary/30 transition-all group" onclick="window.location='record-expense.html'">
+                        <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-[20px]">receipt</span>
+                        </div>
+                        <span class="text-xs font-bold text-on-surface">Record Expense</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-2 p-4 bg-surface-container-lowest border border-outline-variant/20 rounded-2xl hover:bg-primary/5 hover:border-primary/30 transition-all group" onclick="window.location='add-class.html'">
+                        <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-[20px]">add_business</span>
+                        </div>
+                        <span class="text-xs font-bold text-on-surface">Add Class</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Charts and Lists -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Recent Activities -->
+                <div class="card lg:col-span-2 overflow-hidden">
+                    <div class="card-header flex justify-between items-center">
+                        <h3 class="text-lg font-headline font-bold text-on-surface">Recent Activities</h3>
+                        <a href="#" class="text-sm font-medium text-primary hover:underline">View All</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Activity</th>
+                                    <th>Reference</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm">
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
+                                                <span class="material-symbols-outlined text-[16px]">person_add</span>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">New Admission: Sarah Jenkins</p>
+                                                <p class="text-xs text-on-surface-variant">Grade 10 - Science</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-on-surface-variant">ADM-2024-089</td>
+                                    <td class="text-on-surface-variant">Today, 09:42 AM</td>
+                                    <td><span class="badge-success px-2 py-1 rounded-full text-xs font-medium">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
+                                                <span class="material-symbols-outlined text-[16px]">payments</span>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Fee Payment: Michael Chen</p>
+                                                <p class="text-xs text-on-surface-variant">Term 2 Tuition</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-on-surface-variant">TXN-88492</td>
+                                    <td class="text-on-surface-variant">Yesterday, 02:20 PM</td>
+                                    <td><span class="badge-success px-2 py-1 rounded-full text-xs font-medium">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+                                                <span class="material-symbols-outlined text-[16px]">description</span>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Document Request</p>
+                                                <p class="text-xs text-on-surface-variant">Transfer Certificate - David L.</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-on-surface-variant">REQ-1022</td>
+                                    <td class="text-on-surface-variant">Oct 24, 2024</td>
+                                    <td><span class="badge-warning px-2 py-1 rounded-full text-xs font-medium">Pending</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Upcoming Exams -->
+                <div class="card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-headline font-bold text-on-surface">Upcoming Exams</h3>
+                        <button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">more_horiz</span></button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex gap-4 items-start p-3 rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer border border-transparent hover:border-outline-variant/20">
+                            <div class="w-12 h-12 rounded-lg bg-surface-container-high flex flex-col items-center justify-center shrink-0">
+                                <span class="text-[10px] font-bold text-on-surface-variant uppercase">Nov</span>
+                                <span class="text-lg font-black text-primary leading-none">12</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-on-surface text-sm">Mid-Term: Mathematics</h4>
+                                <p class="text-xs text-on-surface-variant mt-1">Grade 10 • Hall A • 09:00 AM</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start p-3 rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer border border-transparent hover:border-outline-variant/20">
+                            <div class="w-12 h-12 rounded-lg bg-surface-container-high flex flex-col items-center justify-center shrink-0">
+                                <span class="text-[10px] font-bold text-on-surface-variant uppercase">Nov</span>
+                                <span class="text-lg font-black text-primary leading-none">14</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-on-surface text-sm">Mid-Term: Physics</h4>
+                                <p class="text-xs text-on-surface-variant mt-1">Grade 11 • Lab 2 • 11:30 AM</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start p-3 rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer border border-transparent hover:border-outline-variant/20">
+                            <div class="w-12 h-12 rounded-lg bg-surface-container-high flex flex-col items-center justify-center shrink-0">
+                                <span class="text-[10px] font-bold text-on-surface-variant uppercase">Nov</span>
+                                <span class="text-lg font-black text-primary leading-none">18</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-on-surface text-sm">Literature Essay</h4>
+                                <p class="text-xs text-on-surface-variant mt-1">Grade 9 • Room 402 • 02:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="w-full mt-8 py-2.5 border border-outline-variant/50 rounded-xl text-sm font-bold text-on-surface hover:bg-surface-container transition-colors" onclick="window.location='exams.html'">
+                        View Full Schedule
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        async function loadRecentActivities() {
+            try {
+                const res = await fetch('/api/admissions?limit=5');
+                const admissions = await res.json();
+                renderActivities(admissions);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function renderActivities(admissions) {
+            const body = document.querySelector('.data-table tbody');
+            body.innerHTML = admissions.map(adm => `
+                <tr>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
+                                <span class="material-symbols-outlined text-[16px]">person_add</span>
+                            </div>
+                            <div>
+                                <p class="font-medium">New Admission: ${adm.fullName}</p>
+                                <p class="text-xs text-on-surface-variant">${adm.appliedClass} - ${adm.appliedProgram}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-on-surface-variant">${adm._id.substring(18).toUpperCase()}</td>
+                    <td class="text-on-surface-variant">${new Date(adm.appliedDate).toLocaleDateString()}</td>
+                    <td><span class="badge-${adm.status === 'Approved' ? 'success' : (adm.status === 'Rejected' ? 'error' : 'warning')} px-2 py-1 rounded-full text-xs font-medium">${adm.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        window.addEventListener('DOMContentLoaded', loadRecentActivities);
+    </script>
