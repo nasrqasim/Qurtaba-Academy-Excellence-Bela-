@@ -491,13 +491,28 @@ async function apiFetch(endpoint, options = {}) {
  * @param {{ onStart?: () => void, onDone?: (url: string) => void }} [hooks]
  * @returns {Promise<string|null>} Cloudinary or local URL
  */
+window.fetchWithTimeout = async function fetchWithTimeout(url, options = {}, ms = 45000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      throw new Error('Request timed out. Please try again or submit without large files.');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+};
+
 window.uploadOptimizedFile = async function uploadOptimizedFile(file, category = 'general', hooks = {}) {
-  if (!file) return null;
+  if (!file || !file.size) return null;
   hooks.onStart?.();
   const formData = new FormData();
   formData.append('file', file);
   formData.append('category', category);
-  const res = await fetch('/api/upload', { method: 'POST', body: formData });
+  const res = await fetchWithTimeout('/api/upload', { method: 'POST', body: formData }, 25000);
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Upload failed');
   hooks.onDone?.(data.url);

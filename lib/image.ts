@@ -32,7 +32,7 @@ const CATEGORY_MAX_WIDTH: Record<UploadCategory, number> = {
   program: 1200,
   facility: 1600,
   logo: 512,
-  document: 1920,
+  document: 1200,
   general: 1920,
 };
 

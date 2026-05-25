@@ -14,6 +14,7 @@ import {
 import { isCloudinaryConfigured, uploadToCloudinary } from '@/lib/cloudinary';
 
 export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 const VALID_CATEGORIES = new Set<UploadCategory>([
   'student',

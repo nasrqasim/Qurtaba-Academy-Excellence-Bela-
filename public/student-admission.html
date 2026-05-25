@@ -226,20 +226,47 @@
             }
         }
 
+        const MAX_FILE_MB = 4;
+
+        function validateFileSize(file) {
+            if (!file || !file.size) return true;
+            if (file.size > MAX_FILE_MB * 1024 * 1024) {
+                throw new Error(`"${file.name}" is too large. Maximum size is ${MAX_FILE_MB}MB per file.`);
+            }
+            return true;
+        }
+
         async function uploadIfPresent(file, category) {
             if (!file || !file.size) return null;
             try {
                 return await uploadOptimizedFile(file, category);
             } catch (err) {
-                throw new Error(err.message || 'File upload failed');
+                console.warn('Upload skipped:', err.message);
+                return null;
             }
+        }
+
+        async function attachDocumentsInBackground(admissionId, photoFile, cnicFile, marksheetFile, extraFile) {
+            const [photoUrl, cnicUrl, marksheetUrl, extraUrl] = await Promise.all([
+                uploadIfPresent(photoFile, 'student'),
+                uploadIfPresent(cnicFile, 'document'),
+                uploadIfPresent(marksheetFile, 'document'),
+                uploadIfPresent(extraFile, 'document'),
+            ]);
+            const documents = [cnicUrl, marksheetUrl, extraUrl].filter(Boolean);
+            if (!photoUrl && !documents.length) return;
+            await fetchWithTimeout(`/api/admissions/${admissionId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: photoUrl || null, documents }),
+            }, 30000);
         }
 
         async function handleAdmission(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
-            btn.textContent = 'Submitting…';
+            btn.textContent = 'Submitting application…';
             document.getElementById('formAlert').classList.remove('show');
 
             try {
@@ -251,20 +278,15 @@
 
                 const data = Object.fromEntries(new FormData(form).entries());
 
+                if (!data.appliedProgram || !data.appliedClass) {
+                    throw new Error('Please select a class and program.');
+                }
+
                 const photoFile = document.getElementById('photo').files[0];
                 const cnicFile = document.getElementById('cnicDoc').files[0];
                 const marksheetFile = document.getElementById('marksheet').files[0];
                 const extraFile = document.getElementById('extraDoc').files[0];
-
-                btn.textContent = 'Uploading files…';
-                const [photoUrl, cnicUrl, marksheetUrl, extraUrl] = await Promise.all([
-                    uploadIfPresent(photoFile, 'student'),
-                    uploadIfPresent(cnicFile, 'document'),
-                    uploadIfPresent(marksheetFile, 'document'),
-                    uploadIfPresent(extraFile, 'document'),
-                ]);
-
-                const documents = [cnicUrl, marksheetUrl, extraUrl].filter(Boolean);
+                [photoFile, cnicFile, marksheetFile, extraFile].forEach(validateFileSize);
 
                 const payload = {
                     fullName: data.fullName,
@@ -279,24 +301,35 @@
                     email: data.email || undefined,
                     address: data.address,
                     previousSchool: data.previousSchool || undefined,
-                    image: photoUrl || undefined,
-                    documents,
+                    documents: [],
                 };
 
-                btn.textContent = 'Saving application…';
-                const res = await fetch('/api/admissions', {
+                const res = await fetchWithTimeout('/api/admissions', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
-                });
+                }, 30000);
 
                 const result = await res.json();
                 if (!res.ok) {
                     throw new Error(result.message || `Submission failed (${res.status})`);
                 }
 
-                showAlert(result.message || 'Application submitted successfully.', 'success');
+                const admissionId = result.admission?._id || result.admission?.id;
+                const hasFiles = [photoFile, cnicFile, marksheetFile, extraFile].some((f) => f && f.size);
+
+                showAlert(
+                    hasFiles
+                        ? 'Application submitted successfully. Documents are uploading in the background.'
+                        : 'Application submitted successfully.',
+                    'success'
+                );
                 btn.textContent = 'Submitted ✓';
+
+                if (hasFiles && admissionId) {
+                    attachDocumentsInBackground(admissionId, photoFile, cnicFile, marksheetFile, extraFile).catch(() => {});
+                }
+
                 setTimeout(() => { window.location.href = 'index.html'; }, 2000);
             } catch (err) {
                 console.error(err);

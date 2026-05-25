@@ -30,18 +30,32 @@ export async function PATCH(
   try {
     await connectDB();
     const { id } = await params;
-    const { status } = await request.json();
-
-    if (!['Pending', 'Approved', 'Rejected'].includes(status)) {
-      return NextResponse.json({ message: 'Invalid status' }, { status: 400 });
-    }
+    const body = await request.json();
+    const { status, image, documents } = body as {
+      status?: string;
+      image?: string | null;
+      documents?: string[];
+    };
 
     const admission = await Admission.findById(id);
     if (!admission) {
       return NextResponse.json({ message: 'Application not found' }, { status: 404 });
     }
 
-    admission.status = status;
+    if (image !== undefined) {
+      admission.image = image || undefined;
+    }
+    if (documents !== undefined) {
+      admission.documents = Array.isArray(documents) ? documents.filter(Boolean) : [];
+    }
+
+    if (status) {
+      if (!['Pending', 'Approved', 'Rejected'].includes(status)) {
+        return NextResponse.json({ message: 'Invalid status' }, { status: 400 });
+      }
+      admission.status = status;
+    }
+
     await admission.save();
 
     if (status === 'Approved') {
@@ -72,10 +86,11 @@ export async function PATCH(
       }
     }
 
-    return NextResponse.json(
-      { message: `Application ${status.toLowerCase()}`, admission },
-      { status: 200 }
-    );
+    const message = status
+      ? `Application ${status.toLowerCase()}`
+      : 'Application updated';
+
+    return NextResponse.json({ message, admission }, { status: 200 });
   } catch (error: unknown) {
     const message = formatDbConnectionError(error);
     const detail = error instanceof Error && !message.includes('MongoDB') ? error.message : message;
