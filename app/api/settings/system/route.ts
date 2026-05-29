@@ -12,8 +12,8 @@ export async function GET() {
         schoolName: 'Qurtaba School of Excellence Bela',
         schoolLogo: 'logo.jpg',
         schoolEmail: 'info@qurtaba.edu.pk',
-        phone: '+92 91 1234567',
-        address: 'Phase 3, Hayatabad, Peshawar, Khyber Pakhtunkhwa, Pakistan',
+        phone: '+923312493233',
+        address: 'Qurtaba Academy of excellence bela Near AC Office bela,Lasbela',
         footerText: '© 2026 Qurtaba School of Excellence Bela. All Rights Reserved.',
         themeColor: '#3525cd'
       });

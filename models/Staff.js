@@ -17,10 +17,17 @@ const StaffSchema = new mongoose.Schema({
   loginEnabled: { type: Boolean, default: false }
 }, { timestamps: true });
 
-// Hash password before saving
-StaffSchema.pre('save', async function() {
-  if (!this.isModified('password') || !this.password) return;
-  this.password = await bcrypt.hash(this.password, 10);
+// Hash password before saving; enable portal login when credentials are set
+StaffSchema.pre('save', async function () {
+  if (this.isModified('password') && this.password) {
+    if (!this.isModified('loginEnabled') && this.loginEnabled === false) {
+      this.loginEnabled = true;
+    }
+    const alreadyHashed = /^\$2[aby]\$/.test(this.password);
+    if (!alreadyHashed) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
+  }
 });
 
 export default mongoose.models.Staff || mongoose.model('Staff', StaffSchema, 'staff');

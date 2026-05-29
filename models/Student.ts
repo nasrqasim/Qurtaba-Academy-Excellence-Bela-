@@ -32,10 +32,17 @@ const StudentSchema = new mongoose.Schema({
   verificationDate: { type: Date }
 }, { timestamps: true });
 
-// Hash password before saving
-StudentSchema.pre('save', async function(this: any) {
-  if (!this.isModified('password') || !this.password) return;
-  this.password = await bcrypt.hash(this.password, 10);
+// Hash password before saving; enable portal login when credentials are set
+StudentSchema.pre('save', async function (this: any) {
+  if (this.isModified('password') && this.password) {
+    if (!this.isModified('loginEnabled') && this.loginEnabled === false) {
+      this.loginEnabled = true;
+    }
+    const alreadyHashed = /^\$2[aby]\$/.test(this.password);
+    if (!alreadyHashed) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
+  }
 });
 
 export default mongoose.models.Student || mongoose.model('Student', StudentSchema, 'students');

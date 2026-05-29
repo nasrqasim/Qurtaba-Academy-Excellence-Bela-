@@ -3,6 +3,7 @@ import connectDB from '@/lib/db';
 import Staff from '@/models/Staff';
 import Student from '@/models/Student';
 import User from '@/models/User';
+import { applyPortalCredentials } from '@/lib/credentials';
 
 export async function PUT(
   request: Request,
@@ -26,25 +27,18 @@ export async function PUT(
       if (existsInStaff || existsInStudent || existsInUser) {
         return NextResponse.json({ message: 'Username is already taken' }, { status: 400 });
       }
-      teacher.username = username;
     }
 
-    if (password) {
-      teacher.password = password; // Pre-save hook hashes this
-    }
-
-    if (loginEnabled !== undefined) {
-      teacher.loginEnabled = loginEnabled;
-    }
+    applyPortalCredentials(teacher, { username, password, loginEnabled });
 
     await teacher.save();
-    return NextResponse.json({ 
-      message: 'Teacher login updated successfully', 
-      teacher: { 
-        _id: teacher._id, 
-        username: teacher.username, 
-        loginEnabled: teacher.loginEnabled 
-      } 
+    return NextResponse.json({
+      message: 'Teacher login updated successfully',
+      teacher: {
+        _id: teacher._id,
+        username: teacher.username,
+        loginEnabled: teacher.loginEnabled
+      }
     }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });

@@ -3,7 +3,7 @@ import connectDB from '@/lib/db';
 import Student from '@/models/Student';
 import Staff from '@/models/Staff';
 import User from '@/models/User';
-import bcrypt from 'bcryptjs';
+import { applyPortalCredentials } from '@/lib/credentials';
 
 export async function PUT(
   request: Request,
@@ -27,16 +27,9 @@ export async function PUT(
       if (existsInStudent || existsInUser || existsInStaff) {
         return NextResponse.json({ message: 'Username is already taken' }, { status: 400 });
       }
-      student.username = username;
     }
 
-    if (password) {
-      student.password = password; // Pre-save hook hashes this
-    }
-
-    if (loginEnabled !== undefined) {
-      student.loginEnabled = loginEnabled;
-    }
+    applyPortalCredentials(student, { username, password, loginEnabled });
 
     await student.save();
     return NextResponse.json({ 

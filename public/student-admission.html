@@ -318,17 +318,13 @@
                 const admissionId = result.admission?._id || result.admission?.id;
                 const hasFiles = [photoFile, cnicFile, marksheetFile, extraFile].some((f) => f && f.size);
 
-                showAlert(
-                    hasFiles
-                        ? 'Application submitted successfully. Documents are uploading in the background.'
-                        : 'Application submitted successfully.',
-                    'success'
-                );
-                btn.textContent = 'Submitted ✓';
-
                 if (hasFiles && admissionId) {
-                    attachDocumentsInBackground(admissionId, photoFile, cnicFile, marksheetFile, extraFile).catch(() => {});
+                    btn.textContent = 'Uploading documents...';
+                    await attachDocumentsInBackground(admissionId, photoFile, cnicFile, marksheetFile, extraFile);
                 }
+
+                showAlert('Application submitted successfully with documents.', 'success');
+                btn.textContent = 'Submitted ✓';
 
                 setTimeout(() => { window.location.href = 'index.html'; }, 2000);
             } catch (err) {
