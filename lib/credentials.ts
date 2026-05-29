@@ -1,6 +1,6 @@
 /** Apply username/password/loginEnabled updates for student/staff portal accounts. */
 export function applyPortalCredentials(
-  record: { password?: string; loginEnabled?: boolean },
+  record: { username?: string; password?: string; loginEnabled?: boolean },
   input: { username?: string; password?: string; loginEnabled?: boolean }
 ): void {
   if (input.username) {
