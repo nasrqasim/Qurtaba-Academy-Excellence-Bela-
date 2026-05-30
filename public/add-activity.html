@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Add Activity - Qurtaba Academy of Excellence Bela</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "surface-container": "#f0ecf9",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#eae6f4",
+                        "on-surface": "#1b1b24",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline": "#777587",
+                        "outline-variant": "#c7c4d8",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        headline: ["Inter"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="shared.css"/>
+</head>
+<body class="bg-background font-body flex min-h-screen">
+    <div id="sidebar-overlay"></div>
+    <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header id="topbar" data-title="Add Activity" class="h-16 bg-surface border-b border-outline-variant/20 shadow-sm flex items-center justify-between px-6 sticky top-0 z-30 shrink-0"></header>
+        
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-background">
+            <div class="max-w-4xl mx-auto">
+                <!-- Breadcrumbs -->
+                <nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-6">
+                    <a href="dashboard.html" class="hover:text-primary transition-colors">Dashboard</a>
+                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    <a href="admin-activities.html" class="hover:text-primary transition-colors">Activities</a>
+                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    <span class="text-on-surface font-semibold" id="breadcrumb-current">Add Activity</span>
+                </nav>
+
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-2xl font-headline font-bold text-on-surface" id="page-title">Create New Activity</h2>
+                        <p class="text-on-surface-variant mt-1 text-sm" id="page-subtitle">Publish a new student activity, achievement, or event.</p>
+                    </div>
+                </div>
+
+                <div class="card p-8">
+                    <form id="activityForm" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Activity Title -->
+                            <div class="md:col-span-2 space-y-2">
+                                <label class="text-sm font-bold text-on-surface">Activity Title <span class="text-error">*</span></label>
+                                <input type="text" name="title" placeholder="e.g. Annual Sports League Finals 2026" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required/>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-on-surface">Category <span class="text-error">*</span></label>
+                                <select name="category" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required>
+                                    <option value="" disabled selected>Select category</option>
+                                    <option value="School Houses">School Houses</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="Events">Events</option>
+                                    <option value="Extra Curricular Activities">Extra Curricular Activities</option>
+                                </select>
+                            </div>
+
+                            <!-- Image Preview/Dropzone -->
+                            <div class="md:col-span-2 space-y-2">
+                                <label class="text-sm font-bold text-on-surface">Activity Image</label>
+                                <div id="dropzone" class="border-2 border-dashed border-outline-variant/50 rounded-2xl p-8 flex flex-col items-center justify-center bg-surface-container-low hover:bg-surface-container-high transition-all cursor-pointer group relative overflow-hidden min-h-[160px]">
+                                     <div id="dropzone-prompt" class="flex flex-col items-center justify-center text-center">
+                                         <span class="material-symbols-outlined text-[48px] text-outline group-hover:text-primary transition-colors">image</span>
+                                         <p class="mt-2 text-sm text-on-surface-variant font-medium">Click or drag image here to upload</p>
+                                         <p class="text-xs text-outline mt-1">PNG, JPG or WEBP (Max 5MB)</p>
+                                     </div>
+                                     <img id="image-preview" class="absolute inset-0 w-full h-full object-cover hidden" alt="Preview"/>
+                                     <input type="file" id="image-input" accept="image/*" class="hidden"/>
+                                 </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="md:col-span-2 space-y-2">
+                                <label class="text-sm font-bold text-on-surface">Description <span class="text-error">*</span></label>
+                                <textarea name="description" rows="5" placeholder="Describe the activity, highlight key students, outcomes, and details..." class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none" required></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center justify-end gap-4 pt-6 border-t border-outline-variant/20">
+                            <button type="button" class="btn-secondary px-8" onclick="window.location='admin-activities.html'">Cancel</button>
+                            <button type="submit" class="btn-primary px-8" id="submit-btn">Publish Activity</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="shared.js"></script>
+    <script>
+        let isEditing = false;
+        let editId = null;
+        let existingImageUrl = '';
+
+        async function loadActivityData() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('edit')) {
+                isEditing = true;
+                editId = params.get('edit');
+                document.getElementById('page-title').textContent = 'Edit Activity';
+                document.getElementById('page-subtitle').textContent = 'Update details of an existing activity.';
+                document.getElementById('breadcrumb-current').textContent = 'Edit Activity';
+                document.getElementById('submit-btn').textContent = 'Save Changes';
+
+                try {
+                    const res = await fetch(`/api/activities/${editId}`);
+                    if (!res.ok) throw new Error('Activity not found');
+                    const act = await res.json();
+                    
+                    const form = document.getElementById('activityForm');
+                    form.elements['title'].value = act.title || '';
+                    form.elements['category'].value = act.category || '';
+                    form.elements['description'].value = act.description || '';
+                    
+                    if (act.image) {
+                        existingImageUrl = act.image;
+                        const preview = document.getElementById('image-preview');
+                        preview.src = resolveImageUrl(act.image);
+                        preview.classList.remove('hidden');
+                        document.getElementById('dropzone-prompt').classList.add('opacity-0');
+                    }
+                } catch(e) {
+                    console.error(e);
+                    alert('Error loading activity data.');
+                }
+            }
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.textContent = isEditing ? 'Updating...' : 'Publishing...';
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            const fileInput = document.getElementById('image-input');
+            const file = fileInput.files[0];
+
+            try {
+                let imageUrl = existingImageUrl;
+                if (file) {
+                    imageUrl = await uploadOptimizedFile(file, 'general');
+                }
+
+                const payload = {
+                    title: data.title,
+                    category: data.category,
+                    description: data.description,
+                    image: imageUrl
+                };
+
+                const url = isEditing ? `/api/activities/${editId}` : '/api/activities';
+                const method = isEditing ? 'PUT' : 'POST';
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    alert(isEditing ? 'Activity updated successfully!' : 'Activity published successfully!');
+                    window.location.href = 'admin-activities.html';
+                } else {
+                    const err = await res.json();
+                    alert(err.message || 'Failed to save activity');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Failed to save activity. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = isEditing ? 'Save Changes' : 'Publish Activity';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadActivityData();
+            document.getElementById('activityForm').addEventListener('submit', handleFormSubmit);
+            
+            const dropzone = document.getElementById('dropzone');
+            const input = document.getElementById('image-input');
+            const preview = document.getElementById('image-preview');
+            const prompt = document.getElementById('dropzone-prompt');
+
+            dropzone.addEventListener('click', () => input.click());
+
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        preview.src = event.target.result;
+                        preview.classList.remove('hidden');
+                        prompt.classList.add('opacity-0');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
