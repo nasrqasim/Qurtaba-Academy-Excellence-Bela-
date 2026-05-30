@@ -32,7 +32,6 @@ async function apiFetch(endpoint, options = {}) {
 }
 
 (function () {
-  // ---- Public Pages Configuration ----
   const PUBLIC_PAGES = [
     'index.html',
     'login.html',
@@ -41,6 +40,8 @@ async function apiFetch(endpoint, options = {}) {
     'contact.html',
     'gallery.html',
     'verification.html',
+    'student-admission.html',
+    'activities.html',
     '' // Root path
   ];
 
@@ -169,6 +170,13 @@ async function apiFetch(endpoint, options = {}) {
         children: [
           { icon: 'collections', label: 'Facilities List', href: 'facilities-list.html' },
           { icon: 'add_photo_alternate', label: 'Add Facility', href: 'add-facility.html' },
+        ]
+      },
+      {
+        icon: 'local_activity', label: 'Student Activities', href: '#', hasChildren: true,
+        children: [
+          { icon: 'list_alt', label: 'Activities List', href: 'admin-activities.html' },
+          { icon: 'add_box', label: 'Add Activity', href: 'add-activity.html' },
         ]
       },
       {
@@ -522,7 +530,12 @@ window.uploadOptimizedFile = async function uploadOptimizedFile(file, category =
 /** Preview URL for img src (Cloudinary auto-format or local path) */
 window.resolveImageUrl = function resolveImageUrl(url) {
   if (!url) return '';
-  if (url.startsWith('http')) return url;
+  if (url.startsWith('http')) {
+    if (url.includes('res.cloudinary.com') && !url.includes('/f_auto,q_auto')) {
+      return url.replace('/image/upload/', '/image/upload/f_auto,q_auto/');
+    }
+    return url;
+  }
   return url.startsWith('/') ? url : `/${url}`;
 };
 

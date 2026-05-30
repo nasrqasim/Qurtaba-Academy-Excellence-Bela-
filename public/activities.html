@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Student Activities - Qurtaba Academy of Excellence Bela</title>
+    <meta name="description" content="Explore sports, events, extra-curricular activities and school house achievements at Qurtaba Academy of Excellence Bela."/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#3525cd",
+                        "on-primary": "#ffffff",
+                        "surface": "#fcf8ff",
+                        "on-surface": "#1b1b24",
+                        "surface-container": "#f0ecf9",
+                        "on-surface-variant": "#464555",
+                        "background": "#fcf8ff",
+                        "outline-variant": "#c7c4d8"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; }
+
+        .activity-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .activity-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(53,37,205,0.12);
+        }
+        .category-badge {
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .filter-btn.active {
+            background-color: #3525cd;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(53,37,205,0.25);
+        }
+        .skeleton-card {
+            background: linear-gradient(90deg, #f0ecf9 25%, #e4dff5 50%, #f0ecf9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased">
+    <!-- NavBar -->
+    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 py-5 bg-white/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm transition-all duration-300">
+        <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <img src="logo.jpg" alt="Logo" width="48" height="48" loading="eager" decoding="async" class="w-12 h-12 object-contain shrink-0 rounded-lg"/>
+        </a>
+        <div class="hidden md:flex items-center gap-8 lg:gap-10">
+            <a class="text-on-surface-variant hover:text-primary transition-colors pb-1" href="index.html">Home</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors pb-1" href="about.html">About</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors pb-1" href="programs.html">Programs</a>
+            <a class="text-primary font-bold border-b-2 border-primary pb-1 transition-all" href="activities.html">Activities</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors pb-1" href="gallery.html">Gallery</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors pb-1" href="verification.html">Verification</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors pb-1" href="contact.html">Contact</a>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="theme-toggle" class="p-2.5 text-on-surface-variant hover:bg-primary/10 rounded-full transition-colors">
+                <span class="material-symbols-outlined">dark_mode</span>
+            </button>
+            <div class="h-6 w-px bg-outline-variant/30 mx-1"></div>
+            <a href="student-admission.html" class="hidden sm:block px-5 py-2.5 rounded-xl bg-primary/10 text-primary font-bold hover:bg-primary/20 transition-all text-sm">Apply Now</a>
+            <button onclick="window.location='login.html'" class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-bold hover:shadow-lg hover:shadow-primary/30 hover:opacity-95 transition-all text-sm">Dashboard</button>
+        </div>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="pt-32 pb-16 bg-primary text-white text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 20% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 20%, #fff 1px, transparent 1px); background-size: 40px 40px;"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 rounded-full text-sm font-bold tracking-wider uppercase mb-6">
+                <span class="material-symbols-outlined text-[16px]">emoji_events</span>
+                Student Achievements
+            </div>
+            <h1 class="text-4xl md:text-5xl font-headline font-black mb-4">Student Activities &amp; Events</h1>
+            <p class="text-indigo-100 max-w-2xl mx-auto text-lg">Discover the vibrant school life at Qurtaba Academy — from sports champions to cultural events and academic excellence.</p>
+        </div>
+    </header>
+
+    <!-- Stats Bar -->
+    <section class="bg-white border-b border-outline-variant/20 py-8">
+        <div class="container mx-auto px-6 max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>
+                <p class="text-3xl font-black text-primary" id="stat-total">—</p>
+                <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mt-1">Total Activities</p>
+            </div>
+            <div>
+                <p class="text-3xl font-black text-primary">4</p>
+                <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mt-1">Categories</p>
+            </div>
+            <div>
+                <p class="text-3xl font-black text-primary">2026</p>
+                <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mt-1">Current Year</p>
+            </div>
+            <div>
+                <p class="text-3xl font-black text-primary">500+</p>
+                <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mt-1">Students Involved</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Tabs -->
+    <section class="py-10 bg-surface-container/30">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <div class="flex flex-wrap gap-3 justify-center" id="filter-bar">
+                <button class="filter-btn active px-5 py-2 rounded-full text-sm font-bold border border-primary/20 transition-all" data-filter="all">All Activities</button>
+                <button class="filter-btn px-5 py-2 rounded-full text-sm font-bold border border-outline-variant/40 hover:border-primary/40 text-on-surface-variant transition-all" data-filter="School Houses">🏠 School Houses</button>
+                <button class="filter-btn px-5 py-2 rounded-full text-sm font-bold border border-outline-variant/40 hover:border-primary/40 text-on-surface-variant transition-all" data-filter="Sports">⚽ Sports</button>
+                <button class="filter-btn px-5 py-2 rounded-full text-sm font-bold border border-outline-variant/40 hover:border-primary/40 text-on-surface-variant transition-all" data-filter="Events">🎉 Events</button>
+                <button class="filter-btn px-5 py-2 rounded-full text-sm font-bold border border-outline-variant/40 hover:border-primary/40 text-on-surface-variant transition-all" data-filter="Extra Curricular Activities">🎭 Extra Curricular</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Activities Grid -->
+    <section class="py-16">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <!-- Skeleton Loaders -->
+            <div id="skeleton-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="skeleton-card rounded-2xl h-80"></div>
+                <div class="skeleton-card rounded-2xl h-80"></div>
+                <div class="skeleton-card rounded-2xl h-80"></div>
+                <div class="skeleton-card rounded-2xl h-80"></div>
+                <div class="skeleton-card rounded-2xl h-80"></div>
+                <div class="skeleton-card rounded-2xl h-80"></div>
+            </div>
+
+            <!-- Activities Grid -->
+            <div id="activities-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
+                <!-- Dynamically injected -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden text-center py-20">
+                <span class="material-symbols-outlined text-[64px] text-on-surface-variant/30">search_off</span>
+                <p class="text-on-surface-variant font-bold mt-4">No activities found in this category yet.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 bg-primary text-white text-center">
+        <div class="container mx-auto px-6 max-w-2xl">
+            <h2 class="text-3xl font-black mb-4">Be Part of Our Story</h2>
+            <p class="text-indigo-200 mb-8">Join Qurtaba Academy and participate in our vibrant school community.</p>
+            <a href="student-admission.html" class="inline-block px-8 py-4 bg-white text-primary rounded-xl font-black hover:shadow-xl hover:shadow-black/20 transition-all hover:-translate-y-0.5">Apply for Admission</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-outline-variant/20 py-16">
+        <div class="container mx-auto px-6 max-w-6xl grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="space-y-4">
+                <div class="flex items-center gap-2">
+                    <img src="logo.jpg" alt="Logo" class="w-8 h-8 object-contain rounded"/>
+                    <span class="font-headline font-bold text-lg text-on-surface">Qurtaba Academy of Excellence Bela</span>
+                </div>
+                <p class="text-on-surface-variant text-sm">Empowering minds, building character, and shaping the future since 2009.</p>
+            </div>
+            <div class="flex flex-col space-y-3">
+                <h4 class="font-bold text-on-surface">Quick Links</h4>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="about.html">About Us</a>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="programs.html">Programs</a>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="activities.html">Activities</a>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="gallery.html">Gallery</a>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="contact.html">Contact</a>
+            </div>
+            <div class="flex flex-col space-y-3">
+                <h4 class="font-bold text-on-surface">Admissions</h4>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="student-admission.html">Apply Now</a>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="verification.html">Verify Certificate</a>
+                <a class="text-on-surface-variant hover:text-primary text-sm" href="login.html">Student Portal</a>
+            </div>
+            <div class="flex flex-col space-y-3">
+                <h4 class="font-bold text-on-surface">Contact</h4>
+                <p class="text-on-surface-variant text-sm">Qurtaba Academy of excellence bela Near AC Office bela,Lasbela</p>
+                <p class="text-on-surface-variant text-sm">info@qurtabaschoolbela.edu.pk</p>
+                <p class="text-on-surface-variant text-sm">+923312493233</p>
+            </div>
+        </div>
+        <div class="container mx-auto px-6 max-w-6xl mt-12 pt-8 border-t border-outline-variant/10 text-center">
+            <p class="text-on-surface-variant text-xs">© 2026 Qurtaba Academy of Excellence Bela. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle
+        const toggle = document.getElementById('theme-toggle');
+        const applyTheme = (dark) => {
+            document.documentElement.classList.toggle('dark', dark);
+            toggle.querySelector('span').textContent = dark ? 'light_mode' : 'dark_mode';
+        };
+        applyTheme(localStorage.getItem('qurtaba-dark') === 'true');
+        toggle.addEventListener('click', () => {
+            const nowDark = !document.documentElement.classList.contains('dark');
+            localStorage.setItem('qurtaba-dark', nowDark);
+            applyTheme(nowDark);
+        });
+
+        // Category color map
+        const categoryColors = {
+            'School Houses': { bg: 'bg-amber-100', text: 'text-amber-700', dot: 'bg-amber-500' },
+            'Sports': { bg: 'bg-emerald-100', text: 'text-emerald-700', dot: 'bg-emerald-500' },
+            'Events': { bg: 'bg-purple-100', text: 'text-purple-700', dot: 'bg-purple-500' },
+            'Extra Curricular Activities': { bg: 'bg-blue-100', text: 'text-blue-700', dot: 'bg-blue-500' },
+        };
+
+        const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=800';
+
+        let allActivities = [];
+        let currentFilter = 'all';
+
+        function buildCard(act) {
+            const colors = categoryColors[act.category] || { bg: 'bg-primary/10', text: 'text-primary', dot: 'bg-primary' };
+            const img = act.image || DEFAULT_IMAGE;
+            return `
+            <div class="activity-card bg-white rounded-2xl overflow-hidden border border-outline-variant/30 shadow-sm flex flex-col group" data-category="${act.category}">
+                <div class="relative overflow-hidden h-52">
+                    <img src="${img}" alt="${act.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy" onerror="this.src='${DEFAULT_IMAGE}'"/>
+                    <div class="absolute top-3 left-3">
+                        <span class="category-badge ${colors.bg} ${colors.text} px-3 py-1 rounded-full flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full ${colors.dot} inline-block"></span>
+                            ${act.category}
+                        </span>
+                    </div>
+                </div>
+                <div class="p-6 flex flex-col flex-1">
+                    <h3 class="text-lg font-black text-on-surface mb-2 leading-tight">${act.title}</h3>
+                    <p class="text-on-surface-variant text-sm leading-relaxed flex-1">${act.description || ''}</p>
+                </div>
+            </div>`;
+        }
+
+        function renderActivities(filter) {
+            const grid = document.getElementById('activities-grid');
+            const empty = document.getElementById('empty-state');
+            const filtered = filter === 'all' ? allActivities : allActivities.filter(a => a.category === filter);
+
+            if (filtered.length === 0) {
+                grid.classList.add('hidden');
+                empty.classList.remove('hidden');
+            } else {
+                grid.innerHTML = filtered.map(buildCard).join('');
+                grid.classList.remove('hidden');
+                empty.classList.add('hidden');
+            }
+        }
+
+        async function loadActivities() {
+            try {
+                const res = await fetch('/api/activities');
+                allActivities = await res.json();
+
+                // Update stat
+                document.getElementById('stat-total').textContent = allActivities.length;
+
+                // Hide skeleton, show grid
+                document.getElementById('skeleton-grid').classList.add('hidden');
+                renderActivities('all');
+            } catch (e) {
+                document.getElementById('skeleton-grid').classList.add('hidden');
+                document.getElementById('empty-state').classList.remove('hidden');
+            }
+        }
+
+        // Filter buttons
+        document.getElementById('filter-bar').addEventListener('click', (e) => {
+            const btn = e.target.closest('.filter-btn');
+            if (!btn) return;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            renderActivities(currentFilter);
+        });
+
+        window.addEventListener('DOMContentLoaded', loadActivities);
+    </script>
+</body>
+</html>
