@@ -99,16 +99,17 @@ export async function POST(request: Request) {
     const inputBuffer = Buffer.from(bytes);
     const contentHash = hashBuffer(inputBuffer);
     const baseName = sanitizeBaseName(file.name);
-    const publicId = `${category}-${contentHash}-${baseName}`;
 
     let outputBuffer = inputBuffer;
-    let ext = path.extname(file.name).replace('.', '') || 'bin';
+    let ext = (path.extname(file.name).replace('.', '') || 'bin').toLowerCase();
 
     if (isImage) {
       const optimized = await optimizeImage(inputBuffer, mime, category);
       outputBuffer = Buffer.from(optimized.buffer);
       ext = optimized.ext;
     }
+
+    const publicId = `${category}-${contentHash}-${baseName}.${ext}`;
 
     if (isCloudinaryConfigured()) {
       const uploaded = await uploadToCloudinary(outputBuffer, {

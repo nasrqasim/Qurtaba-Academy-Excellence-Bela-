@@ -342,7 +342,7 @@
 
             docs.forEach((url, i) => {
                 const resolved = typeof resolveImageUrl === 'function' ? resolveImageUrl(url) : url;
-                const isPdf = resolved.toLowerCase().includes('.pdf');
+                const isPdf = resolved.toLowerCase().includes('.pdf') || resolved.toLowerCase().includes('/raw/upload/');
                 items.push({ label: `Document ${i + 1}`, url: resolved, type: isPdf ? 'pdf' : 'image' });
             });
 
