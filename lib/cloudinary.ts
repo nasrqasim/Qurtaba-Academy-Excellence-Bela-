@@ -16,8 +16,20 @@ export function isCloudinaryConfigured(): boolean {
 
 function ensureConfigured(): void {
   if (configured) return;
-  if (process.env.CLOUDINARY_URL) {
-    cloudinary.config({ secure: true });
+  const url = process.env.CLOUDINARY_URL;
+  if (url) {
+    const matches = url.match(/cloudinary:\/\/([^:]+):([^@]+)@(.+)/);
+    if (matches) {
+      const [, apiKey, apiSecret, cloudName] = matches;
+      cloudinary.config({
+        cloud_name: cloudName,
+        api_key: apiKey,
+        api_secret: apiSecret,
+        secure: true,
+      });
+    } else {
+      cloudinary.config({ secure: true });
+    }
   } else {
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
