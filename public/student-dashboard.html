@@ -355,8 +355,9 @@
                     fetchAttendance();
                     fetchResults();
                     fetchFees();
-                    fetchTimetable(profileRes.class);
-                    fetchAssignments(profileRes.class);
+                    const fullClassName = profileRes.section ? `Class ${profileRes.class}-${profileRes.section}` : `Class ${profileRes.class}`;
+                    fetchTimetable(fullClassName);
+                    fetchAssignments(fullClassName);
                 }
             } catch (e) {
                 console.error("Error loading dashboard data", e);
@@ -415,39 +416,76 @@
             if (data) {
                 const tbody = document.getElementById('results-history-body');
                 if (data.length > 0) {
-                    tbody.innerHTML = data.map(item => {
+                    const rows = [];
+                    data.forEach(item => {
                         const examName = item.examId?.name || 'Standard Exam';
-                        const examTerm = item.examId?.term || 'N/A';
-                        const examYear = item.examId?.year || '';
+                        const examSession = item.examId?.session || 'N/A';
                         
-                        const marksObtained = item.obtainedMarks || 0;
-                        const marksTotal = item.totalMarks || 100;
-                        const percentage = Math.round((marksObtained / marksTotal) * 100);
-                        
-                        let grade = 'F';
-                        if (percentage >= 90) grade = 'A+';
-                        else if (percentage >= 80) grade = 'A';
-                        else if (percentage >= 70) grade = 'B';
-                        else if (percentage >= 60) grade = 'C';
-                        else if (percentage >= 50) grade = 'D';
+                        if (item.subjects && item.subjects.length > 0) {
+                            item.subjects.forEach(sub => {
+                                const marksObtained = sub.obtained || 0;
+                                const marksTotal = sub.total || 100;
+                                const percentage = Math.round((marksObtained / marksTotal) * 100);
+                                
+                                let grade = sub.grade || 'F';
+                                if (grade === 'F' && percentage >= 50) {
+                                    if (percentage >= 90) grade = 'A+';
+                                    else if (percentage >= 80) grade = 'A';
+                                    else if (percentage >= 70) grade = 'B';
+                                    else if (percentage >= 60) grade = 'C';
+                                    else if (percentage >= 50) grade = 'D';
+                                }
 
-                        return `
-                            <tr>
-                                <td class="text-sm text-on-surface font-semibold">${examName} (${examTerm} - ${examYear})</td>
-                                <td class="text-sm text-on-surface font-semibold text-primary">${item.subject || 'N/A'}</td>
-                                <td class="text-sm text-on-surface-variant">${marksObtained}</td>
-                                <td class="text-sm text-on-surface-variant">${marksTotal}</td>
-                                <td class="text-sm text-on-surface font-semibold">${percentage}%</td>
-                                <td>
-                                    <span class="px-2 py-0.5 rounded text-xs font-bold ${
-                                        grade === 'A+' || grade === 'A' ? 'badge-success' :
-                                        grade === 'B' || grade === 'C' ? 'badge-info' : 'badge-error'
-                                    }">${grade}</span>
-                                </td>
-                                <td class="text-sm text-on-surface-variant">${item.remarks || 'N/A'}</td>
-                            </tr>
-                        `;
-                    }).join('');
+                                rows.push(`
+                                    <tr>
+                                        <td class="text-sm text-on-surface font-semibold">${examName} (${examSession})</td>
+                                        <td class="text-sm text-on-surface font-semibold text-primary">${sub.name}</td>
+                                        <td class="text-sm text-on-surface-variant">${marksObtained}</td>
+                                        <td class="text-sm text-on-surface-variant">${marksTotal}</td>
+                                        <td class="text-sm text-on-surface font-semibold">${percentage}%</td>
+                                        <td>
+                                            <span class="px-2 py-0.5 rounded text-xs font-bold ${
+                                                grade === 'A+' || grade === 'A' ? 'badge-success' :
+                                                grade === 'B' || grade === 'C' ? 'badge-info' : 'badge-error'
+                                            }">${grade}</span>
+                                        </td>
+                                        <td class="text-sm text-on-surface-variant">${item.remarks || 'N/A'}</td>
+                                    </tr>
+                                `);
+                            });
+                        } else {
+                            const marksObtained = item.marks || 0;
+                            const marksTotal = item.totalMarks || 100;
+                            const percentage = Math.round((marksObtained / marksTotal) * 100);
+                            
+                            let grade = item.grade || 'F';
+                            if (grade === 'F' && percentage >= 50) {
+                                if (percentage >= 90) grade = 'A+';
+                                else if (percentage >= 80) grade = 'A';
+                                else if (percentage >= 70) grade = 'B';
+                                else if (percentage >= 60) grade = 'C';
+                                else if (percentage >= 50) grade = 'D';
+                            }
+
+                            rows.push(`
+                                <tr>
+                                    <td class="text-sm text-on-surface font-semibold">${examName} (${examSession})</td>
+                                    <td class="text-sm text-on-surface font-semibold text-primary">All Subjects</td>
+                                    <td class="text-sm text-on-surface-variant">${marksObtained}</td>
+                                    <td class="text-sm text-on-surface-variant">${marksTotal}</td>
+                                    <td class="text-sm text-on-surface font-semibold">${percentage}%</td>
+                                    <td>
+                                        <span class="px-2 py-0.5 rounded text-xs font-bold ${
+                                            grade === 'A+' || grade === 'A' ? 'badge-success' :
+                                            grade === 'B' || grade === 'C' ? 'badge-info' : 'badge-error'
+                                        }">${grade}</span>
+                                    </td>
+                                    <td class="text-sm text-on-surface-variant">${item.remarks || 'N/A'}</td>
+                                </tr>
+                            `);
+                        }
+                    });
+                    tbody.innerHTML = rows.join('');
                 } else {
                     tbody.innerHTML = `<tr><td colspan="7" class="text-center text-on-surface-variant py-4">No exam results recorded yet.</td></tr>`;
                 }
@@ -508,7 +546,7 @@
                             <td class="text-sm text-on-surface font-semibold text-primary">${item.day}</td>
                             <td class="text-sm text-on-surface font-semibold">${item.subject}</td>
                             <td class="text-sm text-on-surface-variant font-medium">${item.startTime} - ${item.endTime}</td>
-                            <td class="text-sm text-on-surface-variant">${item.roomNo || 'N/A'}</td>
+                            <td class="text-sm text-on-surface-variant">${item.room || 'N/A'}</td>
                             <td class="text-sm text-on-surface-variant">${item.teacher || 'N/A'}</td>
                         </tr>
                     `).join('');
@@ -524,7 +562,7 @@
                                 <td class="text-sm text-on-surface font-semibold text-primary">${item.day}</td>
                                 <td class="text-sm text-on-surface font-semibold">${item.subject}</td>
                                 <td class="text-sm text-on-surface-variant font-medium">${item.startTime} - ${item.endTime}</td>
-                                <td class="text-sm text-on-surface-variant">${item.roomNo} / ${item.teacher}</td>
+                                <td class="text-sm text-on-surface-variant">${item.room || 'N/A'} / ${item.teacher || 'N/A'}</td>
                             </tr>
                         `).join('');
                     } else {
@@ -572,14 +610,12 @@
                                         <span>Due: ${dueDate.toLocaleDateString()}</span>
                                     </div>
                                 </div>
-                                ${item.fileUrl ? `
-                                    <div class="pt-2">
-                                        <a href="${item.fileUrl}" target="_blank" class="w-full btn-secondary text-xs flex justify-center py-2">
-                                            <span class="material-symbols-outlined text-[14px]">download</span>
-                                            Download Course Materials
-                                        </a>
-                                    </div>
-                                ` : ''}
+                                <div class="pt-2">
+                                    <button onclick="${item.fileUrl ? `window.open('${item.fileUrl}', '_blank')` : `alert('No documents uploaded yet!')`}" class="w-full btn-secondary text-xs flex justify-center py-2 items-center gap-1.5 font-semibold">
+                                        <span class="material-symbols-outlined text-[14px]">download</span>
+                                        Download Course Materials
+                                    </button>
+                                </div>
                             </div>
                         `;
                     }).join('');

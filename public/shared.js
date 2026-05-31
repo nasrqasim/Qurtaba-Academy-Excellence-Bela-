@@ -42,6 +42,7 @@ async function apiFetch(endpoint, options = {}) {
     'verification.html',
     'student-admission.html',
     'activities.html',
+    'programs.html',
     '' // Root path
   ];
 
@@ -419,6 +420,76 @@ async function apiFetch(endpoint, options = {}) {
     // 4. Update Document Title
     const currentTitle = document.title.split('–')[0].trim() || 'Portal';
     document.title = `${currentTitle} – ${systemSettings.schoolName}`;
+
+    // 5. Update public navbar if on public page
+    if (isPublicPage) {
+      renderPublicNavbar();
+    }
+  }
+
+  function renderPublicNavbar() {
+    // Update logo
+    document.querySelectorAll('nav img[alt="Logo"], nav img[src*="logo.jpg"]').forEach(el => {
+      el.src = systemSettings.schoolLogo || 'logo.jpg';
+    });
+    
+    // Update school name
+    document.querySelectorAll('nav span.text-xl, nav .school-name-lbl').forEach(el => {
+      el.textContent = systemSettings.schoolName;
+    });
+
+    // Hide theme switcher on public portals
+    const themeBtn = document.getElementById('theme-toggle') || document.querySelector('#theme-toggle') || document.querySelector('.theme-btn');
+    if (themeBtn) {
+      themeBtn.style.display = 'none';
+      
+      // Hide adjacent divider if any
+      const nextSibling = themeBtn.nextElementSibling;
+      if (nextSibling && (nextSibling.classList.contains('w-px') || nextSibling.tagName === 'DIV')) {
+        nextSibling.style.display = 'none';
+      }
+      const prevSibling = themeBtn.previousElementSibling;
+      if (prevSibling && (prevSibling.classList.contains('w-px') || prevSibling.tagName === 'DIV')) {
+        prevSibling.style.display = 'none';
+      }
+    }
+
+    // Hide "Home" page link if on home page (index.html or root)
+    const isHome = currentPage.toLowerCase() === 'index.html' || currentPage === '' || currentPage === '/';
+    document.querySelectorAll('nav a').forEach(a => {
+      if (a.textContent.trim().toLowerCase() === 'home') {
+        if (isHome) {
+          a.style.display = 'none';
+        } else {
+          a.style.display = '';
+        }
+      }
+    });
+
+    // Update dashboard/login button dynamically if already logged in
+    const hasToken = localStorage.getItem('qurtaba_token');
+    const userJson = localStorage.getItem('qurtaba_user');
+    if (hasToken && userJson) {
+      try {
+        const u = JSON.parse(userJson);
+        let target = 'login.html';
+        if (u.role === 'Student') target = 'student-dashboard.html';
+        else if (u.role === 'Teacher') target = 'teacher-dashboard.html';
+        else if (u.role === 'Staff') target = 'staff-dashboard.html';
+        else if (u.role === 'Admin' || u.role === 'Super Admin') target = 'dashboard.html';
+
+        document.querySelectorAll('nav button, nav a').forEach(el => {
+          const text = el.textContent.trim().toLowerCase();
+          if (text === 'dashboard' || text === 'login') {
+            el.setAttribute('onclick', `window.location='${target}'`);
+            if (el.tagName === 'A') {
+              el.setAttribute('href', target);
+            }
+            el.textContent = 'Dashboard';
+          }
+        });
+      } catch(e) {}
+    }
   }
 
   async function loadSystemConfig() {

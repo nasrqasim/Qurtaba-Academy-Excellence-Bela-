@@ -38,6 +38,58 @@
     <link rel="stylesheet" href="shared.css"/>
 </head>
 <body class="bg-background font-body flex min-h-screen">
+
+    <!-- ================== Edit Assignment Modal ================== -->
+    <div id="edit-asg-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-surface rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 animate-fade-in">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">edit_note</span>
+                    Edit Assignment
+                </h3>
+                <button onclick="closeEditAsg()" class="text-on-surface-variant hover:text-error transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <input type="hidden" id="edit-asg-id"/>
+            <div class="grid grid-cols-1 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1.5">Title</label>
+                    <input type="text" id="edit-asg-title" class="input-field" placeholder="Assignment title"/>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1.5">Class</label>
+                        <input type="text" id="edit-asg-class" class="input-field" placeholder="e.g. Class 9-A"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1.5">Subject</label>
+                        <input type="text" id="edit-asg-subject" class="input-field" placeholder="e.g. Math"/>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1.5">Due Date</label>
+                    <input type="date" id="edit-asg-date" class="input-field"/>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1.5">Description</label>
+                    <textarea id="edit-asg-desc" rows="3" class="input-field" placeholder="Instructions..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1.5">Material File URL</label>
+                    <input type="text" id="edit-asg-file" class="input-field" placeholder="Link to existing file URL"/>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <button onclick="closeEditAsg()" class="btn-secondary">Cancel</button>
+                <button id="btn-edit-asg-save" onclick="saveEditAsg()" class="btn-primary flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">save</span>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="sidebar-overlay"></div>
     <aside id="sidebar" class="w-[280px] bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col h-screen sticky top-0 shrink-0 hidden md:flex z-40 overflow-y-auto"></aside>
 
@@ -255,8 +307,21 @@
                                     <textarea id="asg-desc" rows="3" class="input-field" placeholder="Instructions for students..."></textarea>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-on-surface-variant mb-1.5" for="asg-file">Material File URL (Optional)</label>
-                                    <input type="text" id="asg-file" class="input-field" placeholder="Link to document / study guide"/>
+                                    <label class="block text-xs font-bold text-on-surface-variant mb-1.5">Material File (Optional)</label>
+                                    <div id="asg-file-wrapper" class="relative flex flex-col gap-2">
+                                        <div class="border-2 border-dashed border-outline-variant/50 rounded-xl p-4 text-center cursor-pointer hover:border-primary/60 hover:bg-primary/5 transition-all" onclick="document.getElementById('asg-file-input').click()">
+                                            <span class="material-symbols-outlined text-2xl text-primary/60">upload_file</span>
+                                            <p class="text-xs text-on-surface-variant mt-1" id="asg-file-label">Click to upload PDF or Image</p>
+                                        </div>
+                                        <input type="file" id="asg-file-input" accept=".pdf,image/*" class="hidden" onchange="handleAsgFileSelect(this)"/>
+                                        <input type="hidden" id="asg-file"/>
+                                        <div id="asg-upload-progress" class="hidden">
+                                            <div class="flex items-center gap-2 text-xs text-on-surface-variant">
+                                                <span class="material-symbols-outlined text-sm animate-spin">progress_activity</span>
+                                                <span id="asg-upload-status">Uploading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <button type="submit" id="btn-save-asg" class="btn-primary w-full flex justify-center py-3">
                                     <span class="material-symbols-outlined text-[18px]">upload</span>
@@ -276,7 +341,8 @@
                                             <th>Class</th>
                                             <th>Subject</th>
                                             <th>Due Date</th>
-                                            <th>Action</th>
+                                            <th>File</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="asg-history-body">
@@ -463,7 +529,7 @@
                 const el = document.getElementById('res-exam');
                 if (el) {
                     el.innerHTML = '<option value="">-- Choose Exam Term --</option>' +
-                        data.map(e => `<option value="${e._id}">${e.name} (${e.term} - ${e.year})</option>`).join('');
+                        data.map(e => `<option value="${e._id}">${e.name} (${e.class || 'All Classes'} - ${e.subject || 'All Subjects'})</option>`).join('');
                 }
             }
         }
@@ -593,6 +659,96 @@
 
 
         // ================== COURSEWORK SECTION ==================
+
+        // File upload handler for assignment material
+        async function handleAsgFileSelect(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const label = document.getElementById('asg-file-label');
+            const progress = document.getElementById('asg-upload-progress');
+            const statusEl = document.getElementById('asg-upload-status');
+            label.textContent = file.name;
+            progress.classList.remove('hidden');
+            statusEl.textContent = 'Uploading...';
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('asg-file').value = data.url || data.fileUrl || '';
+                    statusEl.textContent = '✓ Uploaded successfully';
+                } else {
+                    // Fallback: create a blob URL for local preview
+                    document.getElementById('asg-file').value = '';
+                    statusEl.textContent = '⚠ Upload endpoint unavailable. File noted locally.';
+                }
+            } catch {
+                statusEl.textContent = '⚠ Could not upload. Check connection.';
+            }
+        }
+
+        // Edit coursework modal opener
+        function openEditAsg(id, asg) {
+            document.getElementById('edit-asg-id').value = id;
+            document.getElementById('edit-asg-title').value = asg.title || '';
+            document.getElementById('edit-asg-class').value = asg.class || '';
+            document.getElementById('edit-asg-subject').value = asg.subject || '';
+            document.getElementById('edit-asg-date').value = asg.dueDate ? asg.dueDate.split('T')[0] : '';
+            document.getElementById('edit-asg-desc').value = asg.description || '';
+            document.getElementById('edit-asg-file').value = asg.fileUrl || '';
+            document.getElementById('edit-asg-modal').classList.remove('hidden');
+        }
+
+        function closeEditAsg() {
+            document.getElementById('edit-asg-modal').classList.add('hidden');
+        }
+
+        async function saveEditAsg() {
+            const id = document.getElementById('edit-asg-id').value;
+            const btn = document.getElementById('btn-edit-asg-save');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+            const payload = {
+                title: document.getElementById('edit-asg-title').value,
+                class: document.getElementById('edit-asg-class').value,
+                subject: document.getElementById('edit-asg-subject').value,
+                dueDate: document.getElementById('edit-asg-date').value,
+                description: document.getElementById('edit-asg-desc').value,
+                fileUrl: document.getElementById('edit-asg-file').value,
+            };
+            try {
+                const res = await fetch(`/api/assignments/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('qurtaba_token')}` },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    closeEditAsg();
+                    fetchTeacherAssignments();
+                } else {
+                    const err = await res.json();
+                    alert(err.message || 'Failed to update assignment.');
+                }
+            } catch { alert('Server error.'); }
+            finally { btn.disabled = false; btn.textContent = 'Save Changes'; }
+        }
+
+        async function deleteAsg(id) {
+            if (!confirm('Are you sure you want to delete this assignment? This cannot be undone.')) return;
+            try {
+                const res = await fetch(`/api/assignments/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('qurtaba_token')}` }
+                });
+                if (res.ok) {
+                    fetchTeacherAssignments();
+                } else {
+                    alert('Failed to delete assignment.');
+                }
+            } catch { alert('Server error.'); }
+        }
+
         async function fetchTeacherAssignments() {
             const user = JSON.parse(localStorage.getItem('qurtaba_user'));
             const data = await apiFetch('/assignments');
@@ -604,18 +760,30 @@
                 const tbody = document.getElementById('asg-history-body');
                 if (filtered.length > 0) {
                     tbody.innerHTML = filtered.map(asg => `
-                        <tr>
+                        <tr data-asg-id="${asg._id}">
                             <td class="text-sm text-on-surface font-semibold">${asg.title}</td>
                             <td class="text-sm text-on-surface-variant font-medium">${asg.class}</td>
                             <td class="text-sm text-on-surface-variant">${asg.subject}</td>
                             <td class="text-sm text-error font-semibold">${new Date(asg.dueDate).toLocaleDateString()}</td>
                             <td>
-                                <a href="${asg.fileUrl || '#'}" target="_blank" class="text-xs text-primary font-bold hover:underline ${asg.fileUrl ? '' : 'pointer-events-none opacity-40'}">Download File</a>
+                                ${asg.fileUrl
+                                    ? `<a href="${asg.fileUrl}" target="_blank" class="text-xs text-primary font-bold hover:underline">View File</a>`
+                                    : `<span class="text-xs text-on-surface-variant/50 italic">No file</span>`}
+                            </td>
+                            <td>
+                                <div class="flex gap-2">
+                                    <button onclick="openEditAsg('${asg._id}', ${JSON.stringify(asg).replace(/"/g, '&quot;')})" class="text-xs px-2 py-1 rounded-lg bg-primary/10 text-primary font-bold hover:bg-primary/20 transition-colors flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[14px]">edit</span> Edit
+                                    </button>
+                                    <button onclick="deleteAsg('${asg._id}')" class="text-xs px-2 py-1 rounded-lg bg-error/10 text-error font-bold hover:bg-error/20 transition-colors flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[14px]">delete</span> Delete
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     `).join('');
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-on-surface-variant">No assignments uploaded. Use the form to submit.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-on-surface-variant">No assignments uploaded. Use the form to submit.</td></tr>`;
                 }
             }
         }
@@ -739,24 +907,20 @@
             const totalMarks = exam ? exam.totalMarks : 100;
 
             const payload = [];
-            let valid = true;
 
             rows.forEach(row => {
                 const studentId = row.getAttribute('data-student-id');
-                const obtainedVal = row.querySelector('.res-obtained-field').value;
-                const remarks = row.querySelector('.res-remarks-field').value;
+                const obtainedVal = row.querySelector('.res-obtained-field').value.trim();
+                const remarks = row.querySelector('.res-remarks-field').value.trim();
 
-                if (obtainedVal === '') {
-                    alert("Please enter marks for all students.");
-                    valid = false;
-                    return;
-                }
+                // Skip rows with no marks entered (allow partial saves)
+                if (obtainedVal === '') return;
 
                 const obtained = parseFloat(obtainedVal);
-                if (obtained < 0 || obtained > totalMarks) {
-                    alert(`Obtained marks must be between 0 and ${totalMarks}.`);
-                    valid = false;
-                    return;
+                if (isNaN(obtained) || obtained < 0 || obtained > totalMarks) {
+                    alert(`Invalid marks for a student. Must be between 0 and ${totalMarks}.`);
+                    payload.length = 0; // clear
+                    throw new Error('validation');
                 }
 
                 payload.push({
@@ -769,7 +933,10 @@
                 });
             });
 
-            if (!valid) return;
+            if (payload.length === 0) {
+                alert('No marks entered. Please fill in at least one student\'s marks.');
+                return;
+            }
 
             btn.disabled = true;
             btn.textContent = 'Saving...';
@@ -815,7 +982,7 @@
                             <td class="text-sm text-on-surface font-semibold">${item.class}</td>
                             <td class="text-sm text-on-surface-variant font-medium">${item.subject}</td>
                             <td class="text-sm text-on-surface-variant">${item.startTime} - ${item.endTime}</td>
-                            <td class="text-sm text-on-surface-variant font-bold">${item.roomNo || 'N/A'}</td>
+                            <td class="text-sm text-on-surface-variant font-bold">${item.room || item.roomNo || 'N/A'}</td>
                         </tr>
                     `).join('');
                 } else {
